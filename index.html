@@ -697,6 +697,39 @@
         .ib-status.inactive { background: var(--border); color: var(--text-light); }
         .ib-status.positive { background: var(--cat-med-bg); color: var(--cat-med); }
         .ib-status.negative { background: var(--safe-bg); color: var(--safe-text); }
+
+        /* ═══ EXPORT DAILY SUMMARY ═══ */
+        .export-card {
+            background: linear-gradient(135deg, rgba(197,138,205,0.08), rgba(255,255,255,0.95), rgba(151,215,198,0.08));
+            border-radius: var(--radius); padding: 16px; margin-top: 10px;
+            box-shadow: var(--shadow); border: 1px solid rgba(197,138,205,0.12);
+        }
+        .export-card-header { margin-bottom: 10px; }
+        .export-card-header > div { display: flex; align-items: center; gap: 6px; }
+        .export-card-icon { font-size: 1.1rem; }
+        .export-card-title { font-size: 0.75rem; font-weight: 800; color: var(--text); text-transform: uppercase; letter-spacing: 0.5px; }
+        .export-card-sub { display: block; font-size: 0.55rem; color: var(--text-light); margin-top: 2px; }
+        .export-btn {
+            width: 100%; padding: 12px;
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid), var(--purple-soft));
+            color: white; border: none; border-radius: 14px; font-size: 0.8rem; font-weight: 700;
+            cursor: pointer; font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 4px 16px rgba(216,90,156,0.3);
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .export-btn:active { opacity: 0.9; transform: translateY(1px); }
+        .export-btn.copied {
+            background: linear-gradient(135deg, var(--teal), #6bc4ad);
+        }
+        .export-preview {
+            display: none; margin-top: 10px; background: var(--white);
+            border: 1px solid var(--border); border-radius: 12px; padding: 12px;
+            font-size: 0.62rem; line-height: 1.6; color: var(--text);
+            white-space: pre-wrap; font-family: 'Montserrat', sans-serif;
+            max-height: 300px; overflow-y: auto;
+        }
+        .export-preview.visible { display: block; animation: fadeUp 0.2s ease; }
     </style>
 </head>
 <body>
@@ -2175,6 +2208,18 @@
             if (!container) return;
             var html = '';
 
+            // Add export card to co-parent tab
+            if (tab === 'coparent') {
+                html += '<div class="export-card">';
+                html += '<div class="export-card-header">';
+                html += '<div><span class="export-card-icon">📋</span><span class="export-card-title">Daily Care Summary</span></div>';
+                html += '<span class="export-card-sub">Export feeding, meds & sleep for co-parent</span>';
+                html += '</div>';
+                html += '<button class="export-btn" id="exportDailySummary"><i class="fa-solid fa-copy"></i> Copy Today\'s Summary</button>';
+                html += '<div class="export-preview" id="exportPreview"></div>';
+                html += '</div>';
+            }
+
             tabGroups[tab].forEach(function(section) {
                 var items = infoBank[section.key] || [];
                 var isOpen = items.length > 0 ? ' open' : '';
@@ -2245,6 +2290,129 @@
                 });
             });
         });
+
+        // Wire export button
+        var exportBtn = document.getElementById('exportDailySummary');
+        if (exportBtn) {
+            exportBtn.addEventListener('click', exportDailySummary);
+        }
+    }
+
+    function exportDailySummary() {
+        var now = new Date();
+        var cstStr = now.toLocaleString('en-US', { timeZone: 'America/Chicago' });
+        var cstDate = new Date(cstStr);
+        var todayKey = cstDate.getFullYear() + '-' +
+            String(cstDate.getMonth() + 1).padStart(2, '0') + '-' +
+            String(cstDate.getDate()).padStart(2, '0');
+
+        var todayLabel = cstDate.toLocaleDateString('en-US', {
+            weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Chicago'
+        });
+
+        // Get today's log entries
+        var todayEntries = (logEntries || []).filter(function(e) {
+            if (!e.time) return false;
+            var entryDate = new Date(e.time);
+            var entryCST = entryDate.toLocaleString('en-US', { timeZone: 'America/Chicago' });
+            var ed = new Date(entryCST);
+            var ek = ed.getFullYear() + '-' +
+                String(ed.getMonth() + 1).padStart(2, '0') + '-' +
+                String(ed.getDate()).padStart(2, '0');
+            return ek === todayKey;
+        });
+
+        // Filter to feed, med, sleep only (support both 'cat' and 'type' keys)
+        var relevant = todayEntries.filter(function(e) {
+            var c = e.cat || e.type || '';
+            return c === 'feed' || c === 'med' || c === 'sleep';
+        });
+
+        // Sort by time
+        relevant.sort(function(a, b) {
+            return new Date(a.time) - new Date(b.time);
+        });
+
+        // Helper to get display text from an entry
+        function getEntryText(e) {
+            // Use msg field (strip leading emoji + space)
+            if (e.msg) return e.msg.replace(/^[\u{1F000}-\u{1FFFF}]\s*/u, '').replace(/^[^\w]*\s*/, '');
+            if (e.text) return e.text;
+            if (e.chipLabel) return e.chipLabel + (e.amount ? ' — ' + e.amount : '') + (e.notes ? ' — ' + e.notes : '');
+            return '';
+        }
+
+        // Build summary
+        var lines = [];
+        lines.push('🦋 Kaleesi\'s Daily Care Summary');
+        lines.push('📅 ' + todayLabel);
+        lines.push('');
+
+        var feeds = relevant.filter(function(e) { return (e.cat || e.type) === 'feed'; });
+        var meds = relevant.filter(function(e) { return (e.cat || e.type) === 'med'; });
+        var sleeps = relevant.filter(function(e) { return (e.cat || e.type) === 'sleep'; });
+
+        if (feeds.length > 0) {
+            lines.push('🍼 FEEDING');
+            feeds.forEach(function(e) {
+                lines.push('  • ' + getEntryText(e));
+            });
+            lines.push('');
+        }
+
+        if (meds.length > 0) {
+            lines.push('💊 MEDICATIONS');
+            meds.forEach(function(e) {
+                lines.push('  • ' + getEntryText(e));
+            });
+            lines.push('');
+        }
+
+        if (sleeps.length > 0) {
+            lines.push('😴 SLEEP');
+            sleeps.forEach(function(e) {
+                lines.push('  • ' + getEntryText(e));
+            });
+            lines.push('');
+        }
+
+        if (feeds.length === 0 && meds.length === 0 && sleeps.length === 0) {
+            lines.push('No feeding, medication, or sleep entries logged yet today.');
+            lines.push('');
+        }
+
+        lines.push('— Sent from Kaleesi Natalia Knopko App ✦');
+
+        var summary = lines.join('\n');
+
+        // Show preview
+        var preview = document.getElementById('exportPreview');
+        if (preview) {
+            preview.textContent = summary;
+            preview.classList.add('visible');
+        }
+
+        // Copy to clipboard
+        var btn = document.getElementById('exportDailySummary');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(summary).then(function() {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                btn.classList.add('copied');
+                showToast('Summary copied to clipboard! ✦');
+                setTimeout(function() {
+                    btn.innerHTML = '<i class="fa-solid fa-copy"></i> Copy Today\'s Summary';
+                    btn.classList.remove('copied');
+                }, 2500);
+            });
+        } else {
+            // Fallback: select text in preview
+            var range = document.createRange();
+            range.selectNodeContents(preview);
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+            showToast('Summary ready — tap and hold to copy');
+        }
     }
 
     function renderInfoRow(section, item) {
