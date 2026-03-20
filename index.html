@@ -115,6 +115,13 @@
             color: var(--text-light); margin-top: 2px; font-weight: 700;
         }
         .cst-clock { margin-top: 4px; font-size: 0.58rem; font-weight: 600; color: var(--purple-mid); letter-spacing: 0.5px; }
+        .header-photo {
+            width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
+            border: 3px solid rgba(197,138,205,0.3);
+            box-shadow: 0 4px 16px rgba(197,138,205,0.25), 0 0 0 4px rgba(248,132,213,0.1);
+            margin: 0 auto 6px;
+            display: block;
+        }
 
         /* ═══ BOTTOM NAV ═══ */
         .bottom-nav {
@@ -735,6 +742,7 @@
 <body>
     <div class="app">
         <header>
+            <img src="kaleesi.png" alt="Kaleesi" class="header-photo">
             <h1>🦋 Kaleesi Natalia Knopko ♡</h1>
             <div class="subtitle">✦ 🐾 DAILY CARE & SCHEDULE TRACKER 🐾 ✦</div>
             <div class="cst-clock" id="clockDisplay"></div>
