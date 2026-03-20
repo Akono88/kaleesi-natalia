@@ -1,0 +1,1319 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Kaleesi Natalia</title>
+    <link rel="manifest" href="manifest.json">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Kaleesi">
+    <meta name="theme-color" content="#7c3aed">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root {
+            --purple-deep: #7c3aed;
+            --purple-mid: #8b5cf6;
+            --purple-soft: #c4b5fd;
+            --purple-whisper: #f3e8ff;
+            --purple-glow: rgba(124, 58, 237, 0.07);
+            --cream: #faf8ff;
+            --white: #ffffff;
+            --text: #2e2240;
+            --text-mid: #6a5a7e;
+            --text-light: #9a8aae;
+            --border: rgba(124, 58, 237, 0.08);
+            --danger-bg: #fff3e0;
+            --danger-text: #bf360c;
+            --safe-bg: #e8f5e9;
+            --safe-text: #2e7d32;
+            --info-bg: #e3f2fd;
+            --info-text: #1565c0;
+            --warn-bg: #fff8e1;
+            --warn-text: #f57f17;
+            --adam-color: #3B82F6;
+            --adam-light: #DBEAFE;
+            --marta-color: #EC4899;
+            --marta-light: #FCE7F3;
+            --shared-color: #8B5CF6;
+            --shared-light: #EDE9FE;
+            --radius: 18px;
+            --shadow: 0 2px 12px rgba(0,0,0,0.04), 0 0 0 1px var(--border);
+
+            /* Category colors */
+            --cat-feed: #f59e0b;
+            --cat-feed-bg: #fef3c7;
+            --cat-med: #ef4444;
+            --cat-med-bg: #fee2e2;
+            --cat-sleep: #6366f1;
+            --cat-sleep-bg: #e0e7ff;
+            --cat-diaper: #14b8a6;
+            --cat-diaper-bg: #ccfbf1;
+            --cat-hygiene: #06b6d4;
+            --cat-hygiene-bg: #cffafe;
+            --cat-activity: #22c55e;
+            --cat-activity-bg: #dcfce7;
+            --cat-note: #8b5cf6;
+            --cat-note-bg: #ede9fe;
+            --cat-milestone: #ec4899;
+            --cat-milestone-bg: #fce7f3;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        body {
+            font-family: 'Outfit', system-ui, sans-serif;
+            background: var(--purple-whisper); color: var(--text);
+            min-height: 100vh; padding: 0;
+            background-image:
+                radial-gradient(ellipse at 15% 0%, rgba(196,181,253,0.2) 0%, transparent 55%),
+                radial-gradient(ellipse at 85% 100%, rgba(139,92,246,0.08) 0%, transparent 45%);
+        }
+        .app { max-width: 520px; margin: 0 auto; padding: 14px 14px 100px; }
+
+        /* ═══ HEADER ═══ */
+        header {
+            background: var(--white); border-radius: var(--radius);
+            padding: 20px 18px 14px; text-align: center;
+            box-shadow: var(--shadow); margin-bottom: 6px;
+            position: relative; overflow: hidden;
+        }
+        header::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--purple-soft), var(--purple-deep), var(--purple-soft));
+        }
+        h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 900; font-size: 1.3rem; color: var(--purple-deep); letter-spacing: 0.3px; }
+        .subtitle { font-size: 0.5rem; letter-spacing: 3px; text-transform: uppercase; color: var(--text-light); margin-top: 2px; font-weight: 700; }
+        .cst-clock { margin-top: 4px; font-size: 0.62rem; font-weight: 600; color: var(--purple-mid); letter-spacing: 0.5px; }
+
+        /* ═══ BOTTOM NAV ═══ */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; background: var(--white);
+            border-top: 1px solid var(--border); display: flex; z-index: 50;
+            box-shadow: 0 -2px 16px rgba(0,0,0,0.04); max-width: 520px; margin: 0 auto;
+        }
+        .nav-btn {
+            flex: 1; border: none; background: none; padding: 8px 4px 6px; cursor: pointer;
+            display: flex; flex-direction: column; align-items: center; gap: 2px;
+            color: var(--text-light); transition: color 0.2s; font-family: 'Outfit', sans-serif;
+        }
+        .nav-btn i { font-size: 16px; }
+        .nav-btn span { font-size: 0.5rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .nav-btn.active { color: var(--purple-deep); }
+
+        /* ═══ TABS ═══ */
+        .tab-view { display: none; animation: fadeUp 0.3s ease; }
+        .tab-view.active { display: block; }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ═══ CARDS ═══ */
+        .card { background: var(--white); border-radius: var(--radius); padding: 14px; margin-top: 10px; box-shadow: var(--shadow); }
+        .card-label {
+            display: flex; align-items: center; gap: 6px; font-size: 0.5rem; font-weight: 800;
+            letter-spacing: 2px; text-transform: uppercase; color: var(--text-light); margin-bottom: 10px;
+        }
+        .card-label i { font-size: 0.65rem; color: var(--purple-soft); }
+
+        /* ═══ QUICK-ADD CATEGORY BUTTONS ═══ */
+        .quick-cats {
+            display: grid; grid-template-columns: repeat(4, 1fr); gap: 6px;
+            margin-bottom: 8px;
+        }
+        .cat-btn {
+            display: flex; flex-direction: column; align-items: center; gap: 3px;
+            padding: 10px 4px 8px; border: 2px solid var(--border); background: var(--white);
+            border-radius: 14px; cursor: pointer; transition: all 0.15s; font-family: 'Outfit', sans-serif;
+        }
+        .cat-btn:active { transform: scale(0.95); }
+        .cat-btn .cat-icon { font-size: 1.2rem; }
+        .cat-btn .cat-label { font-size: 0.45rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
+        .cat-btn.active { transform: scale(0.97); }
+        .cat-btn[data-cat="feed"] { border-color: var(--cat-feed); background: var(--cat-feed-bg); }
+        .cat-btn[data-cat="feed"] .cat-label { color: var(--cat-feed); }
+        .cat-btn[data-cat="med"] { border-color: var(--cat-med); background: var(--cat-med-bg); }
+        .cat-btn[data-cat="med"] .cat-label { color: var(--cat-med); }
+        .cat-btn[data-cat="sleep"] { border-color: var(--cat-sleep); background: var(--cat-sleep-bg); }
+        .cat-btn[data-cat="sleep"] .cat-label { color: var(--cat-sleep); }
+        .cat-btn[data-cat="diaper"] { border-color: var(--cat-diaper); background: var(--cat-diaper-bg); }
+        .cat-btn[data-cat="diaper"] .cat-label { color: var(--cat-diaper); }
+        .cat-btn[data-cat="hygiene"] { border-color: var(--cat-hygiene); background: var(--cat-hygiene-bg); }
+        .cat-btn[data-cat="hygiene"] .cat-label { color: var(--cat-hygiene); }
+        .cat-btn[data-cat="activity"] { border-color: var(--cat-activity); background: var(--cat-activity-bg); }
+        .cat-btn[data-cat="activity"] .cat-label { color: var(--cat-activity); }
+        .cat-btn[data-cat="note"] { border-color: var(--cat-note); background: var(--cat-note-bg); }
+        .cat-btn[data-cat="note"] .cat-label { color: var(--cat-note); }
+        .cat-btn[data-cat="milestone"] { border-color: var(--cat-milestone); background: var(--cat-milestone-bg); }
+        .cat-btn[data-cat="milestone"] .cat-label { color: var(--cat-milestone); }
+
+        /* ═══ QUICK-ADD FORM ═══ */
+        .quick-form {
+            display: none; background: var(--purple-whisper); border-radius: 14px;
+            padding: 12px; margin-bottom: 10px; animation: fadeUp 0.2s ease;
+        }
+        .quick-form.active { display: block; }
+        .quick-form-header {
+            display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
+        }
+        .quick-form-cat {
+            display: flex; align-items: center; gap: 6px; font-size: 0.7rem;
+            font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
+        }
+        .quick-form-close {
+            background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--text-light);
+            width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+        }
+        .quick-form-row {
+            display: flex; gap: 8px; margin-bottom: 8px; align-items: center;
+        }
+        .quick-form-row input[type="time"],
+        .quick-form-row input[type="text"],
+        .quick-form-row input[type="number"],
+        .quick-form-row select {
+            flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 10px;
+            font-family: 'Outfit', sans-serif; font-size: 0.8rem; background: var(--white);
+        }
+        .quick-form-row input[type="time"] { flex: 0 0 110px; }
+        .quick-form-row input[type="number"] { flex: 0 0 70px; }
+        .quick-chips {
+            display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 8px;
+        }
+        .quick-chip {
+            padding: 5px 10px; border-radius: 16px; font-size: 0.6rem; font-weight: 700;
+            border: 1px solid var(--border); background: var(--white); cursor: pointer;
+            font-family: 'Outfit', sans-serif; transition: all 0.15s;
+        }
+        .quick-chip:active { transform: scale(0.95); }
+        .quick-chip.selected { background: var(--purple-deep); color: white; border-color: var(--purple-deep); }
+        .quick-submit {
+            width: 100%; padding: 10px; background: var(--purple-deep); color: white;
+            border: none; border-radius: 12px; font-size: 0.8rem; font-weight: 700;
+            cursor: pointer; font-family: 'Outfit', sans-serif;
+        }
+        .quick-submit:active { opacity: 0.9; }
+
+        /* ═══ TIMELINE ═══ */
+        .timeline { position: relative; padding-left: 20px; }
+        .timeline::before {
+            content: ''; position: absolute; left: 7px; top: 0; bottom: 0;
+            width: 2px; background: linear-gradient(to bottom, var(--purple-soft), var(--border));
+        }
+        .tl-entry {
+            position: relative; padding: 8px 0 8px 14px; border-bottom: none;
+        }
+        .tl-entry::before {
+            content: ''; position: absolute; left: -16px; top: 14px;
+            width: 10px; height: 10px; border-radius: 50%; border: 2px solid var(--purple-soft);
+            background: var(--white); z-index: 1;
+        }
+        /* Category dot colors */
+        .tl-entry.cat-feed::before { border-color: var(--cat-feed); background: var(--cat-feed-bg); }
+        .tl-entry.cat-med::before { border-color: var(--cat-med); background: var(--cat-med-bg); }
+        .tl-entry.cat-sleep::before { border-color: var(--cat-sleep); background: var(--cat-sleep-bg); }
+        .tl-entry.cat-diaper::before { border-color: var(--cat-diaper); background: var(--cat-diaper-bg); }
+        .tl-entry.cat-hygiene::before { border-color: var(--cat-hygiene); background: var(--cat-hygiene-bg); }
+        .tl-entry.cat-activity::before { border-color: var(--cat-activity); background: var(--cat-activity-bg); }
+        .tl-entry.cat-note::before { border-color: var(--cat-note); background: var(--cat-note-bg); }
+        .tl-entry.cat-milestone::before { border-color: var(--cat-milestone); background: var(--cat-milestone-bg); }
+
+        .tl-time { font-size: 0.55rem; font-weight: 800; color: var(--text-light); letter-spacing: 0.5px; }
+        .tl-content {
+            background: var(--white); border-radius: 12px; padding: 8px 10px;
+            margin-top: 3px; box-shadow: 0 1px 4px rgba(0,0,0,0.03);
+            display: flex; align-items: center; gap: 8px;
+        }
+        .tl-cat-badge {
+            font-size: 0.4rem; font-weight: 800; letter-spacing: 0.5px;
+            text-transform: uppercase; padding: 2px 6px; border-radius: 6px;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .tl-cat-badge.feed { background: var(--cat-feed-bg); color: var(--cat-feed); }
+        .tl-cat-badge.med { background: var(--cat-med-bg); color: var(--cat-med); }
+        .tl-cat-badge.sleep { background: var(--cat-sleep-bg); color: var(--cat-sleep); }
+        .tl-cat-badge.diaper { background: var(--cat-diaper-bg); color: var(--cat-diaper); }
+        .tl-cat-badge.hygiene { background: var(--cat-hygiene-bg); color: var(--cat-hygiene); }
+        .tl-cat-badge.activity { background: var(--cat-activity-bg); color: var(--cat-activity); }
+        .tl-cat-badge.note { background: var(--cat-note-bg); color: var(--cat-note); }
+        .tl-cat-badge.milestone { background: var(--cat-milestone-bg); color: var(--cat-milestone); }
+        .tl-text { font-size: 0.72rem; font-weight: 500; flex: 1; line-height: 1.3; }
+        .tl-detail { font-size: 0.58rem; color: var(--text-light); }
+        .tl-emoji { font-size: 0.9rem; flex-shrink: 0; }
+        .tl-delete {
+            background: none; border: none; color: var(--text-light); cursor: pointer;
+            font-size: 0.65rem; padding: 4px; opacity: 0.5; flex-shrink: 0;
+        }
+        .tl-delete:hover { opacity: 1; color: var(--cat-med); }
+
+        /* Schedule guide markers */
+        .tl-entry.schedule-guide {
+            opacity: 0.55;
+        }
+        .tl-entry.schedule-guide::before {
+            width: 8px; height: 8px; border: 2px dashed var(--purple-soft);
+            background: var(--purple-whisper);
+        }
+        .tl-entry.schedule-guide .tl-content {
+            background: var(--purple-glow); border: 1px dashed var(--border);
+            box-shadow: none;
+        }
+        .tl-entry.schedule-guide .tl-text { font-size: 0.62rem; font-style: italic; color: var(--text-mid); }
+
+        .tl-now-marker {
+            position: relative; padding: 6px 0 6px 14px; display: flex; align-items: center; gap: 8px;
+        }
+        .tl-now-marker::before {
+            content: ''; position: absolute; left: -17px; top: 50%; transform: translateY(-50%);
+            width: 12px; height: 12px; border-radius: 50%;
+            background: var(--purple-deep); z-index: 2;
+            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+        }
+        .tl-now-label {
+            font-size: 0.5rem; font-weight: 800; color: var(--purple-deep);
+            text-transform: uppercase; letter-spacing: 1.5px;
+        }
+        .tl-now-line { flex: 1; height: 1px; background: var(--purple-deep); opacity: 0.3; }
+
+        .timeline-empty {
+            text-align: center; padding: 24px 0; color: var(--text-light);
+            font-size: 0.7rem; font-style: italic;
+        }
+
+        /* Show/hide schedule toggle */
+        .schedule-toggle {
+            display: flex; align-items: center; justify-content: flex-end; gap: 6px;
+            margin-bottom: 8px; font-size: 0.55rem; font-weight: 700; color: var(--text-light);
+        }
+        .schedule-toggle label { cursor: pointer; }
+        .schedule-toggle input { accent-color: var(--purple-deep); cursor: pointer; }
+
+        /* ═══ CALENDAR (from Leesitime) ═══ */
+        .cal-nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .cal-nav-bar h3 { font-family: 'Fraunces', serif; font-size: 1rem; color: var(--purple-deep); }
+        .cal-nav-bar button {
+            background: var(--purple-whisper); border: none; width: 32px; height: 32px;
+            border-radius: 50%; cursor: pointer; color: var(--purple-deep); font-size: 0.8rem;
+        }
+        .cal-nav-bar .today-btn { width: auto; padding: 0 10px; font-size: 0.55rem; font-weight: 700; border-radius: 12px; }
+        .cal-legend { display: flex; justify-content: center; gap: 12px; margin-bottom: 10px; font-size: 0.6rem; font-weight: 600; }
+        .cal-legend-item { display: flex; align-items: center; gap: 4px; }
+        .cal-legend-dot { width: 10px; height: 10px; border-radius: 4px; }
+        .cal-legend-dot.adam { background: var(--adam-color); }
+        .cal-legend-dot.marta { background: var(--marta-color); }
+        .cal-legend-dot.shared { background: var(--shared-color); }
+        .cal-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
+        .cal-stat { text-align: center; padding: 8px; background: var(--purple-whisper); border-radius: 10px; }
+        .cal-stat.adam { border-top: 3px solid var(--adam-color); }
+        .cal-stat.marta { border-top: 3px solid var(--marta-color); }
+        .cal-stat-val { font-size: 1.1rem; font-weight: 800; }
+        .cal-stat-label { font-size: 0.5rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+        .cal-mode-toggle { display: flex; justify-content: center; gap: 4px; margin-bottom: 10px; }
+        .cal-mode-btn {
+            padding: 6px 10px; border: 2px solid var(--border); background: var(--white);
+            border-radius: 20px; cursor: pointer; font-size: 0.6rem; font-weight: 600; font-family: 'Outfit', sans-serif;
+        }
+        .cal-mode-btn.active { background: var(--purple-deep); color: white; border-color: var(--purple-deep); }
+        .cal-mode-btn.adam-mode.active { background: var(--adam-color); border-color: var(--adam-color); }
+        .cal-mode-btn.marta-mode.active { background: var(--marta-color); border-color: var(--marta-color); }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
+        .cal-dow { text-align: center; font-size: 0.5rem; font-weight: 800; color: var(--text-light); padding: 6px 0; text-transform: uppercase; }
+        .cal-day {
+            min-height: 44px; border: 1px solid var(--border); padding: 4px;
+            text-align: center; cursor: pointer; position: relative;
+            font-size: 0.7rem; font-weight: 600; display: flex;
+            flex-direction: column; align-items: center; gap: 2px;
+        }
+        .cal-day:hover { background: var(--purple-glow); }
+        .cal-day.empty { cursor: default; opacity: 0.3; }
+        .cal-day.today { background: #fef9c3; border: 2px solid #f59e0b; font-weight: 800; }
+        .cal-day.selected { background: var(--purple-whisper); border: 2px solid var(--purple-deep); }
+        .cal-day.has-data::after { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--purple-deep); position: absolute; bottom: 3px; }
+        .cal-day.adam-day { background: var(--adam-light); }
+        .cal-day.marta-day { background: var(--marta-light); }
+        .cal-day.shared-day { background: linear-gradient(135deg, var(--adam-light) 50%, var(--marta-light) 50%); }
+        .cal-day-parent { font-size: 0.4rem; font-weight: 800; padding: 1px 3px; border-radius: 3px; color: white; }
+        .cal-day-parent.adam { background: var(--adam-color); }
+        .cal-day-parent.marta { background: var(--marta-color); }
+        .cal-day-parent.shared { background: var(--shared-color); }
+        .cal-detail { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
+        .cal-empty { text-align: center; font-size: 0.7rem; color: var(--text-light); padding: 16px 0; }
+        .cal-detail-date { font-family: 'Fraunces', serif; font-size: 0.85rem; color: var(--purple-deep); margin-bottom: 8px; }
+
+        /* Calendar day modal */
+        .modal-overlay {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.5); z-index: 100; align-items: center;
+            justify-content: center; padding: 14px;
+        }
+        .modal-overlay.active { display: flex; }
+        .modal {
+            background: var(--white); border-radius: var(--radius); width: 100%;
+            max-width: 460px; max-height: 85vh; overflow-y: auto;
+        }
+        .modal-header {
+            padding: 14px; border-bottom: 1px solid var(--border);
+            display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; background: var(--white); z-index: 2;
+            border-radius: var(--radius) var(--radius) 0 0;
+        }
+        .modal-header h2 { font-family: 'Fraunces', serif; font-size: 0.95rem; color: var(--purple-deep); }
+        .close-btn {
+            background: var(--purple-whisper); border: none; width: 30px; height: 30px;
+            border-radius: 50%; font-size: 1rem; cursor: pointer; color: var(--text-mid);
+        }
+        .modal-body { padding: 14px; }
+        .quick-assign { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
+        .assign-btn {
+            padding: 10px 6px; border: 3px solid var(--border); background: var(--white);
+            border-radius: 12px; cursor: pointer; text-align: center; font-family: 'Outfit', sans-serif;
+        }
+        .assign-btn.adam.active { border-color: var(--adam-color); background: var(--adam-light); }
+        .assign-btn.marta.active { border-color: var(--marta-color); background: var(--marta-light); }
+        .assign-btn.shared.active { border-color: var(--shared-color); background: var(--shared-light); }
+        .assign-icon { font-size: 1.1rem; }
+        .assign-label { font-size: 0.6rem; font-weight: 700; }
+        .section-title { font-size: 0.55rem; font-weight: 800; color: var(--text-light); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .time-section { background: var(--purple-whisper); padding: 10px; border-radius: 12px; margin-bottom: 10px; }
+        .time-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; }
+        .time-row:last-child { margin-bottom: 0; }
+        .form-group { margin-bottom: 4px; }
+        .form-group label { display: block; font-size: 0.55rem; font-weight: 700; margin-bottom: 2px; color: var(--text-mid); }
+        .form-group input, .form-group textarea {
+            width: 100%; padding: 8px; border: 1px solid var(--border);
+            border-radius: 8px; font-size: 0.75rem; font-family: 'Outfit', sans-serif;
+        }
+        .form-group textarea { min-height: 50px; resize: vertical; }
+        .note-templates { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
+        .note-template {
+            padding: 3px 8px; background: var(--purple-whisper); border: 1px solid var(--border);
+            border-radius: 12px; font-size: 0.5rem; cursor: pointer; font-family: 'Outfit', sans-serif;
+        }
+        .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .btn-modal {
+            padding: 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 700;
+            cursor: pointer; border: none; font-family: 'Outfit', sans-serif;
+        }
+        .btn-primary { background: var(--purple-deep); color: white; }
+        .btn-secondary { background: var(--purple-whisper); color: var(--text-mid); }
+
+        /* Quick patterns */
+        .patterns-panel { margin-bottom: 8px; }
+        .patterns-panel h4 { font-size: 0.6rem; font-weight: 800; color: var(--text-light); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .pattern-buttons { display: flex; gap: 4px; flex-wrap: wrap; }
+        .pattern-btn {
+            padding: 5px 8px; background: var(--purple-whisper); border: 1px solid var(--border);
+            border-radius: 10px; cursor: pointer; font-size: 0.55rem; font-weight: 600; font-family: 'Outfit', sans-serif;
+        }
+
+        /* ═══ CARE TAB ═══ */
+        .info-block { border-radius: 14px; padding: 14px; margin-bottom: 10px; }
+        .info-block.info { background: var(--info-bg); }
+        .info-block.warn { background: var(--warn-bg); }
+        .info-block.safe { background: var(--safe-bg); }
+        .info-block.danger { background: var(--danger-bg); }
+        .info-block-title { font-size: 0.7rem; font-weight: 800; margin-bottom: 8px; }
+        .info-block.info .info-block-title { color: var(--info-text); }
+        .info-block.warn .info-block-title { color: var(--warn-text); }
+        .info-block.safe .info-block-title { color: var(--safe-text); }
+        .info-block.danger .info-block-title { color: var(--danger-text); }
+        .ref-table { width: 100%; border-collapse: collapse; font-size: 0.62rem; }
+        .ref-table td { padding: 5px 6px; border-bottom: 1px solid rgba(0,0,0,0.06); vertical-align: top; }
+        .ref-table td:first-child { font-weight: 700; width: 80px; white-space: nowrap; }
+        .ref-table .why-col { font-size: 0.55rem; color: rgba(0,0,0,0.5); font-style: italic; }
+
+        /* Schedule reference in care tab */
+        .sched-ref-item {
+            display: flex; gap: 8px; padding: 6px 0; border-bottom: 1px solid rgba(0,0,0,0.06);
+            font-size: 0.62rem;
+        }
+        .sched-ref-item:last-child { border-bottom: none; }
+        .sched-ref-time { font-weight: 800; min-width: 55px; color: var(--info-text); }
+        .sched-ref-name { font-weight: 700; }
+        .sched-ref-why { font-size: 0.55rem; color: rgba(0,0,0,0.45); font-style: italic; margin-top: 1px; }
+
+        /* ═══ LOG TAB ═══ */
+        .log-entry { padding: 8px 0; border-bottom: 1px solid var(--border); }
+        .log-entry:last-child { border-bottom: none; }
+        .log-time { font-size: 0.55rem; color: var(--text-light); font-weight: 600; }
+        .log-msg { font-size: 0.7rem; }
+        .log-date-header { font-size: 0.6rem; font-weight: 800; color: var(--purple-deep); margin-top: 10px; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 2px solid var(--purple-soft); }
+
+        /* ═══ TOAST ═══ */
+        .toast-container { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 6px; max-width: 340px; width: 90%; }
+        .toast {
+            background: var(--purple-deep); color: white; padding: 10px 14px;
+            border-radius: 12px; font-size: 0.75rem; font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: toastIn 0.3s ease;
+        }
+        @keyframes toastIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ═══ PUSH BANNER ═══ */
+        .notif-banner {
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid));
+            border-radius: 14px; padding: 14px; margin-top: 10px; color: white; cursor: pointer;
+        }
+        .notif-banner h4 { font-size: 0.75rem; margin-bottom: 4px; }
+        .notif-banner p { font-size: 0.6rem; opacity: 0.85; }
+
+        /* ═══ SYNC ═══ */
+        .sync-badge {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.55rem; font-weight: 700; padding: 3px 8px; border-radius: 10px; margin-top: 8px;
+        }
+        .sync-badge.connected { background: var(--safe-bg); color: var(--safe-text); }
+        .sync-badge.disconnected { background: var(--danger-bg); color: var(--danger-text); }
+
+        .edit-sched-btn {
+            display: flex; align-items: center; justify-content: center; gap: 6px;
+            width: 100%; padding: 8px; margin-top: 8px; border: 2px dashed var(--purple-soft);
+            background: var(--purple-glow); border-radius: 12px; cursor: pointer;
+            font-size: 0.65rem; font-weight: 700; color: var(--purple-mid); font-family: 'Outfit', sans-serif;
+        }
+    </style>
+</head>
+<body>
+    <div class="app">
+        <header>
+            <h1>👸 Kaleesi Natalia</h1>
+            <div class="subtitle">DAILY CARE & SCHEDULE TRACKER</div>
+            <div class="cst-clock" id="clockDisplay"></div>
+        </header>
+
+        <!-- ═══════════ TAB: ACTIONS (Daily Log) ═══════════ -->
+        <div class="tab-view active" id="tab-actions">
+            <div class="card" style="padding-bottom:10px;">
+                <div class="card-label"><i class="fa-solid fa-bolt"></i> QUICK ADD</div>
+                <div class="quick-cats">
+                    <button class="cat-btn" data-cat="feed"><div class="cat-icon">🍼</div><div class="cat-label">Feed</div></button>
+                    <button class="cat-btn" data-cat="med"><div class="cat-icon">💊</div><div class="cat-label">Meds</div></button>
+                    <button class="cat-btn" data-cat="sleep"><div class="cat-icon">😴</div><div class="cat-label">Sleep</div></button>
+                    <button class="cat-btn" data-cat="diaper"><div class="cat-icon">🧷</div><div class="cat-label">Diaper</div></button>
+                    <button class="cat-btn" data-cat="hygiene"><div class="cat-icon">👃</div><div class="cat-label">Hygiene</div></button>
+                    <button class="cat-btn" data-cat="activity"><div class="cat-icon">🏃</div><div class="cat-label">Activity</div></button>
+                    <button class="cat-btn" data-cat="note"><div class="cat-icon">📝</div><div class="cat-label">Note</div></button>
+                    <button class="cat-btn" data-cat="milestone"><div class="cat-icon">⭐</div><div class="cat-label">Milestone</div></button>
+                </div>
+                <div class="quick-form" id="quickForm"></div>
+            </div>
+
+            <div class="card">
+                <div style="display:flex;align-items:center;justify-content:space-between;">
+                    <div class="card-label" style="margin-bottom:0;"><i class="fa-solid fa-timeline"></i> TODAY'S TIMELINE</div>
+                    <div class="schedule-toggle">
+                        <input type="checkbox" id="showSchedule" checked>
+                        <label for="showSchedule">Guide</label>
+                    </div>
+                </div>
+                <div class="timeline" id="timeline" style="margin-top:8px;"></div>
+            </div>
+
+            <div class="notif-banner" id="notifBanner" style="display:none;">
+                <h4><i class="fa-solid fa-bell"></i> Enable Push Notifications</h4>
+                <p>Tap to get real-time alerts — even when the app is closed.</p>
+            </div>
+            <div style="text-align:center">
+                <div class="sync-badge connected" id="syncBadge"><i class="fa-solid fa-cloud"></i> Connected</div>
+            </div>
+        </div>
+
+        <!-- ═══════════ TAB: CALENDAR ═══════════ -->
+        <div class="tab-view" id="tab-calendar">
+            <div class="card">
+                <div class="cal-nav-bar">
+                    <button id="calPrev"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div style="display:flex;align-items:center;gap:6px;">
+                        <h3 id="calMonthLabel"></h3>
+                        <button class="today-btn" id="calToday">Today</button>
+                    </div>
+                    <button id="calNext"><i class="fa-solid fa-chevron-right"></i></button>
+                </div>
+                <div class="cal-legend">
+                    <div class="cal-legend-item"><div class="cal-legend-dot adam"></div> Adam</div>
+                    <div class="cal-legend-item"><div class="cal-legend-dot marta"></div> Marta</div>
+                    <div class="cal-legend-item"><div class="cal-legend-dot shared"></div> Shared</div>
+                </div>
+                <div class="cal-stats">
+                    <div class="cal-stat adam"><div class="cal-stat-val" id="adamDays">0</div><div class="cal-stat-label">Adam</div></div>
+                    <div class="cal-stat marta"><div class="cal-stat-val" id="martaDays">0</div><div class="cal-stat-label">Marta</div></div>
+                    <div class="cal-stat"><div class="cal-stat-val" id="unassignedDays">0</div><div class="cal-stat-label">Unassigned</div></div>
+                </div>
+                <div class="cal-mode-toggle">
+                    <button class="cal-mode-btn active" id="calModeView">View</button>
+                    <button class="cal-mode-btn adam-mode" id="calModePaintAdam"><i class="fa-solid fa-paintbrush"></i> Adam</button>
+                    <button class="cal-mode-btn marta-mode" id="calModePaintMarta"><i class="fa-solid fa-paintbrush"></i> Marta</button>
+                </div>
+                <div class="cal-grid" id="calGrid"></div>
+                <div class="cal-detail" id="calDetail"><div class="cal-empty">Tap a date to view details.</div></div>
+            </div>
+            <div class="card patterns-panel">
+                <h4><i class="fa-solid fa-bolt"></i> Quick Patterns</h4>
+                <div class="pattern-buttons">
+                    <button class="pattern-btn" id="patternAlt">Alternating Weeks</button>
+                    <button class="pattern-btn" id="patternRotation">2-2-3 Rotation</button>
+                    <button class="pattern-btn" id="patternWeekday">Weekdays / Weekends</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ═══════════ TAB: CARE ═══════════ -->
+        <div class="tab-view" id="tab-care">
+            <div class="info-block info">
+                <div class="info-block-title"><i class="fa-solid fa-anchor"></i> "Safe Harbor" Daily Schedule</div>
+                <p style="font-size:0.55rem;color:var(--info-text);margin-bottom:8px;">The predictable rhythm that makes your home feel safe. Because at 2.5, they don't have a sense of time — they have a sense of <strong>sequence</strong>.</p>
+                <div id="safeHarborSchedule"></div>
+            </div>
+
+            <div class="info-block warn">
+                <div class="info-block-title"><i class="fa-solid fa-rotate"></i> 2-2-3 Transition Day Adjustments</div>
+                <table class="ref-table">
+                    <tr><td>First 2 Hours</td><td>The "Decompression" window — no errands, no big outings, no new foods. Have a "Welcome Home" snack ready.<br><span class="why-col">Expect a "collapse." Extra whiny or clingy is normal.</span></td></tr>
+                    <tr><td>If Amped Up</td><td>Move "Big Energy" play to immediately after arrival.<br><span class="why-col">Burn off cortisol from the transition.</span></td></tr>
+                    <tr><td>If Exhausted</td><td>Move "Anchor Nap" up by 30 minutes.<br><span class="why-col">Over-tired from the other house.</span></td></tr>
+                    <tr><td>Visual Cues</td><td>Use picture schedule on fridge: "At Dad's house, first we eat, then we nap."<br><span class="why-col">Helps them "switch" their brain into your rhythm.</span></td></tr>
+                    <tr><td>Meltdowns</td><td>The "Transition Day Meltdown" means they feel safe enough to let go. Don't take it personally.<br><span class="why-col">It's not a sign of a bad schedule — it's a sign they're finally home.</span></td></tr>
+                </table>
+            </div>
+
+            <div class="info-block safe">
+                <div class="info-block-title"><i class="fa-solid fa-clipboard-list"></i> Quick Reference</div>
+                <table class="ref-table">
+                    <tr><td>Full Name</td><td>Kaleesi Natalia</td></tr>
+                    <tr><td>Nickname</td><td>Leesi</td></tr>
+                    <tr><td>Meals</td><td>3× daily + snacks. High-protein/fiber for stable blood sugar.</td></tr>
+                    <tr><td>Allergies</td><td>None known — update if discovered</td></tr>
+                    <tr><td>Nap</td><td>12:30 PM "Anchor Nap" — dark room, white noise, 1.5–2 hrs</td></tr>
+                    <tr><td>Bedtime</td><td>Bath → PJs → Same 3 books → Song → "See you when the sun comes up"</td></tr>
+                    <tr><td>Comfort</td><td>Favorite blanket / stuffed animal</td></tr>
+                    <tr><td>Meds</td><td>As prescribed — log every dose in Actions tab</td></tr>
+                </table>
+            </div>
+
+            <div class="info-block danger">
+                <div class="info-block-title"><i class="fa-solid fa-triangle-exclamation"></i> Emergency & Safety</div>
+                <table class="ref-table">
+                    <tr><td>Emergency</td><td>911 first, then call both parents immediately</td></tr>
+                    <tr><td>Sunscreen</td><td>Apply before outdoor play, reapply every 2 hours</td></tr>
+                    <tr><td>Car Seat</td><td>Always properly buckled</td></tr>
+                    <tr><td>Water</td><td>Offer throughout the day, keep sippy cup accessible</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- ═══════════ TAB: LOG ═══════════ -->
+        <div class="tab-view" id="tab-log">
+            <div class="card">
+                <div class="card-label"><i class="fa-solid fa-clock-rotate-left"></i> Full Activity History (CST)</div>
+                <div id="logList"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div class="bottom-nav">
+        <button class="nav-btn active" data-tab="tab-actions"><i class="fa-solid fa-bolt"></i><span>ACTIONS</span></button>
+        <button class="nav-btn" data-tab="tab-calendar"><i class="fa-solid fa-calendar-days"></i><span>CALENDAR</span></button>
+        <button class="nav-btn" data-tab="tab-care"><i class="fa-solid fa-heart-pulse"></i><span>CARE</span></button>
+        <button class="nav-btn" data-tab="tab-log"><i class="fa-solid fa-clock-rotate-left"></i><span>LOG</span></button>
+    </div>
+
+    <!-- Calendar Day Edit Modal -->
+    <div class="modal-overlay" id="calDayModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="calDayModalTitle">Edit Day</h2>
+                <button class="close-btn" id="closeCalDayModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="section-title">Assign Day To</div>
+                <div class="quick-assign">
+                    <button class="assign-btn adam" id="assignAdam"><div class="assign-icon">👨</div><div class="assign-label">Adam</div></button>
+                    <button class="assign-btn marta" id="assignMarta"><div class="assign-icon">👩</div><div class="assign-label">Marta</div></button>
+                    <button class="assign-btn shared" id="assignShared"><div class="assign-icon">👥</div><div class="assign-label">Shared</div></button>
+                </div>
+                <div class="time-section">
+                    <div class="section-title">Custom Times (Optional)</div>
+                    <div class="time-row">
+                        <div class="form-group"><label>Adam: Start</label><input type="time" id="adamStart"></div>
+                        <div class="form-group"><label>Adam: End</label><input type="time" id="adamEnd"></div>
+                    </div>
+                    <div class="time-row">
+                        <div class="form-group"><label>Marta: Start</label><input type="time" id="martaStart"></div>
+                        <div class="form-group"><label>Marta: End</label><input type="time" id="martaEnd"></div>
+                    </div>
+                </div>
+                <div class="section-title">Notes</div>
+                <div class="note-templates">
+                    <button class="note-template" onclick="addCalNote('Pickup from school')">🏫 School</button>
+                    <button class="note-template" onclick="addCalNote('Drop off')">🚗 Drop off</button>
+                    <button class="note-template" onclick="addCalNote('Doctor appointment')">🏥 Doctor</button>
+                    <button class="note-template" onclick="addCalNote('Birthday party')">🎂 Party</button>
+                    <button class="note-template" onclick="addCalNote('Playdate')">🧸 Playdate</button>
+                    <button class="note-template" onclick="addCalNote('Holiday')">🎉 Holiday</button>
+                </div>
+                <div class="form-group"><textarea id="calDayNotes" placeholder="Add notes..."></textarea></div>
+                <div class="modal-actions">
+                    <button class="btn-modal btn-secondary" id="clearCalDay">🗑️ Clear</button>
+                    <button class="btn-modal btn-primary" id="saveCalDay">💾 Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script>
+    /* ═══════════════════════════════════════
+       KALEESI NATALIA — DAILY CARE TRACKER
+       ═══════════════════════════════════════ */
+
+    // ─── Supabase ───
+    var SUPABASE_URL = 'https://ynhotsrphuewesdwqcet.supabase.co';
+    var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InluaG90c3JwaHVld2VzZHdxY2V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2MzMyNjEsImV4cCI6MjA4MTIwOTI2MX0.nGBRoKiJh2y1BjEZex5CYVY6R-GzAWy7iaPv9r3gs_8';
+    var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    var VAPID_PUBLIC_KEY = 'BFslLD6EcYoUUcAPbL_tAJEzWvbVcpUAdh8K5eBlrAJgW9MUMtdn8J9on9J0M5xIR8MEgjT1bXmjJMGq5LVXfdI';
+    var PUSH_FUNCTION_URL = SUPABASE_URL + '/functions/v1/push-notify';
+
+    // ─── Device ID ───
+    var DEVICE_ID = localStorage.getItem('kn_device_id');
+    if (!DEVICE_ID) { DEVICE_ID = 'kn-' + Date.now() + '-' + Math.random().toString(36).slice(2,8); localStorage.setItem('kn_device_id', DEVICE_ID); }
+
+    // ─── Data Keys ───
+    var ACTIONS_ID = 'kaleesi-actions';
+    var LOG_ID = 'kaleesi-log';
+
+    // ─── Categories ───
+    var categories = {
+        feed:      { emoji: '🍼', label: 'Feed',      color: 'feed' },
+        med:       { emoji: '💊', label: 'Meds',      color: 'med' },
+        sleep:     { emoji: '😴', label: 'Sleep',     color: 'sleep' },
+        diaper:    { emoji: '🧷', label: 'Diaper',    color: 'diaper' },
+        hygiene:   { emoji: '👃', label: 'Hygiene',   color: 'hygiene' },
+        activity:  { emoji: '🏃', label: 'Activity',  color: 'activity' },
+        note:      { emoji: '📝', label: 'Note',      color: 'note' },
+        milestone: { emoji: '⭐', label: 'Milestone', color: 'milestone' }
+    };
+
+    // Quick chips per category
+    var quickChips = {
+        feed: ['5 oz milk', '6 oz milk', 'Breakfast', 'Lunch', 'Dinner', 'Snack', 'Fruit cup', 'Oatmeal', 'Yogurt', 'Egg bites', 'Water'],
+        med: ['Albuterol', 'Flonase', 'Amoxicillin 6.5 mL', 'Highlands 5 mL', '1 mL Multivitamin', 'Tylenol', 'Motrin'],
+        sleep: ['Nap start', 'Nap end', 'Bedtime', 'Woke up', 'Night waking'],
+        diaper: ['Wet', 'Dirty', 'Change', 'Bowel movement'],
+        hygiene: ['Boogies', 'Bath', 'Teeth brushed', 'Sunscreen', 'Hair washed', 'Nails trimmed'],
+        activity: ['Park', 'Outdoor play', 'Sensory play', 'Coloring', 'Reading', 'TV/Screen', 'Play-dough', 'Water table', 'Heavy work'],
+        note: [],
+        milestone: ['New word', 'New skill', 'First time', 'Funny moment']
+    };
+
+    // ─── Safe Harbor Schedule ───
+    var safeHarborSchedule = [
+        { time: '7:00 AM',  name: 'The Gentle Wake',     why: '5–10 mins floor time or cuddles. No rush, no demands.' },
+        { time: '7:30 AM',  name: 'Breakfast',            why: 'High-protein/fiber. Stable blood sugar = fewer tantrums.' },
+        { time: '8:30 AM',  name: 'Big Energy Out',       why: 'Park, running, or "heavy work." Burn off cortisol.' },
+        { time: '10:15 AM', name: 'Hydrate & Snack',      why: 'Small bridge snack. Stealth hunger is real at 2.5.' },
+        { time: '11:00 AM', name: 'Independent Play',     why: 'Set a timer. Builds confidence while you prep lunch.' },
+        { time: '11:45 AM', name: 'Lunch',                why: 'Comfort foods they know and love.' },
+        { time: '12:30 PM', name: 'The Anchor Nap',       why: 'Dark room, white noise, 1.5–2 hrs. The Golden Hour.' },
+        { time: '2:30 PM',  name: 'Post-Nap Reset',       why: 'Slow wake-up. Water and a snack.' },
+        { time: '3:30 PM',  name: 'Sensory Play',         why: 'Play-dough, water table, coloring. Grounding and calming.' },
+        { time: '5:00 PM',  name: 'The "Helping" Hour',   why: 'Let them help with dinner. Fosters belonging.' },
+        { time: '5:45 PM',  name: 'Dinner',               why: 'Low-pressure. Connection > Calories.' },
+        { time: '6:30 PM',  name: 'Wind-Down Ritual',     why: 'Warm bath, PJs, same 3 books. Repetition = safety.' },
+        { time: '7:15 PM',  name: 'Final Connection',     why: 'A song or "recap." "I loved being with you today."' },
+        { time: '7:30 PM',  name: 'Lights Out',           why: '"I\'ll see you when the sun comes up."' }
+    ];
+
+    // ─── State ───
+    var actions = [];  // Today's action entries: { id, cat, time, text, detail, timestamp }
+    var logEntries = [];
+    var custodySchedule = {};
+    var calYear, calMonth, calSelected = null, calMode = 'view', calSelectedDate = null;
+    var swRegistration = null;
+    var activeFormCat = null;
+
+    // ─── CST Helpers ───
+    function getCSTNow() { return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })); }
+    function getCSTDate() { var d = getCSTNow(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+    function getCSTTimeStr() { var d = getCSTNow(); var h = d.getHours(); var m = String(d.getMinutes()).padStart(2,'0'); var ap = h >= 12 ? 'PM' : 'AM'; if (h === 0) h = 12; else if (h > 12) h -= 12; return h + ':' + m + ' ' + ap; }
+    function getCSTTime24() { var d = getCSTNow(); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
+    function formatDateNice(ds) { var p = ds.split('-'); return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }); }
+    function time12(t24) { if (!t24) return ''; var p = t24.split(':'); var h = parseInt(p[0]); var m = p[1]; var ap = h >= 12 ? 'PM' : 'AM'; if (h === 0) h = 12; else if (h > 12) h -= 12; return h + ':' + m + ' ' + ap; }
+    function timeToMinutes(t12) {
+        var m = t12.match(/(\d+):(\d+)\s*(AM|PM)/i);
+        if (!m) return 0;
+        var h = parseInt(m[1]), min = parseInt(m[2]), ap = m[3].toUpperCase();
+        if (ap === 'PM' && h !== 12) h += 12;
+        if (ap === 'AM' && h === 12) h = 0;
+        return h * 60 + min;
+    }
+
+    // ─── Clock ───
+    function updateClock() {
+        var now = getCSTNow();
+        document.getElementById('clockDisplay').textContent = now.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' }) + ' — ' + now.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', second: '2-digit' }) + ' CST';
+    }
+    setInterval(updateClock, 1000);
+    updateClock();
+
+    // ─── Tab Navigation ───
+    document.querySelectorAll('.nav-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
+            document.querySelectorAll('.tab-view').forEach(function(t) { t.classList.remove('active'); });
+            btn.classList.add('active');
+            document.getElementById(btn.dataset.tab).classList.add('active');
+            if (btn.dataset.tab === 'tab-calendar') initCalendar();
+            if (btn.dataset.tab === 'tab-log') renderLog();
+        });
+    });
+
+    // ═══════════════════════════════════════
+    //  QUICK-ADD SYSTEM
+    // ═══════════════════════════════════════
+    document.querySelectorAll('.cat-btn').forEach(function(btn) {
+        btn.addEventListener('click', function() { openQuickForm(this.dataset.cat); });
+    });
+
+    function openQuickForm(cat) {
+        activeFormCat = cat;
+        var c = categories[cat];
+        var chips = quickChips[cat] || [];
+        var now24 = getCSTTime24();
+
+        var html = '<div class="quick-form-header">' +
+            '<div class="quick-form-cat" style="color:var(--cat-' + cat + ')">' + c.emoji + ' ' + c.label + '</div>' +
+            '<button class="quick-form-close" id="closeQuickForm">&times;</button></div>';
+
+        html += '<div class="quick-form-row">' +
+            '<input type="time" id="qfTime" value="' + now24 + '">';
+
+        // Category-specific fields
+        if (cat === 'feed') {
+            html += '<input type="text" id="qfAmount" placeholder="Amount (e.g. 5 oz)">';
+        } else if (cat === 'med') {
+            html += '<input type="text" id="qfDose" placeholder="Dosage (e.g. 6.5 mL)">';
+        }
+        html += '</div>';
+
+        html += '<div class="quick-form-row">' +
+            '<input type="text" id="qfText" placeholder="Details..." style="flex:1"></div>';
+
+        if (chips.length > 0) {
+            html += '<div class="quick-chips">';
+            chips.forEach(function(chip) {
+                html += '<button class="quick-chip" data-val="' + chip + '">' + chip + '</button>';
+            });
+            html += '</div>';
+        }
+
+        html += '<button class="quick-submit" id="qfSubmit">+ Add ' + c.label + ' Entry</button>';
+
+        var form = document.getElementById('quickForm');
+        form.innerHTML = html;
+        form.classList.add('active');
+
+        // Wire events
+        document.getElementById('closeQuickForm').addEventListener('click', function() {
+            form.classList.remove('active');
+            activeFormCat = null;
+        });
+
+        form.querySelectorAll('.quick-chip').forEach(function(chip) {
+            chip.addEventListener('click', function() {
+                var txt = document.getElementById('qfText');
+                var val = this.dataset.val;
+                // Toggle chip selection visually
+                this.classList.toggle('selected');
+                // Build text from all selected chips
+                var selected = [];
+                form.querySelectorAll('.quick-chip.selected').forEach(function(s) { selected.push(s.dataset.val); });
+                txt.value = selected.join(', ');
+            });
+        });
+
+        document.getElementById('qfSubmit').addEventListener('click', submitQuickForm);
+
+        // Focus the text input
+        setTimeout(function() { document.getElementById('qfText').focus(); }, 100);
+    }
+
+    function submitQuickForm() {
+        var timeVal = document.getElementById('qfTime').value;
+        var textVal = document.getElementById('qfText').value.trim();
+        var detail = '';
+
+        if (activeFormCat === 'feed') {
+            var amt = document.getElementById('qfAmount');
+            if (amt) detail = amt.value.trim();
+        } else if (activeFormCat === 'med') {
+            var dose = document.getElementById('qfDose');
+            if (dose) detail = dose.value.trim();
+        }
+
+        // Build display text
+        var displayText = textVal;
+        if (detail && textVal) displayText = detail + ' — ' + textVal;
+        else if (detail) displayText = detail;
+        else if (!textVal) { showToast('Please add some details'); return; }
+
+        var entry = {
+            id: 'a-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+            cat: activeFormCat,
+            time: time12(timeVal),
+            time24: timeVal,
+            text: displayText,
+            timestamp: new Date().toISOString(),
+            date: getCSTDate()
+        };
+
+        actions.push(entry);
+        actions.sort(function(a, b) { return (a.time24 || '').localeCompare(b.time24 || ''); });
+
+        renderTimeline();
+        saveActions();
+
+        var c = categories[activeFormCat];
+        var notifText = c.emoji + ' ' + entry.time + ' — ' + displayText;
+        notify(c.emoji + ' ' + c.label, entry.time + ' — ' + displayText, 'action-' + entry.id);
+        sendPushToAll(c.emoji + ' ' + c.label, entry.time + ' — ' + displayText, 'action-' + entry.id);
+        addLog(activeFormCat, notifText);
+
+        // Close form
+        document.getElementById('quickForm').classList.remove('active');
+        activeFormCat = null;
+        showToast(c.emoji + ' Logged!');
+    }
+
+    // ═══════════════════════════════════════
+    //  TIMELINE RENDERING
+    // ═══════════════════════════════════════
+    function renderTimeline() {
+        var container = document.getElementById('timeline');
+        var showGuide = document.getElementById('showSchedule').checked;
+        var nowMin = (function() { var d = getCSTNow(); return d.getHours() * 60 + d.getMinutes(); })();
+
+        // Build combined timeline items
+        var items = [];
+
+        // Add actual actions
+        actions.forEach(function(a) {
+            if (a.date !== getCSTDate()) return;
+            items.push({ type: 'action', min: timeToMinutes(a.time), data: a });
+        });
+
+        // Add schedule guide markers
+        if (showGuide) {
+            safeHarborSchedule.forEach(function(s) {
+                items.push({ type: 'guide', min: timeToMinutes(s.time), data: s });
+            });
+        }
+
+        // Sort by time
+        items.sort(function(a, b) {
+            if (a.min !== b.min) return a.min - b.min;
+            // Actions before guides at same time
+            return a.type === 'action' ? -1 : 1;
+        });
+
+        if (items.length === 0) {
+            container.innerHTML = '<div class="timeline-empty">Tap a category above to log your first entry today.</div>';
+            return;
+        }
+
+        var html = '';
+        var nowInserted = false;
+
+        items.forEach(function(item) {
+            // Insert "NOW" marker
+            if (!nowInserted && item.min > nowMin) {
+                html += '<div class="tl-now-marker"><span class="tl-now-label">Now — ' + getCSTTimeStr() + '</span><div class="tl-now-line"></div></div>';
+                nowInserted = true;
+            }
+
+            if (item.type === 'guide') {
+                html += '<div class="tl-entry schedule-guide">' +
+                    '<div class="tl-time">' + item.data.time + '</div>' +
+                    '<div class="tl-content">' +
+                    '<span class="tl-emoji">🔮</span>' +
+                    '<div><div class="tl-text">' + item.data.name + '</div>' +
+                    '<div class="tl-detail">' + item.data.why + '</div></div>' +
+                    '</div></div>';
+            } else {
+                var a = item.data;
+                var c = categories[a.cat] || categories.note;
+                html += '<div class="tl-entry cat-' + a.cat + '">' +
+                    '<div class="tl-time">' + a.time + '</div>' +
+                    '<div class="tl-content">' +
+                    '<span class="tl-emoji">' + c.emoji + '</span>' +
+                    '<span class="tl-cat-badge ' + a.cat + '">' + c.label + '</span>' +
+                    '<span class="tl-text">' + a.text + '</span>' +
+                    '<button class="tl-delete" data-id="' + a.id + '"><i class="fa-solid fa-xmark"></i></button>' +
+                    '</div></div>';
+            }
+        });
+
+        // If now is after all items
+        if (!nowInserted) {
+            html += '<div class="tl-now-marker"><span class="tl-now-label">Now — ' + getCSTTimeStr() + '</span><div class="tl-now-line"></div></div>';
+        }
+
+        container.innerHTML = html;
+
+        // Wire delete buttons
+        container.querySelectorAll('.tl-delete').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var id = this.dataset.id;
+                actions = actions.filter(function(a) { return a.id !== id; });
+                renderTimeline();
+                saveActions();
+                showToast('Entry removed');
+            });
+        });
+    }
+
+    // Toggle guide visibility
+    document.getElementById('showSchedule').addEventListener('change', renderTimeline);
+
+    // ═══════════════════════════════════════
+    //  DATA PERSISTENCE
+    // ═══════════════════════════════════════
+    async function loadActions() {
+        try {
+            var res = await sb.from('kaleesi_data').select('content').eq('id', ACTIONS_ID).single();
+            if (res.data && res.data.content) {
+                var c = res.data.content;
+                actions = Array.isArray(c.actions) ? c.actions : [];
+                // Filter to today only for display, keep all for history
+            }
+        } catch(e) {}
+        renderTimeline();
+    }
+
+    async function saveActions() {
+        try {
+            await sb.from('kaleesi_data').upsert({
+                id: ACTIONS_ID,
+                content: { actions: actions, date: getCSTDate() },
+                updated_at: new Date().toISOString()
+            });
+        } catch(e) { console.error('[Actions] Save error:', e); }
+    }
+
+    // ─── Log ───
+    function addLog(type, msg) {
+        logEntries.unshift({ type: type, msg: msg, time: new Date().toISOString() });
+        if (logEntries.length > 300) logEntries = logEntries.slice(0, 300);
+        saveLog();
+    }
+    async function saveLog() {
+        try { await sb.from('kaleesi_data').upsert({ id: LOG_ID, content: { entries: logEntries }, updated_at: new Date().toISOString() }); }
+        catch(e) {}
+    }
+    async function loadLog() {
+        try {
+            var res = await sb.from('kaleesi_data').select('content').eq('id', LOG_ID).single();
+            if (res.data && res.data.content) {
+                var lc = res.data.content;
+                logEntries = Array.isArray(lc.entries) ? lc.entries : (Array.isArray(lc) ? lc : []);
+            }
+        } catch(e) {}
+    }
+    function renderLog() {
+        var html = '';
+        var lastDate = '';
+        logEntries.forEach(function(entry) {
+            var d = new Date(entry.time);
+            var cst = new Date(d.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+            var dateStr = cst.getFullYear() + '-' + String(cst.getMonth()+1).padStart(2,'0') + '-' + String(cst.getDate()).padStart(2,'0');
+            if (dateStr !== lastDate) { lastDate = dateStr; html += '<div class="log-date-header">' + formatDateNice(dateStr) + '</div>'; }
+            var ts = cst.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+            var c = categories[entry.type];
+            var badge = c ? '<span class="tl-cat-badge ' + entry.type + '" style="font-size:0.45rem;margin-right:4px;">' + c.label + '</span>' : '';
+            html += '<div class="log-entry"><div class="log-time">' + ts + '</div>' + badge + '<div class="log-msg">' + entry.msg + '</div></div>';
+        });
+        if (!html) html = '<div style="text-align:center;color:var(--text-light);font-size:0.7rem;padding:20px;">No activity yet.</div>';
+        document.getElementById('logList').innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════
+    //  SAFE HARBOR SCHEDULE (Care Tab)
+    // ═══════════════════════════════════════
+    function renderSafeHarbor() {
+        var html = '';
+        safeHarborSchedule.forEach(function(item) {
+            html += '<div class="sched-ref-item">' +
+                '<div class="sched-ref-time">' + item.time + '</div>' +
+                '<div><div class="sched-ref-name">' + item.name + '</div>' +
+                '<div class="sched-ref-why">' + item.why + '</div></div></div>';
+        });
+        document.getElementById('safeHarborSchedule').innerHTML = html;
+    }
+
+    // ═══════════════════════════════════════
+    //  CALENDAR (Co-Parenting from Leesitime)
+    // ═══════════════════════════════════════
+    function initCalendar() {
+        var now = getCSTNow();
+        if (!calYear) { calYear = now.getFullYear(); calMonth = now.getMonth(); }
+        renderCalendar();
+    }
+    function renderCalendar() {
+        var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        document.getElementById('calMonthLabel').textContent = months[calMonth] + ' ' + calYear;
+        var grid = document.getElementById('calGrid');
+        var html = '';
+        ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(function(d) { html += '<div class="cal-dow">' + d + '</div>'; });
+        var firstDay = new Date(calYear, calMonth, 1).getDay();
+        var daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+        var todayStr = getCSTDate();
+        var tp = todayStr.split('-');
+        var todayY = parseInt(tp[0]), todayM = parseInt(tp[1])-1, todayD = parseInt(tp[2]);
+        for (var i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
+        for (var d = 1; d <= daysInMonth; d++) {
+            var ds = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+            var cls = 'cal-day';
+            if (calYear === todayY && calMonth === todayM && d === todayD) cls += ' today';
+            if (calSelected === ds) cls += ' selected';
+            var cust = custodySchedule[ds] || {};
+            if (cust.parent === 'adam') cls += ' adam-day';
+            if (cust.parent === 'marta') cls += ' marta-day';
+            if (cust.parent === 'shared') cls += ' shared-day';
+            var hasActions = actions.some(function(a) { return a.date === ds; });
+            if (hasActions) cls += ' has-data';
+            var badge = cust.parent ? '<span class="cal-day-parent ' + cust.parent + '">' + cust.parent.charAt(0).toUpperCase() + cust.parent.slice(1) + '</span>' : '';
+            html += '<div class="' + cls + '" data-date="' + ds + '">' + d + badge + '</div>';
+        }
+        grid.innerHTML = html;
+        grid.querySelectorAll('.cal-day:not(.empty)').forEach(function(el) {
+            el.addEventListener('click', function() { handleCalClick(this.dataset.date); });
+        });
+        updateCalStats();
+    }
+    function handleCalClick(ds) {
+        if (calMode === 'view') { calSelected = ds; renderCalendar(); showCalDetail(ds); }
+        else { paintCalDay(ds); }
+    }
+    function showCalDetail(ds) {
+        var detail = document.getElementById('calDetail');
+        var cust = custodySchedule[ds] || {};
+        var dayActions = actions.filter(function(a) { return a.date === ds; });
+        var html = '<div class="cal-detail-date">' + formatDateNice(ds) + '</div>';
+        if (cust.parent) {
+            var colors = { adam: 'var(--adam-color)', marta: 'var(--marta-color)', shared: 'var(--shared-color)' };
+            html += '<div style="font-size:0.65rem;color:' + (colors[cust.parent]||'') + ';font-weight:700;margin-bottom:6px;">' + cust.parent.charAt(0).toUpperCase() + cust.parent.slice(1) + '\'s day</div>';
+        }
+        if (cust.note) html += '<div style="font-size:0.6rem;color:var(--text-mid);margin-bottom:8px;background:var(--purple-glow);padding:6px;border-radius:6px;">📝 ' + cust.note + '</div>';
+        if (dayActions.length > 0) {
+            dayActions.forEach(function(a) {
+                var c = categories[a.cat] || categories.note;
+                html += '<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);font-size:0.65rem;">' +
+                    '<span>' + c.emoji + '</span><span class="tl-cat-badge ' + a.cat + '">' + c.label + '</span>' +
+                    '<span style="font-weight:600;flex:1">' + a.text + '</span>' +
+                    '<span style="color:var(--text-light);font-size:0.55rem;">' + a.time + '</span></div>';
+            });
+        } else {
+            html += '<div class="cal-empty">No actions logged for this date.</div>';
+        }
+        html += '<button class="edit-sched-btn" onclick="openCalDayModal(\'' + ds + '\')"><i class="fa-solid fa-pen"></i> Edit Custody</button>';
+        detail.innerHTML = html;
+    }
+    function paintCalDay(ds) {
+        var parent = calMode === 'paintAdam' ? 'adam' : 'marta';
+        if (!custodySchedule[ds]) custodySchedule[ds] = {};
+        if (custodySchedule[ds].parent === parent) { delete custodySchedule[ds].parent; if (!Object.keys(custodySchedule[ds]).length) delete custodySchedule[ds]; }
+        else custodySchedule[ds].parent = parent;
+        renderCalendar(); saveCustodySchedule();
+    }
+    async function saveCustodySchedule() {
+        try { await sb.from('schedule').upsert({ id: 'main', data: custodySchedule, updated_at: new Date().toISOString() }); } catch(e) {}
+    }
+    function updateCalStats() {
+        var days = new Date(calYear, calMonth+1, 0).getDate();
+        var adam = 0, marta = 0;
+        for (var d = 1; d <= days; d++) {
+            var ds = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+            var c = custodySchedule[ds];
+            if (c && c.parent === 'adam') adam++;
+            if (c && c.parent === 'marta') marta++;
+        }
+        document.getElementById('adamDays').textContent = adam;
+        document.getElementById('martaDays').textContent = marta;
+        document.getElementById('unassignedDays').textContent = days - adam - marta;
+    }
+
+    // Calendar nav
+    document.getElementById('calPrev').addEventListener('click', function() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } calSelected = null; renderCalendar(); document.getElementById('calDetail').innerHTML = '<div class="cal-empty">Tap a date.</div>'; });
+    document.getElementById('calNext').addEventListener('click', function() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } calSelected = null; renderCalendar(); document.getElementById('calDetail').innerHTML = '<div class="cal-empty">Tap a date.</div>'; });
+    document.getElementById('calToday').addEventListener('click', function() { var n = getCSTNow(); calYear = n.getFullYear(); calMonth = n.getMonth(); calSelected = getCSTDate(); renderCalendar(); showCalDetail(getCSTDate()); });
+    document.getElementById('calModeView').addEventListener('click', function() { setCalMode('view'); });
+    document.getElementById('calModePaintAdam').addEventListener('click', function() { setCalMode('paintAdam'); });
+    document.getElementById('calModePaintMarta').addEventListener('click', function() { setCalMode('paintMarta'); });
+    function setCalMode(m) {
+        calMode = m;
+        document.querySelectorAll('.cal-mode-btn').forEach(function(b) { b.classList.remove('active'); });
+        if (m === 'view') document.getElementById('calModeView').classList.add('active');
+        else if (m === 'paintAdam') document.getElementById('calModePaintAdam').classList.add('active');
+        else if (m === 'paintMarta') document.getElementById('calModePaintMarta').classList.add('active');
+    }
+
+    // Patterns
+    document.getElementById('patternAlt').addEventListener('click', function() { applyPattern('alternating'); });
+    document.getElementById('patternRotation').addEventListener('click', function() { applyPattern('2-2-3'); });
+    document.getElementById('patternWeekday').addEventListener('click', function() { applyPattern('weekday-weekend'); });
+    function applyPattern(p) {
+        if (!confirm('Apply pattern to this month?')) return;
+        var days = new Date(calYear, calMonth+1, 0).getDate();
+        var first = new Date(calYear, calMonth, 1);
+        for (var d = 1; d <= days; d++) {
+            var ds = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+            var dow = new Date(calYear, calMonth, d).getDay();
+            var wk = Math.floor((d - 1 + first.getDay()) / 7);
+            if (!custodySchedule[ds]) custodySchedule[ds] = {};
+            if (p === 'alternating') custodySchedule[ds].parent = wk % 2 === 0 ? 'adam' : 'marta';
+            else if (p === '2-2-3') { var c = (d-1)%14; custodySchedule[ds].parent = c<2?'adam':c<4?'marta':c<7?'adam':c<9?'marta':c<11?'adam':'marta'; }
+            else if (p === 'weekday-weekend') custodySchedule[ds].parent = (dow===0||dow===6) ? 'marta' : 'adam';
+        }
+        renderCalendar(); saveCustodySchedule(); showToast('Pattern applied!');
+    }
+
+    // Calendar day edit modal
+    function openCalDayModal(ds) {
+        calSelectedDate = ds;
+        var d = custodySchedule[ds] || {};
+        document.getElementById('calDayModalTitle').textContent = formatDateNice(ds);
+        document.querySelectorAll('.assign-btn').forEach(function(b) { b.classList.remove('active'); });
+        if (d.parent === 'adam') document.getElementById('assignAdam').classList.add('active');
+        if (d.parent === 'marta') document.getElementById('assignMarta').classList.add('active');
+        if (d.parent === 'shared') document.getElementById('assignShared').classList.add('active');
+        document.getElementById('adamStart').value = d.adamStart || '';
+        document.getElementById('adamEnd').value = d.adamEnd || '';
+        document.getElementById('martaStart').value = d.martaStart || '';
+        document.getElementById('martaEnd').value = d.martaEnd || '';
+        document.getElementById('calDayNotes').value = d.note || '';
+        document.getElementById('calDayModal').classList.add('active');
+    }
+    window.openCalDayModal = openCalDayModal;
+    document.getElementById('closeCalDayModal').addEventListener('click', function() { document.getElementById('calDayModal').classList.remove('active'); });
+    document.getElementById('calDayModal').addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
+    ['assignAdam','assignMarta','assignShared'].forEach(function(id) {
+        document.getElementById(id).addEventListener('click', function() {
+            document.querySelectorAll('.assign-btn').forEach(function(b) { b.classList.remove('active'); });
+            this.classList.add('active');
+        });
+    });
+    document.getElementById('saveCalDay').addEventListener('click', async function() {
+        if (!custodySchedule[calSelectedDate]) custodySchedule[calSelectedDate] = {};
+        var active = document.querySelector('.assign-btn.active');
+        if (active) custodySchedule[calSelectedDate].parent = active.id.replace('assign','').toLowerCase();
+        else delete custodySchedule[calSelectedDate].parent;
+        ['adamStart','adamEnd','martaStart','martaEnd'].forEach(function(k) {
+            var v = document.getElementById(k).value;
+            if (v) custodySchedule[calSelectedDate][k] = v; else delete custodySchedule[calSelectedDate][k];
+        });
+        var note = document.getElementById('calDayNotes').value.trim();
+        if (note) custodySchedule[calSelectedDate].note = note; else delete custodySchedule[calSelectedDate].note;
+        if (!Object.keys(custodySchedule[calSelectedDate]).length) delete custodySchedule[calSelectedDate];
+        renderCalendar(); if (calSelected) showCalDetail(calSelected);
+        document.getElementById('calDayModal').classList.remove('active');
+        await saveCustodySchedule(); showToast('Saved!');
+    });
+    document.getElementById('clearCalDay').addEventListener('click', async function() {
+        delete custodySchedule[calSelectedDate]; renderCalendar();
+        document.getElementById('calDayModal').classList.remove('active');
+        document.getElementById('calDetail').innerHTML = '<div class="cal-empty">Tap a date.</div>';
+        await saveCustodySchedule(); showToast('Cleared');
+    });
+    function addCalNote(t) { var ta = document.getElementById('calDayNotes'); ta.value = ta.value ? ta.value + '\n' + t : t; }
+    window.addCalNote = addCalNote;
+
+    // ═══════════════════════════════════════
+    //  REALTIME SYNC
+    // ═══════════════════════════════════════
+    function startRealtime() {
+        sb.channel('kaleesi-sync').on('postgres_changes', { event: '*', schema: 'public', table: 'kaleesi_data' }, function(p) {
+            if (!p.new || !p.new.content) return;
+            var c = p.new.content;
+            if (p.new.id === ACTIONS_ID && Array.isArray(c.actions)) {
+                actions = c.actions;
+                renderTimeline();
+            }
+            if (p.new.id === LOG_ID) {
+                logEntries = Array.isArray(c.entries) ? c.entries : [];
+                renderLog();
+            }
+        }).subscribe();
+        sb.channel('custody-sync').on('postgres_changes', { event: '*', schema: 'public', table: 'schedule' }, function(p) {
+            if (p.new && p.new.data) { custodySchedule = p.new.data; renderCalendar(); }
+        }).subscribe();
+    }
+
+    // ═══════════════════════════════════════
+    //  NOTIFICATIONS
+    // ═══════════════════════════════════════
+    function notify(title, body, tag) {
+        var t = (tag || 'kn') + '-' + Date.now();
+        showToast(title + ' — ' + body);
+        if (swRegistration && swRegistration.showNotification) {
+            swRegistration.showNotification(title, { body: body, tag: t }).catch(function() {});
+        } else if ('Notification' in window && Notification.permission === 'granted') {
+            try { new Notification(title, { body: body, tag: t }); } catch(e) {}
+        }
+    }
+    function showToast(msg) {
+        var c = document.getElementById('toastContainer');
+        var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
+        c.appendChild(t);
+        setTimeout(function() { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; }, 3000);
+        setTimeout(function() { t.remove(); }, 3500);
+    }
+    async function initServiceWorker() {
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
+        try { await navigator.serviceWorker.register('sw.js'); } catch(e) {}
+        try { swRegistration = await navigator.serviceWorker.ready; } catch(e) { return; }
+        if (!swRegistration) return;
+        try {
+            var pad = '='.repeat((4 - VAPID_PUBLIC_KEY.length % 4) % 4);
+            var b64 = (VAPID_PUBLIC_KEY + pad).replace(/-/g, '+').replace(/_/g, '/');
+            var raw = atob(b64); var arr = new Uint8Array(raw.length);
+            for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+            var sub = await swRegistration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: arr });
+            await sb.from('push_subscriptions').upsert({ device_id: DEVICE_ID, subscription: sub.toJSON() }, { onConflict: 'device_id' });
+        } catch(e) {}
+    }
+    async function sendPushToAll(title, body, tag) {
+        try {
+            await fetch(PUSH_FUNCTION_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
+                body: JSON.stringify({ title: title, body: body, tag: tag || ('kn-' + Date.now()), sender_device: DEVICE_ID })
+            });
+        } catch(e) {}
+    }
+    function renderNotifBanner() {
+        var b = document.getElementById('notifBanner');
+        if ('Notification' in window && Notification.permission === 'default') {
+            b.style.display = 'block';
+            b.addEventListener('click', async function() {
+                var p = await Notification.requestPermission();
+                if (p === 'granted') { b.style.display = 'none'; await initServiceWorker(); showToast('Notifications on!'); }
+            });
+        }
+    }
+
+    // ═══════════════════════════════════════
+    //  INIT
+    // ═══════════════════════════════════════
+    (async function() {
+        // Load custody schedule
+        try {
+            var res = await sb.from('schedule').select('data').eq('id', 'main').single();
+            if (res.data && res.data.data) custodySchedule = res.data.data;
+        } catch(e) {}
+        await loadActions();
+        await loadLog();
+        renderSafeHarbor();
+        renderNotifBanner();
+        startRealtime();
+        initServiceWorker();
+    })();
+    </script>
+</body>
+</html>

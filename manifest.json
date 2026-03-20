@@ -1,0 +1,18 @@
+{
+    "name": "Kaleesi Natalia",
+    "short_name": "Kaleesi",
+    "description": "Daily schedule & care tracker for Kaleesi Natalia",
+    "start_url": "/kaleesi-natalia/",
+    "scope": "/kaleesi-natalia/",
+    "display": "standalone",
+    "background_color": "#f3e8ff",
+    "theme_color": "#7c3aed",
+    "icons": [
+        {
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>👸</text></svg>",
+            "sizes": "any",
+            "type": "image/svg+xml",
+            "purpose": "any"
+        }
+    ]
+}
