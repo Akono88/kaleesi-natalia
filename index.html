@@ -59,6 +59,8 @@
             --cat-note-bg: #ede9fe;
             --cat-milestone: #ec4899;
             --cat-milestone-bg: #fce7f3;
+            --cat-tantrum: #dc2626;
+            --cat-tantrum-bg: #fef2f2;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body {
@@ -144,6 +146,13 @@
         .cat-btn[data-cat="note"] .cat-label { color: var(--cat-note); }
         .cat-btn[data-cat="milestone"] { border-color: var(--cat-milestone); background: var(--cat-milestone-bg); }
         .cat-btn[data-cat="milestone"] .cat-label { color: var(--cat-milestone); }
+        .cat-btn[data-cat="tantrum"] {
+            border-color: var(--cat-tantrum); background: var(--cat-tantrum-bg);
+            grid-column: 1 / -1; flex-direction: row; justify-content: center;
+            padding: 8px; gap: 6px;
+        }
+        .cat-btn[data-cat="tantrum"] .cat-label { color: var(--cat-tantrum); font-size: 0.5rem; }
+        .cat-btn[data-cat="tantrum"] .cat-icon { font-size: 1rem; }
 
         /* ═══ QUICK-ADD FORM ═══ */
         .quick-form {
@@ -214,6 +223,7 @@
         .tl-entry.cat-activity::before { border-color: var(--cat-activity); background: var(--cat-activity-bg); }
         .tl-entry.cat-note::before { border-color: var(--cat-note); background: var(--cat-note-bg); }
         .tl-entry.cat-milestone::before { border-color: var(--cat-milestone); background: var(--cat-milestone-bg); }
+        .tl-entry.cat-tantrum::before { border-color: var(--cat-tantrum); background: var(--cat-tantrum-bg); }
 
         .tl-time { font-size: 0.55rem; font-weight: 800; color: var(--text-light); letter-spacing: 0.5px; }
         .tl-content {
@@ -234,6 +244,7 @@
         .tl-cat-badge.activity { background: var(--cat-activity-bg); color: var(--cat-activity); }
         .tl-cat-badge.note { background: var(--cat-note-bg); color: var(--cat-note); }
         .tl-cat-badge.milestone { background: var(--cat-milestone-bg); color: var(--cat-milestone); }
+        .tl-cat-badge.tantrum { background: var(--cat-tantrum-bg); color: var(--cat-tantrum); }
         .tl-text { font-size: 0.72rem; font-weight: 500; flex: 1; line-height: 1.3; }
         .tl-detail { font-size: 0.58rem; color: var(--text-light); }
         .tl-emoji { font-size: 0.9rem; flex-shrink: 0; }
@@ -461,6 +472,65 @@
         .sync-badge.connected { background: var(--safe-bg); color: var(--safe-text); }
         .sync-badge.disconnected { background: var(--danger-bg); color: var(--danger-text); }
 
+        /* ═══ TANTRUM GUIDE ═══ */
+        .tantrum-guide {
+            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(220, 38, 38, 0.06); z-index: 150;
+            align-items: center; justify-content: center; padding: 14px;
+        }
+        .tantrum-guide.active { display: flex; }
+        .tantrum-panel {
+            background: var(--white); border-radius: 20px; width: 100%;
+            max-width: 420px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 8px 40px rgba(220, 38, 38, 0.15);
+            border-top: 4px solid var(--cat-tantrum);
+        }
+        .tantrum-header {
+            padding: 16px 16px 10px; text-align: center;
+            position: sticky; top: 0; background: var(--white); z-index: 2;
+            border-radius: 20px 20px 0 0;
+        }
+        .tantrum-header h2 {
+            font-family: 'Fraunces', serif; font-size: 1.1rem; color: var(--cat-tantrum);
+        }
+        .tantrum-header p { font-size: 0.6rem; color: var(--text-mid); margin-top: 2px; }
+        .tantrum-body { padding: 0 16px 16px; }
+        .tantrum-step {
+            display: flex; gap: 10px; padding: 10px 0;
+            border-bottom: 1px solid rgba(220,38,38,0.08);
+        }
+        .tantrum-step:last-child { border-bottom: none; }
+        .tantrum-step-num {
+            width: 28px; height: 28px; border-radius: 50%;
+            background: var(--cat-tantrum); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.7rem; font-weight: 800; flex-shrink: 0;
+        }
+        .tantrum-step-content { flex: 1; }
+        .tantrum-step-title { font-size: 0.75rem; font-weight: 800; color: var(--cat-tantrum); margin-bottom: 2px; }
+        .tantrum-step-text { font-size: 0.62rem; color: var(--text-mid); line-height: 1.4; }
+        .tantrum-step-quote {
+            font-size: 0.6rem; font-style: italic; color: var(--cat-tantrum);
+            background: var(--cat-tantrum-bg); padding: 6px 8px; border-radius: 8px;
+            margin-top: 4px; border-left: 3px solid var(--cat-tantrum);
+        }
+        .tantrum-reminder {
+            background: #fef9c3; border-radius: 12px; padding: 10px; margin-top: 8px;
+            font-size: 0.6rem; color: #92400e; text-align: center; line-height: 1.4;
+        }
+        .tantrum-reminder strong { display: block; font-size: 0.65rem; margin-bottom: 2px; }
+        .tantrum-actions {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+            margin-top: 12px; padding: 0 16px 16px;
+            position: sticky; bottom: 0; background: var(--white);
+        }
+        .tantrum-log-btn {
+            padding: 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;
+            cursor: pointer; border: none; font-family: 'Outfit', sans-serif;
+        }
+        .tantrum-log-btn.primary { background: var(--cat-tantrum); color: white; }
+        .tantrum-log-btn.secondary { background: var(--cat-tantrum-bg); color: var(--cat-tantrum); }
+
         .edit-sched-btn {
             display: flex; align-items: center; justify-content: center; gap: 6px;
             width: 100%; padding: 8px; margin-top: 8px; border: 2px dashed var(--purple-soft);
@@ -490,6 +560,7 @@
                     <button class="cat-btn" data-cat="activity"><div class="cat-icon">🏃</div><div class="cat-label">Activity</div></button>
                     <button class="cat-btn" data-cat="note"><div class="cat-icon">📝</div><div class="cat-label">Note</div></button>
                     <button class="cat-btn" data-cat="milestone"><div class="cat-icon">⭐</div><div class="cat-label">Milestone</div></button>
+                    <button class="cat-btn" data-cat="tantrum" id="tantrumBtn"><div class="cat-icon">🌋</div><div class="cat-label">Tantrum</div></button>
                 </div>
                 <div class="quick-form" id="quickForm"></div>
             </div>
@@ -657,6 +728,83 @@
         </div>
     </div>
 
+    <!-- Tantrum Guide -->
+    <div class="tantrum-guide" id="tantrumGuide">
+        <div class="tantrum-panel">
+            <div class="tantrum-header">
+                <h2>🌋 Tantrum Protocol</h2>
+                <p>Breathe. You've got this. Follow these steps.</p>
+            </div>
+            <div class="tantrum-body">
+                <div class="tantrum-step">
+                    <div class="tantrum-step-num">1</div>
+                    <div class="tantrum-step-content">
+                        <div class="tantrum-step-title">🛑 STOP — Check Yourself First</div>
+                        <div class="tantrum-step-text">Take one deep breath. If you're escalated, they'll feel it. Your calm IS the intervention. Lower your body — kneel or sit on the floor so you're at their level.</div>
+                    </div>
+                </div>
+                <div class="tantrum-step">
+                    <div class="tantrum-step-num">2</div>
+                    <div class="tantrum-step-content">
+                        <div class="tantrum-step-title">🛡️ SAFETY — Remove Danger, Not the Child</div>
+                        <div class="tantrum-step-text">Move hard/sharp objects away. If they're hitting or throwing, gently block without restraining. Don't pick them up unless they're in danger — it can escalate.</div>
+                    </div>
+                </div>
+                <div class="tantrum-step">
+                    <div class="tantrum-step-num">3</div>
+                    <div class="tantrum-step-content">
+                        <div class="tantrum-step-title">🗣️ NAME IT — Be Their Words</div>
+                        <div class="tantrum-step-text">At 2.5 they don't have the language for what they feel. You say it for them in a calm, low voice:</div>
+                        <div class="tantrum-step-quote">"You're really mad right now. You wanted _____ and you can't have it. That's so frustrating."</div>
+                    </div>
+                </div>
+                <div class="tantrum-step">
+                    <div class="tantrum-step-num">4</div>
+                    <div class="tantrum-step-content">
+                        <div class="tantrum-step-title">🧱 HOLD THE BOUNDARY — Don't Negotiate</div>
+                        <div class="tantrum-step-text">Say the boundary ONCE, then stop repeating it. Repeating = negotiating. They heard you the first time — they just don't like it.</div>
+                        <div class="tantrum-step-quote">"I won't let you hit. I'm going to keep you safe."</div>
+                    </div>
+                </div>
+                <div class="tantrum-step">
+                    <div class="tantrum-step-num">5</div>
+                    <div class="tantrum-step-content">
+                        <div class="tantrum-step-title">🫂 STAY CLOSE — Be a Lighthouse</div>
+                        <div class="tantrum-step-text">Don't walk away, don't isolate them. Sit nearby and be still. They need to know you won't abandon them even at their worst. If they push you away, say:</div>
+                        <div class="tantrum-step-quote">"I'm right here. I'll be here when you're ready."</div>
+                    </div>
+                </div>
+                <div class="tantrum-step">
+                    <div class="tantrum-step-num">6</div>
+                    <div class="tantrum-step-content">
+                        <div class="tantrum-step-title">⏳ WAIT — Let the Storm Pass</div>
+                        <div class="tantrum-step-text">A tantrum has a peak and a come-down. Don't try to fix it during the peak — there is no reasoning with a flooded brain. Average tantrum: 2–5 minutes. It WILL end.</div>
+                    </div>
+                </div>
+                <div class="tantrum-step">
+                    <div class="tantrum-step-num">7</div>
+                    <div class="tantrum-step-content">
+                        <div class="tantrum-step-title">💛 RECONNECT — After the Storm</div>
+                        <div class="tantrum-step-text">When it's over, don't lecture. Don't say "are you done?" Open your arms and wait. When they come to you:</div>
+                        <div class="tantrum-step-quote">"That was really big. I'm proud of you for calming down. I love you no matter what."</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tantrum-reminder">
+                <strong>🧠 Remember: This Is Not Misbehavior</strong>
+                At 2.5, tantrums are a neurological event — their prefrontal cortex is years away from managing big emotions.
+                You are literally teaching their brain how to regulate by staying calm yourself.
+                <strong style="margin-top:4px;">You are their safe place. That's why they melt down with YOU.</strong>
+            </div>
+
+            <div class="tantrum-actions">
+                <button class="tantrum-log-btn secondary" id="tantrumCancel">Close</button>
+                <button class="tantrum-log-btn primary" id="tantrumLogIt">🌋 Log This Tantrum</button>
+            </div>
+        </div>
+    </div>
+
     <div class="toast-container" id="toastContainer"></div>
 
     <script>
@@ -688,7 +836,8 @@
         hygiene:   { emoji: '👃', label: 'Hygiene',   color: 'hygiene' },
         activity:  { emoji: '🏃', label: 'Activity',  color: 'activity' },
         note:      { emoji: '📝', label: 'Note',      color: 'note' },
-        milestone: { emoji: '⭐', label: 'Milestone', color: 'milestone' }
+        milestone: { emoji: '⭐', label: 'Milestone', color: 'milestone' },
+        tantrum:   { emoji: '🌋', label: 'Tantrum',   color: 'tantrum' }
     };
 
     // Quick chips per category
@@ -700,7 +849,8 @@
         hygiene: ['Boogies', 'Bath', 'Teeth brushed', 'Sunscreen', 'Hair washed', 'Nails trimmed'],
         activity: ['Park', 'Outdoor play', 'Sensory play', 'Coloring', 'Reading', 'TV/Screen', 'Play-dough', 'Water table', 'Heavy work'],
         note: [],
-        milestone: ['New word', 'New skill', 'First time', 'Funny moment']
+        milestone: ['New word', 'New skill', 'First time', 'Funny moment'],
+        tantrum: ['Transition day', 'Overtired', 'Hunger', 'Frustration', 'Overstimulated', 'Boundary testing', 'Wanting parent', 'Unknown trigger']
     };
 
     // ─── Safe Harbor Schedule ───
@@ -769,7 +919,10 @@
     //  QUICK-ADD SYSTEM
     // ═══════════════════════════════════════
     document.querySelectorAll('.cat-btn').forEach(function(btn) {
-        btn.addEventListener('click', function() { openQuickForm(this.dataset.cat); });
+        btn.addEventListener('click', function() {
+            if (this.dataset.cat === 'tantrum') { openTantrumGuide(); return; }
+            openQuickForm(this.dataset.cat);
+        });
     });
 
     function openQuickForm(cat) {
@@ -881,6 +1034,143 @@
         activeFormCat = null;
         showToast(c.emoji + ' Logged!');
     }
+
+    // ═══════════════════════════════════════
+    //  TANTRUM GUIDE
+    // ═══════════════════════════════════════
+    var tantrumStartTime = null;
+
+    function openTantrumGuide() {
+        tantrumStartTime = getCSTTime24();
+        document.getElementById('tantrumGuide').classList.add('active');
+    }
+
+    document.getElementById('tantrumCancel').addEventListener('click', function() {
+        document.getElementById('tantrumGuide').classList.remove('active');
+    });
+
+    document.getElementById('tantrumGuide').addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('active');
+    });
+
+    document.getElementById('tantrumLogIt').addEventListener('click', function() {
+        document.getElementById('tantrumGuide').classList.remove('active');
+        // Open the quick form pre-filled for tantrum logging
+        activeFormCat = 'tantrum';
+        var c = categories.tantrum;
+        var chips = quickChips.tantrum || [];
+        var now24 = tantrumStartTime || getCSTTime24();
+
+        var html = '<div class="quick-form-header">' +
+            '<div class="quick-form-cat" style="color:var(--cat-tantrum)">' + c.emoji + ' Log Tantrum</div>' +
+            '<button class="quick-form-close" id="closeQuickForm">&times;</button></div>';
+
+        html += '<div class="quick-form-row">' +
+            '<input type="time" id="qfTime" value="' + now24 + '">' +
+            '<input type="text" id="qfText" placeholder="What happened?" style="flex:1"></div>';
+
+        html += '<div style="font-size:0.55rem;font-weight:700;color:var(--cat-tantrum);margin-bottom:4px;">POSSIBLE TRIGGER:</div>';
+        html += '<div class="quick-chips">';
+        chips.forEach(function(chip) {
+            html += '<button class="quick-chip" data-val="' + chip + '">' + chip + '</button>';
+        });
+        html += '</div>';
+
+        html += '<div style="font-size:0.55rem;font-weight:700;color:var(--text-light);margin: 6px 0 4px;">INTENSITY:</div>';
+        html += '<div class="quick-chips">';
+        ['Mild (fussing)', 'Moderate (crying/screaming)', 'Big (full meltdown)', 'Transition meltdown'].forEach(function(chip) {
+            html += '<button class="quick-chip intensity-chip" data-val="' + chip + '">' + chip + '</button>';
+        });
+        html += '</div>';
+
+        html += '<div style="font-size:0.55rem;font-weight:700;color:var(--text-light);margin: 6px 0 4px;">DURATION:</div>';
+        html += '<div class="quick-chips">';
+        ['< 2 min', '2–5 min', '5–10 min', '10+ min'].forEach(function(chip) {
+            html += '<button class="quick-chip duration-chip" data-val="' + chip + '">' + chip + '</button>';
+        });
+        html += '</div>';
+
+        html += '<button class="quick-submit" id="qfSubmit" style="background:var(--cat-tantrum)">🌋 Log Tantrum</button>';
+
+        var form = document.getElementById('quickForm');
+        form.innerHTML = html;
+        form.classList.add('active');
+
+        document.getElementById('closeQuickForm').addEventListener('click', function() {
+            form.classList.remove('active');
+            activeFormCat = null;
+        });
+
+        // Trigger chips (multi-select within group)
+        form.querySelectorAll('.quick-chip:not(.intensity-chip):not(.duration-chip)').forEach(function(chip) {
+            chip.addEventListener('click', function() {
+                this.classList.toggle('selected');
+            });
+        });
+        // Intensity chips (single select)
+        form.querySelectorAll('.intensity-chip').forEach(function(chip) {
+            chip.addEventListener('click', function() {
+                form.querySelectorAll('.intensity-chip').forEach(function(c) { c.classList.remove('selected'); });
+                this.classList.add('selected');
+            });
+        });
+        // Duration chips (single select)
+        form.querySelectorAll('.duration-chip').forEach(function(chip) {
+            chip.addEventListener('click', function() {
+                form.querySelectorAll('.duration-chip').forEach(function(c) { c.classList.remove('selected'); });
+                this.classList.add('selected');
+            });
+        });
+
+        document.getElementById('qfSubmit').addEventListener('click', function() {
+            var timeVal = document.getElementById('qfTime').value;
+            var textVal = document.getElementById('qfText').value.trim();
+
+            // Gather selected chips
+            var triggers = [];
+            form.querySelectorAll('.quick-chip.selected:not(.intensity-chip):not(.duration-chip)').forEach(function(c) { triggers.push(c.dataset.val); });
+            var intensity = '';
+            var intChip = form.querySelector('.intensity-chip.selected');
+            if (intChip) intensity = intChip.dataset.val;
+            var duration = '';
+            var durChip = form.querySelector('.duration-chip.selected');
+            if (durChip) duration = durChip.dataset.val;
+
+            // Build text
+            var parts = [];
+            if (intensity) parts.push(intensity);
+            if (duration) parts.push(duration);
+            if (triggers.length) parts.push('Trigger: ' + triggers.join(', '));
+            if (textVal) parts.push(textVal);
+            var displayText = parts.join(' · ') || 'Tantrum logged';
+
+            var entry = {
+                id: 'a-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+                cat: 'tantrum',
+                time: time12(timeVal),
+                time24: timeVal,
+                text: displayText,
+                timestamp: new Date().toISOString(),
+                date: getCSTDate()
+            };
+
+            actions.push(entry);
+            actions.sort(function(a, b) { return (a.time24 || '').localeCompare(b.time24 || ''); });
+            renderTimeline();
+            saveActions();
+
+            notify('🌋 Tantrum Logged', entry.time + ' — ' + displayText, 'tantrum-' + entry.id);
+            sendPushToAll('🌋 Tantrum Logged', entry.time + ' — ' + displayText, 'tantrum-' + entry.id);
+            addLog('tantrum', '🌋 ' + entry.time + ' — ' + displayText);
+
+            form.classList.remove('active');
+            activeFormCat = null;
+            showToast('🌋 Tantrum logged');
+        });
+
+        // Scroll to form
+        setTimeout(function() { form.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+    });
 
     // ═══════════════════════════════════════
     //  TIMELINE RENDERING
