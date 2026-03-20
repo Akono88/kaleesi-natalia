@@ -8,100 +8,131 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Kaleesi">
-    <meta name="theme-color" content="#7c3aed">
+    <meta name="theme-color" content="#C58ACD">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <style>
         :root {
-            --purple-deep: #7c3aed;
-            --purple-mid: #8b5cf6;
-            --purple-soft: #c4b5fd;
-            --purple-whisper: #f3e8ff;
-            --purple-glow: rgba(124, 58, 237, 0.07);
-            --cream: #faf8ff;
+            /* ✦ Kaleesi Natalia Knopko Brand Palette ✦ */
+            --purple-deep: #C58ACD;
+            --purple-mid: #D85A9C;
+            --purple-soft: #F884D5;
+            --purple-whisper: #f8f0fc;
+            --purple-glow: rgba(197, 138, 205, 0.1);
+            --teal: #97D7C6;
+            --teal-light: #e0f5ef;
+            --cream: #fef7ff;
             --white: #ffffff;
-            --text: #2e2240;
-            --text-mid: #6a5a7e;
-            --text-light: #9a8aae;
-            --border: rgba(124, 58, 237, 0.08);
-            --danger-bg: #fff3e0;
-            --danger-text: #bf360c;
-            --safe-bg: #e8f5e9;
-            --safe-text: #2e7d32;
-            --info-bg: #e3f2fd;
-            --info-text: #1565c0;
-            --warn-bg: #fff8e1;
-            --warn-text: #f57f17;
-            --adam-color: #3B82F6;
-            --adam-light: #DBEAFE;
-            --marta-color: #EC4899;
-            --marta-light: #FCE7F3;
-            --shared-color: #8B5CF6;
-            --shared-light: #EDE9FE;
-            --radius: 18px;
-            --shadow: 0 2px 12px rgba(0,0,0,0.04), 0 0 0 1px var(--border);
+            --text: #3d2248;
+            --text-mid: #8a6b9e;
+            --text-light: #c4a6d4;
+            --border: rgba(197, 138, 205, 0.18);
+            --danger-bg: #fff0f3;
+            --danger-text: #c0314a;
+            --safe-bg: #edf8f4;
+            --safe-text: #2a7a5f;
+            --info-bg: #f0eefa;
+            --info-text: #6b4fa0;
+            --warn-bg: #fdf5eb;
+            --warn-text: #c67d1a;
+            --adam-color: #7BA3D9;
+            --adam-light: #e4edfa;
+            --marta-color: #D85A9C;
+            --marta-light: #fce7f3;
+            --shared-color: #C58ACD;
+            --shared-light: #f3e0f6;
+            --radius: 20px;
+            --shadow: 0 2px 16px rgba(197,138,205,0.1), 0 0 0 1px rgba(197,138,205,0.08);
 
-            /* Category colors */
-            --cat-feed: #f59e0b;
-            --cat-feed-bg: #fef3c7;
-            --cat-med: #ef4444;
-            --cat-med-bg: #fee2e2;
-            --cat-sleep: #6366f1;
-            --cat-sleep-bg: #e0e7ff;
-            --cat-diaper: #14b8a6;
-            --cat-diaper-bg: #ccfbf1;
-            --cat-hygiene: #06b6d4;
-            --cat-hygiene-bg: #cffafe;
-            --cat-activity: #22c55e;
-            --cat-activity-bg: #dcfce7;
-            --cat-note: #8b5cf6;
-            --cat-note-bg: #ede9fe;
-            --cat-milestone: #ec4899;
-            --cat-milestone-bg: #fce7f3;
-            --cat-tantrum: #dc2626;
-            --cat-tantrum-bg: #fef2f2;
+            /* Category colors — soft pastel palette */
+            --cat-feed: #D4956A;
+            --cat-feed-bg: #fdf0e7;
+            --cat-med: #D85A9C;
+            --cat-med-bg: #fce7f3;
+            --cat-sleep: #9B8EC4;
+            --cat-sleep-bg: #eee9f7;
+            --cat-diaper: #97D7C6;
+            --cat-diaper-bg: #e6f7f2;
+            --cat-hygiene: #7BB8D0;
+            --cat-hygiene-bg: #e4f2f8;
+            --cat-activity: #8DC48B;
+            --cat-activity-bg: #e8f5e8;
+            --cat-note: #C58ACD;
+            --cat-note-bg: #f3e4f6;
+            --cat-milestone: #F884D5;
+            --cat-milestone-bg: #fdeef8;
+            --cat-tantrum: #c44d5e;
+            --cat-tantrum-bg: #fdf0f2;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         body {
-            font-family: 'Outfit', system-ui, sans-serif;
-            background: var(--purple-whisper); color: var(--text);
+            font-family: 'Montserrat', system-ui, sans-serif;
+            background: #f5eef9; color: var(--text);
             min-height: 100vh; padding: 0;
             background-image:
-                radial-gradient(ellipse at 15% 0%, rgba(196,181,253,0.2) 0%, transparent 55%),
-                radial-gradient(ellipse at 85% 100%, rgba(139,92,246,0.08) 0%, transparent 45%);
+                radial-gradient(ellipse at 15% 0%, rgba(197, 138, 205, 0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 85% 10%, rgba(248, 132, 213, 0.15) 0%, transparent 45%),
+                radial-gradient(ellipse at 50% 50%, rgba(151, 215, 198, 0.1) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(216, 90, 156, 0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 90%, rgba(197, 138, 205, 0.2) 0%, transparent 45%);
+            background-attachment: fixed;
         }
         .app { max-width: 520px; margin: 0 auto; padding: 14px 14px 100px; }
 
         /* ═══ HEADER ═══ */
         header {
-            background: var(--white); border-radius: var(--radius);
-            padding: 20px 18px 14px; text-align: center;
-            box-shadow: var(--shadow); margin-bottom: 6px;
+            background: linear-gradient(160deg,
+                rgba(197,138,205,0.15) 0%,
+                rgba(255,255,255,0.95) 20%,
+                rgba(255,255,255,0.98) 50%,
+                rgba(248,132,213,0.08) 80%,
+                rgba(151,215,198,0.1) 100%);
+            border-radius: var(--radius);
+            padding: 24px 18px 14px; text-align: center;
+            box-shadow: 0 4px 24px rgba(197,138,205,0.12), 0 0 0 1px rgba(197,138,205,0.1);
+            margin-bottom: 8px;
             position: relative; overflow: hidden;
         }
         header::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, var(--purple-soft), var(--purple-deep), var(--purple-soft));
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--teal), var(--purple-deep), var(--purple-mid), var(--purple-soft));
         }
-        h1 { font-family: 'Fraunces', Georgia, serif; font-weight: 900; font-size: 1.3rem; color: var(--purple-deep); letter-spacing: 0.3px; }
-        .subtitle { font-size: 0.5rem; letter-spacing: 3px; text-transform: uppercase; color: var(--text-light); margin-top: 2px; font-weight: 700; }
-        .cst-clock { margin-top: 4px; font-size: 0.62rem; font-weight: 600; color: var(--purple-mid); letter-spacing: 0.5px; }
+        header::after {
+            content: '✦ 🦋 ♡ 🐾 ✦'; position: absolute; top: 8px; right: 12px;
+            font-size: 0.4rem; color: var(--purple-soft); letter-spacing: 3px; opacity: 0.7;
+        }
+        h1 {
+            font-family: 'Great Vibes', cursive; font-weight: 400; font-size: 2rem;
+            background: linear-gradient(135deg, #C58ACD 0%, #D85A9C 50%, #C58ACD 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+            filter: drop-shadow(0 1px 2px rgba(197,138,205,0.2));
+        }
+        .subtitle {
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.4rem; letter-spacing: 5px; text-transform: uppercase;
+            color: var(--text-light); margin-top: 2px; font-weight: 700;
+        }
+        .cst-clock { margin-top: 4px; font-size: 0.58rem; font-weight: 600; color: var(--purple-mid); letter-spacing: 0.5px; }
 
         /* ═══ BOTTOM NAV ═══ */
         .bottom-nav {
-            position: fixed; bottom: 0; left: 0; right: 0; background: var(--white);
-            border-top: 1px solid var(--border); display: flex; z-index: 50;
-            box-shadow: 0 -2px 16px rgba(0,0,0,0.04); max-width: 520px; margin: 0 auto;
+            position: fixed; bottom: 0; left: 0; right: 0;
+            background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(248,240,252,0.98));
+            border-top: 1px solid rgba(197,138,205,0.15); display: flex; z-index: 50;
+            box-shadow: 0 -4px 20px rgba(197,138,205,0.08); max-width: 520px; margin: 0 auto;
+            backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         }
         .nav-btn {
             flex: 1; border: none; background: none; padding: 8px 4px 6px; cursor: pointer;
             display: flex; flex-direction: column; align-items: center; gap: 2px;
-            color: var(--text-light); transition: color 0.2s; font-family: 'Outfit', sans-serif;
+            color: var(--text-light); transition: all 0.2s; font-family: 'Montserrat', sans-serif;
         }
         .nav-btn i { font-size: 16px; }
         .nav-btn span { font-size: 0.5rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
-        .nav-btn.active { color: var(--purple-deep); }
+        .nav-btn.active { color: var(--purple-mid); }
+        .nav-btn.active i { filter: drop-shadow(0 0 4px rgba(216,90,156,0.3)); }
 
         /* ═══ TABS ═══ */
         .tab-view { display: none; animation: fadeUp 0.3s ease; }
@@ -109,7 +140,10 @@
         @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ═══ CARDS ═══ */
-        .card { background: var(--white); border-radius: var(--radius); padding: 14px; margin-top: 10px; box-shadow: var(--shadow); }
+        .card {
+            background: rgba(255,255,255,0.92); border-radius: var(--radius); padding: 14px; margin-top: 10px;
+            box-shadow: var(--shadow); backdrop-filter: blur(8px);
+        }
         .card-label {
             display: flex; align-items: center; gap: 6px; font-size: 0.5rem; font-weight: 800;
             letter-spacing: 2px; text-transform: uppercase; color: var(--text-light); margin-bottom: 10px;
@@ -122,12 +156,13 @@
             margin-bottom: 8px;
         }
         .cat-btn {
-            display: flex; flex-direction: column; align-items: center; gap: 3px;
-            padding: 10px 4px 8px; border: 2px solid var(--border); background: var(--white);
-            border-radius: 14px; cursor: pointer; transition: all 0.15s; font-family: 'Outfit', sans-serif;
+            display: flex; flex-direction: column; align-items: center; gap: 4px;
+            padding: 12px 4px 10px; border: 2px solid var(--border); background: rgba(255,255,255,0.85);
+            border-radius: 16px; cursor: pointer; transition: all 0.2s; font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 2px 8px rgba(197,138,205,0.06);
         }
-        .cat-btn:active { transform: scale(0.95); }
-        .cat-btn .cat-icon { font-size: 1.2rem; }
+        .cat-btn:active { transform: scale(0.93); box-shadow: 0 1px 4px rgba(197,138,205,0.1); }
+        .cat-btn .cat-icon { font-size: 1.3rem; }
         .cat-btn .cat-label { font-size: 0.45rem; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
         .cat-btn.active { transform: scale(0.97); }
         .cat-btn[data-cat="feed"] { border-color: var(--cat-feed); background: var(--cat-feed-bg); }
@@ -179,7 +214,7 @@
         .quick-form-row input[type="number"],
         .quick-form-row select {
             flex: 1; padding: 10px; border: 1px solid var(--border); border-radius: 10px;
-            font-family: 'Outfit', sans-serif; font-size: 0.8rem; background: var(--white);
+            font-family: 'Montserrat', sans-serif; font-size: 0.8rem; background: var(--white);
         }
         .quick-form-row input[type="time"] { flex: 0 0 110px; }
         .quick-form-row input[type="number"] { flex: 0 0 70px; }
@@ -189,22 +224,25 @@
         .quick-chip {
             padding: 5px 10px; border-radius: 16px; font-size: 0.6rem; font-weight: 700;
             border: 1px solid var(--border); background: var(--white); cursor: pointer;
-            font-family: 'Outfit', sans-serif; transition: all 0.15s;
+            font-family: 'Montserrat', sans-serif; transition: all 0.15s;
         }
         .quick-chip:active { transform: scale(0.95); }
-        .quick-chip.selected { background: var(--purple-deep); color: white; border-color: var(--purple-deep); }
+        .quick-chip.selected { background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid)); color: white; border-color: transparent; box-shadow: 0 2px 6px rgba(197,138,205,0.3); }
         .quick-submit {
-            width: 100%; padding: 10px; background: var(--purple-deep); color: white;
-            border: none; border-radius: 12px; font-size: 0.8rem; font-weight: 700;
-            cursor: pointer; font-family: 'Outfit', sans-serif;
+            width: 100%; padding: 12px;
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid), var(--purple-soft));
+            color: white; border: none; border-radius: 14px; font-size: 0.8rem; font-weight: 700;
+            cursor: pointer; font-family: 'Montserrat', sans-serif;
+            box-shadow: 0 4px 16px rgba(216, 90, 156, 0.3);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        .quick-submit:active { opacity: 0.9; }
+        .quick-submit:active { opacity: 0.9; transform: translateY(1px); }
 
         /* ═══ TIMELINE ═══ */
         .timeline { position: relative; padding-left: 20px; }
         .timeline::before {
             content: ''; position: absolute; left: 7px; top: 0; bottom: 0;
-            width: 2px; background: linear-gradient(to bottom, var(--purple-soft), var(--border));
+            width: 2px; background: linear-gradient(to bottom, var(--purple-deep), var(--purple-soft), var(--teal), var(--purple-soft));
         }
         .tl-entry {
             position: relative; padding: 8px 0 8px 14px; border-bottom: none;
@@ -274,14 +312,14 @@
         .tl-now-marker::before {
             content: ''; position: absolute; left: -17px; top: 50%; transform: translateY(-50%);
             width: 12px; height: 12px; border-radius: 50%;
-            background: var(--purple-deep); z-index: 2;
-            box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.2);
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid)); z-index: 2;
+            box-shadow: 0 0 0 3px rgba(197, 138, 205, 0.25), 0 0 8px rgba(216,90,156,0.2);
         }
         .tl-now-label {
-            font-size: 0.5rem; font-weight: 800; color: var(--purple-deep);
+            font-size: 0.5rem; font-weight: 800; color: var(--purple-mid);
             text-transform: uppercase; letter-spacing: 1.5px;
         }
-        .tl-now-line { flex: 1; height: 1px; background: var(--purple-deep); opacity: 0.3; }
+        .tl-now-line { flex: 1; height: 1px; background: linear-gradient(90deg, var(--purple-mid), transparent); opacity: 0.4; }
 
         .timeline-empty {
             text-align: center; padding: 24px 0; color: var(--text-light);
@@ -298,7 +336,7 @@
 
         /* ═══ CALENDAR (from Leesitime) ═══ */
         .cal-nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .cal-nav-bar h3 { font-family: 'Fraunces', serif; font-size: 1rem; color: var(--purple-deep); }
+        .cal-nav-bar h3 { font-family: 'Great Vibes', cursive; font-size: 1.4rem; color: var(--purple-deep); }
         .cal-nav-bar button {
             background: var(--purple-whisper); border: none; width: 32px; height: 32px;
             border-radius: 50%; cursor: pointer; color: var(--purple-deep); font-size: 0.8rem;
@@ -319,9 +357,9 @@
         .cal-mode-toggle { display: flex; justify-content: center; gap: 4px; margin-bottom: 10px; }
         .cal-mode-btn {
             padding: 6px 10px; border: 2px solid var(--border); background: var(--white);
-            border-radius: 20px; cursor: pointer; font-size: 0.6rem; font-weight: 600; font-family: 'Outfit', sans-serif;
+            border-radius: 20px; cursor: pointer; font-size: 0.6rem; font-weight: 600; font-family: 'Montserrat', sans-serif;
         }
-        .cal-mode-btn.active { background: var(--purple-deep); color: white; border-color: var(--purple-deep); }
+        .cal-mode-btn.active { background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid)); color: white; border-color: transparent; box-shadow: 0 2px 8px rgba(197,138,205,0.3); }
         .cal-mode-btn.adam-mode.active { background: var(--adam-color); border-color: var(--adam-color); }
         .cal-mode-btn.marta-mode.active { background: var(--marta-color); border-color: var(--marta-color); }
         .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
@@ -334,7 +372,7 @@
         }
         .cal-day:hover { background: var(--purple-glow); }
         .cal-day.empty { cursor: default; opacity: 0.3; }
-        .cal-day.today { background: #fef9c3; border: 2px solid #f59e0b; font-weight: 800; }
+        .cal-day.today { background: rgba(248,132,213,0.1); border: 2px solid var(--purple-soft); font-weight: 800; }
         .cal-day.selected { background: var(--purple-whisper); border: 2px solid var(--purple-deep); }
         .cal-day.has-data::after { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--purple-deep); position: absolute; bottom: 3px; }
         .cal-day.adam-day { background: var(--adam-light); }
@@ -346,7 +384,7 @@
         .cal-day-parent.shared { background: var(--shared-color); }
         .cal-detail { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
         .cal-empty { text-align: center; font-size: 0.7rem; color: var(--text-light); padding: 16px 0; }
-        .cal-detail-date { font-family: 'Fraunces', serif; font-size: 0.85rem; color: var(--purple-deep); margin-bottom: 8px; }
+        .cal-detail-date { font-family: 'Great Vibes', cursive; font-size: 1.2rem; color: var(--purple-deep); margin-bottom: 8px; }
 
         /* Calendar day modal */
         .modal-overlay {
@@ -365,7 +403,7 @@
             position: sticky; top: 0; background: var(--white); z-index: 2;
             border-radius: var(--radius) var(--radius) 0 0;
         }
-        .modal-header h2 { font-family: 'Fraunces', serif; font-size: 0.95rem; color: var(--purple-deep); }
+        .modal-header h2 { font-family: 'Great Vibes', cursive; font-size: 1.3rem; color: var(--purple-deep); }
         .close-btn {
             background: var(--purple-whisper); border: none; width: 30px; height: 30px;
             border-radius: 50%; font-size: 1rem; cursor: pointer; color: var(--text-mid);
@@ -374,7 +412,7 @@
         .quick-assign { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
         .assign-btn {
             padding: 10px 6px; border: 3px solid var(--border); background: var(--white);
-            border-radius: 12px; cursor: pointer; text-align: center; font-family: 'Outfit', sans-serif;
+            border-radius: 12px; cursor: pointer; text-align: center; font-family: 'Montserrat', sans-serif;
         }
         .assign-btn.adam.active { border-color: var(--adam-color); background: var(--adam-light); }
         .assign-btn.marta.active { border-color: var(--marta-color); background: var(--marta-light); }
@@ -389,20 +427,20 @@
         .form-group label { display: block; font-size: 0.55rem; font-weight: 700; margin-bottom: 2px; color: var(--text-mid); }
         .form-group input, .form-group textarea {
             width: 100%; padding: 8px; border: 1px solid var(--border);
-            border-radius: 8px; font-size: 0.75rem; font-family: 'Outfit', sans-serif;
+            border-radius: 8px; font-size: 0.75rem; font-family: 'Montserrat', sans-serif;
         }
         .form-group textarea { min-height: 50px; resize: vertical; }
         .note-templates { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
         .note-template {
             padding: 3px 8px; background: var(--purple-whisper); border: 1px solid var(--border);
-            border-radius: 12px; font-size: 0.5rem; cursor: pointer; font-family: 'Outfit', sans-serif;
+            border-radius: 12px; font-size: 0.5rem; cursor: pointer; font-family: 'Montserrat', sans-serif;
         }
         .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
         .btn-modal {
             padding: 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 700;
-            cursor: pointer; border: none; font-family: 'Outfit', sans-serif;
+            cursor: pointer; border: none; font-family: 'Montserrat', sans-serif;
         }
-        .btn-primary { background: var(--purple-deep); color: white; }
+        .btn-primary { background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid), var(--purple-soft)); color: white; box-shadow: 0 4px 16px rgba(216,90,156,0.25); text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .btn-secondary { background: var(--purple-whisper); color: var(--text-mid); }
 
         /* Quick patterns */
@@ -411,7 +449,7 @@
         .pattern-buttons { display: flex; gap: 4px; flex-wrap: wrap; }
         .pattern-btn {
             padding: 5px 8px; background: var(--purple-whisper); border: 1px solid var(--border);
-            border-radius: 10px; cursor: pointer; font-size: 0.55rem; font-weight: 600; font-family: 'Outfit', sans-serif;
+            border-radius: 10px; cursor: pointer; font-size: 0.55rem; font-weight: 600; font-family: 'Montserrat', sans-serif;
         }
 
         /* ═══ CARE TAB ═══ */
@@ -450,16 +488,20 @@
         /* ═══ TOAST ═══ */
         .toast-container { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 6px; max-width: 340px; width: 90%; }
         .toast {
-            background: var(--purple-deep); color: white; padding: 10px 14px;
-            border-radius: 12px; font-size: 0.75rem; font-weight: 600;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.15); animation: toastIn 0.3s ease;
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid), var(--purple-soft));
+            color: white; padding: 12px 16px;
+            border-radius: 14px; font-size: 0.75rem; font-weight: 600;
+            box-shadow: 0 4px 24px rgba(197,138,205,0.35); animation: toastIn 0.3s ease;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         @keyframes toastIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
 
         /* ═══ PUSH BANNER ═══ */
         .notif-banner {
-            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid));
-            border-radius: 14px; padding: 14px; margin-top: 10px; color: white; cursor: pointer;
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid), var(--purple-soft));
+            border-radius: 16px; padding: 14px; margin-top: 10px; color: white; cursor: pointer;
+            box-shadow: 0 4px 20px rgba(197,138,205,0.25);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .notif-banner h4 { font-size: 0.75rem; margin-bottom: 4px; }
         .notif-banner p { font-size: 0.6rem; opacity: 0.85; }
@@ -491,7 +533,7 @@
             border-radius: 20px 20px 0 0;
         }
         .tantrum-header h2 {
-            font-family: 'Fraunces', serif; font-size: 1.1rem; color: var(--cat-tantrum);
+            font-family: 'Great Vibes', cursive; font-size: 1.1rem; color: var(--cat-tantrum);
         }
         .tantrum-header p { font-size: 0.6rem; color: var(--text-mid); margin-top: 2px; }
         .tantrum-body { padding: 0 16px 16px; }
@@ -526,7 +568,7 @@
         }
         .tantrum-log-btn {
             padding: 12px; border-radius: 12px; font-size: 0.75rem; font-weight: 700;
-            cursor: pointer; border: none; font-family: 'Outfit', sans-serif;
+            cursor: pointer; border: none; font-family: 'Montserrat', sans-serif;
         }
         .tantrum-log-btn.primary { background: var(--cat-tantrum); color: white; }
         .tantrum-log-btn.secondary { background: var(--cat-tantrum-bg); color: var(--cat-tantrum); }
@@ -535,13 +577,38 @@
             display: flex; align-items: center; justify-content: center; gap: 6px;
             width: 100%; padding: 8px; margin-top: 8px; border: 2px dashed var(--purple-soft);
             background: var(--purple-glow); border-radius: 12px; cursor: pointer;
-            font-size: 0.65rem; font-weight: 700; color: var(--purple-mid); font-family: 'Outfit', sans-serif;
+            font-size: 0.65rem; font-weight: 700; color: var(--purple-mid); font-family: 'Montserrat', sans-serif;
         }
+
+        /* ═══ INFO BANK SUB-TABS ═══ */
+        .ib-subtabs {
+            display: flex; gap: 4px; padding: 0 2px; margin-bottom: 10px;
+            overflow-x: auto; -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+        .ib-subtabs::-webkit-scrollbar { display: none; }
+        .ib-subtab {
+            flex-shrink: 0; padding: 8px 14px; border-radius: 20px;
+            font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; cursor: pointer; border: 2px solid var(--border);
+            background: var(--white); color: var(--text-mid);
+            font-family: 'Montserrat', sans-serif; transition: all 0.2s;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .ib-subtab .ib-subtab-icon { font-size: 0.85rem; }
+        .ib-subtab.active {
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid), var(--purple-soft));
+            color: white; border-color: transparent;
+            box-shadow: 0 3px 12px rgba(197, 138, 205, 0.35);
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+        .ib-subtab-content { display: none; }
+        .ib-subtab-content.active { display: block; }
 
         /* ═══ INFO BANK ═══ */
         .ib-section {
-            background: var(--white); border-radius: var(--radius); margin-top: 10px;
-            box-shadow: var(--shadow); overflow: hidden;
+            background: rgba(255,255,255,0.9); border-radius: var(--radius); margin-top: 10px;
+            box-shadow: var(--shadow); overflow: hidden; backdrop-filter: blur(8px);
         }
         .ib-header {
             display: flex; align-items: center; justify-content: space-between;
@@ -558,9 +625,11 @@
         }
         .ib-header-right { display: flex; align-items: center; gap: 6px; }
         .ib-add-btn {
-            background: var(--purple-deep); color: white; border: none;
-            width: 26px; height: 26px; border-radius: 50%; font-size: 0.8rem;
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid), var(--purple-soft));
+            color: white; border: none;
+            width: 28px; height: 28px; border-radius: 50%; font-size: 0.8rem;
             cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 3px 10px rgba(216,90,156,0.3);
         }
         .ib-add-btn:active { opacity: 0.8; }
         .ib-chevron {
@@ -608,15 +677,15 @@
         .ib-form-row:last-child { margin-bottom: 0; }
         .ib-form-row input, .ib-form-row textarea {
             flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 8px;
-            font-family: 'Outfit', sans-serif; font-size: 0.72rem; background: var(--white);
+            font-family: 'Montserrat', sans-serif; font-size: 0.72rem; background: var(--white);
         }
         .ib-form-row textarea { min-height: 40px; resize: vertical; }
         .ib-form-actions { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; }
         .ib-form-btn {
             padding: 7px 14px; border-radius: 10px; font-size: 0.65rem; font-weight: 700;
-            cursor: pointer; border: none; font-family: 'Outfit', sans-serif;
+            cursor: pointer; border: none; font-family: 'Montserrat', sans-serif;
         }
-        .ib-form-btn.save { background: var(--purple-deep); color: white; }
+        .ib-form-btn.save { background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid)); color: white; box-shadow: 0 2px 8px rgba(197,138,205,0.25); }
         .ib-form-btn.cancel { background: var(--white); color: var(--text-mid); border: 1px solid var(--border); }
 
         /* Status badges */
@@ -633,8 +702,8 @@
 <body>
     <div class="app">
         <header>
-            <h1>👸 Kaleesi Natalia</h1>
-            <div class="subtitle">DAILY CARE & SCHEDULE TRACKER</div>
+            <h1>🦋 Kaleesi Natalia Knopko ♡</h1>
+            <div class="subtitle">✦ 🐾 DAILY CARE & SCHEDULE TRACKER 🐾 ✦</div>
             <div class="cst-clock" id="clockDisplay"></div>
         </header>
 
@@ -734,6 +803,50 @@
                 </table>
             </div>
 
+            <div class="info-block" style="background: linear-gradient(135deg, #fdf2f8, #f0e6f6); border: 1px solid rgba(197,138,205,0.2);">
+                <div class="info-block-title" style="color: var(--purple-deep);"><i class="fa-solid fa-pump-soap"></i> 🧴 The Product Cheat Sheet</div>
+                <p style="font-size:0.55rem;color:var(--text-mid);margin-bottom:8px;">To maintain Kaleesi's skin health and comfort, use only these approved products. <strong style="color:var(--cat-med);">Strictly no scented products or polyester fabrics.</strong></p>
+                <table class="ref-table">
+                    <tr style="background:rgba(197,138,205,0.1);"><td style="font-weight:800;font-size:0.5rem;color:var(--text-mid);">Category</td><td style="font-weight:800;font-size:0.5rem;color:var(--text-mid);">Approved Products</td><td style="font-weight:800;font-size:0.5rem;color:var(--text-mid);">Instructions</td></tr>
+                    <tr><td>Face Wash</td><td>Saline wipes or her specific soap</td><td>Use designated Kaleesi towel only.</td></tr>
+                    <tr><td>Face Moisture</td><td>Baby Aquaphor</td><td>Apply underneath face for daily moisture.</td></tr>
+                    <tr><td>Rash Care</td><td>Honest Cream</td><td>Use for any rashes on face or body.</td></tr>
+                    <tr><td>Diaper Cream</td><td>Pipette or Honest Cream</td><td>Must apply every single change.</td></tr>
+                    <tr><td>Hair Care</td><td>Honest Spray Cream</td><td>Only product used for hair.</td></tr>
+                    <tr><td>Sun / Skin</td><td>Pipette (Sunscreen, balm sticks)</td><td>Stick to Pipette for all other skin needs.</td></tr>
+                    <tr><td>Clothing</td><td><strong>100% Cotton or Bamboo</strong></td><td><strong style="color:var(--cat-med);">NO polyester.</strong></td></tr>
+                </table>
+            </div>
+
+            <div class="info-block info">
+                <div class="info-block-title"><i class="fa-solid fa-bath"></i> 🛁 Hygiene & Health Protocols</div>
+                <p style="font-size:0.55rem;color:var(--info-text);margin-bottom:8px;">Cleanliness is a top priority. Follow these specific steps for her daily maintenance:</p>
+                <table class="ref-table">
+                    <tr><td>Diaper Changes</td><td>Moisturize and apply diaper rash cream with <strong>every</strong> change.</td></tr>
+                    <tr><td>The "Booger" Rule</td><td>If she is picking her nose, wipe the inside or use the electric "booger sucker" machine at the house.</td></tr>
+                    <tr><td>Daycare Pickup</td><td><strong>1.</strong> Wipe down face and hands.<br><strong>2.</strong> Change her diaper immediately.<br><strong>3.</strong> Change her into a fresh outfit ASAP.</td></tr>
+                    <tr><td>Bathing</td><td><strong>Nightly bath is required.</strong></td></tr>
+                    <tr><td>Water Quality</td><td>Use <strong>distilled water only</strong> for her sippy cup, the diffuser, and the sterilizer.</td></tr>
+                </table>
+            </div>
+
+            <div class="info-block safe">
+                <div class="info-block-title"><i class="fa-solid fa-carrot"></i> 🥗 Nutrition & Hydration</div>
+                <table class="ref-table">
+                    <tr><td>Schedule</td><td><strong>3 full meals</strong> and <strong>2 healthy snacks</strong> daily.</td></tr>
+                    <tr><td>Drinks</td><td><strong>1% Organic Milk</strong> or <strong>Water only.</strong><br><span class="why-col">No juice, no added sugar.</span></td></tr>
+                </table>
+            </div>
+
+            <div class="info-block" style="background: linear-gradient(135deg, #ede9fe, #e8f0fe); border: 1px solid rgba(139,92,246,0.15);">
+                <div class="info-block-title" style="color: #6d28d9;"><i class="fa-solid fa-moon"></i> 😴 Sleep & Development</div>
+                <table class="ref-table">
+                    <tr><td>Nap Time</td><td><strong>11:30 AM – 1:30 PM</strong></td></tr>
+                    <tr><td>Bedtime Routine</td><td>Diffuser on (distilled water), white noise machine on, and read a book together.</td></tr>
+                    <tr><td>Safety</td><td>The <strong>Nanit camera must be ON</strong> whenever she is sleeping.</td></tr>
+                </table>
+            </div>
+
             <div class="info-block safe">
                 <div class="info-block-title"><i class="fa-solid fa-clipboard-list"></i> Quick Reference</div>
                 <table class="ref-table">
@@ -761,7 +874,20 @@
 
         <!-- ═══════════ TAB: INFO BANK ═══════════ -->
         <div class="tab-view" id="tab-info">
-            <div id="infoBankSections"></div>
+            <div class="ib-subtabs" id="ibSubtabs">
+                <button class="ib-subtab active" data-ibtab="medical"><span class="ib-subtab-icon">🏥</span> Medical</button>
+                <button class="ib-subtab" data-ibtab="education"><span class="ib-subtab-icon">🎓</span> Education</button>
+                <button class="ib-subtab" data-ibtab="activities"><span class="ib-subtab-icon">⚽</span> Activities</button>
+                <button class="ib-subtab" data-ibtab="childcare"><span class="ib-subtab-icon">🧸</span> Child Care</button>
+                <button class="ib-subtab" data-ibtab="religion"><span class="ib-subtab-icon">⛪</span> Religion</button>
+                <button class="ib-subtab" data-ibtab="coparent"><span class="ib-subtab-icon">👨‍👩‍👧</span> Co-Parent</button>
+            </div>
+            <div class="ib-subtab-content active" id="ibtab-medical"></div>
+            <div class="ib-subtab-content" id="ibtab-education"></div>
+            <div class="ib-subtab-content" id="ibtab-activities"></div>
+            <div class="ib-subtab-content" id="ibtab-childcare"></div>
+            <div class="ib-subtab-content" id="ibtab-religion"></div>
+            <div class="ib-subtab-content" id="ibtab-coparent"></div>
         </div>
 
         <!-- ═══════════ TAB: LOG ═══════════ -->
@@ -1695,10 +1821,10 @@
     var INFO_BANK_ID = 'kaleesi-infobank';
 
     var infoBankSchema = [
+        // ── Medical Tab ──
         {
-            key: 'insurance',
-            icon: '🛡️',
-            title: 'Insurance',
+            key: 'insurance', tab: 'medical',
+            icon: '🛡️', title: 'Insurance',
             fields: [
                 { name: 'name', label: 'Name', placeholder: 'Policy holder name' },
                 { name: 'policyNum', label: 'Policy #', placeholder: 'Policy number' },
@@ -1707,9 +1833,8 @@
             ]
         },
         {
-            key: 'providers',
-            icon: '👨‍⚕️',
-            title: 'Health Providers',
+            key: 'providers', tab: 'medical',
+            icon: '👨‍⚕️', title: 'Health Providers',
             fields: [
                 { name: 'name', label: 'Name', placeholder: 'Doctor name' },
                 { name: 'specialty', label: 'Specialty', placeholder: 'Pediatrician, ENT, etc.' },
@@ -1718,9 +1843,8 @@
             ]
         },
         {
-            key: 'medications',
-            icon: '💊',
-            title: 'Medications',
+            key: 'medications', tab: 'medical',
+            icon: '💊', title: 'Medications',
             fields: [
                 { name: 'name', label: 'Medication', placeholder: 'Medication name' },
                 { name: 'dosage', label: 'Dosage', placeholder: 'e.g. 6.5 mL, 100mg' },
@@ -1730,9 +1854,8 @@
             ]
         },
         {
-            key: 'immunizations',
-            icon: '💉',
-            title: 'Immunizations',
+            key: 'immunizations', tab: 'medical',
+            icon: '💉', title: 'Immunizations',
             fields: [
                 { name: 'name', label: 'Vaccine', placeholder: 'Vaccine name' },
                 { name: 'date', label: 'Date Given', placeholder: 'MM/DD/YYYY' },
@@ -1740,9 +1863,8 @@
             ]
         },
         {
-            key: 'incidents',
-            icon: '🏥',
-            title: 'Incidents & Illness',
+            key: 'incidents', tab: 'medical',
+            icon: '🏥', title: 'Incidents & Illness',
             fields: [
                 { name: 'name', label: 'Incident', placeholder: 'What happened' },
                 { name: 'date', label: 'Date', placeholder: 'MM/DD/YYYY' },
@@ -1750,9 +1872,8 @@
             ]
         },
         {
-            key: 'testResults',
-            icon: '🧪',
-            title: 'Test Results',
+            key: 'testResults', tab: 'medical',
+            icon: '🧪', title: 'Test Results',
             fields: [
                 { name: 'name', label: 'Test', placeholder: 'Test name' },
                 { name: 'result', label: 'Result', placeholder: 'Positive, Negative, value' },
@@ -1761,9 +1882,8 @@
             ]
         },
         {
-            key: 'conditions',
-            icon: '📋',
-            title: 'Health Conditions',
+            key: 'conditions', tab: 'medical',
+            icon: '📋', title: 'Health Conditions',
             fields: [
                 { name: 'name', label: 'Condition', placeholder: 'Condition name' },
                 { name: 'status', label: 'Status', placeholder: 'Active, Resolved, Monitoring' },
@@ -1771,14 +1891,173 @@
             ]
         },
         {
-            key: 'procedures',
-            icon: '🔧',
-            title: 'Procedures',
+            key: 'procedures', tab: 'medical',
+            icon: '🔧', title: 'Procedures',
             fields: [
                 { name: 'name', label: 'Procedure', placeholder: 'Procedure name' },
                 { name: 'date', label: 'Date', placeholder: 'MM/DD/YYYY' },
                 { name: 'provider', label: 'Provider', placeholder: 'Doctor / facility' },
                 { name: 'notes', label: 'Notes', placeholder: 'Outcome, recovery, etc.', type: 'textarea' }
+            ]
+        },
+        // ── Education Tab ──
+        {
+            key: 'schools', tab: 'education',
+            icon: '🏫', title: 'Schools',
+            fields: [
+                { name: 'name', label: 'School Name', placeholder: 'School or program name' },
+                { name: 'type', label: 'Type', placeholder: 'Preschool, Daycare, Montessori, etc.' },
+                { name: 'address', label: 'Address', placeholder: 'Street address' },
+                { name: 'phone', label: 'Phone', placeholder: 'Phone number' },
+                { name: 'hours', label: 'Hours', placeholder: 'e.g. 7:30 AM – 5:30 PM' },
+                { name: 'notes', label: 'Notes', placeholder: 'Enrollment info, tuition, etc.', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'teachers', tab: 'education',
+            icon: '👩‍🏫', title: 'Teachers',
+            fields: [
+                { name: 'name', label: 'Name', placeholder: 'Teacher / aide name' },
+                { name: 'role', label: 'Role', placeholder: 'Lead teacher, Assistant, etc.' },
+                { name: 'classroom', label: 'Classroom', placeholder: 'Room name or number' },
+                { name: 'email', label: 'Email', placeholder: 'Email address' },
+                { name: 'phone', label: 'Phone', placeholder: 'Phone number' },
+                { name: 'notes', label: 'Notes', placeholder: 'Best way to reach, schedule', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'classSchedules', tab: 'education',
+            icon: '📅', title: 'Class Schedules',
+            fields: [
+                { name: 'name', label: 'Class / Subject', placeholder: 'e.g. Circle Time, Art, Music' },
+                { name: 'day', label: 'Day(s)', placeholder: 'e.g. Mon/Wed/Fri, Daily' },
+                { name: 'time', label: 'Time', placeholder: 'e.g. 9:00 AM – 9:45 AM' },
+                { name: 'teacher', label: 'Teacher', placeholder: 'Instructor name' },
+                { name: 'notes', label: 'Notes', placeholder: 'Location, what to bring', type: 'textarea' }
+            ]
+        },
+        // ── Activities Tab ──
+        {
+            key: 'activities', tab: 'activities',
+            icon: '⚽', title: 'Activities & Sports',
+            fields: [
+                { name: 'name', label: 'Activity', placeholder: 'e.g. Soccer, Dance, Gymnastics' },
+                { name: 'organization', label: 'Organization', placeholder: 'Club, studio, or league name' },
+                { name: 'day', label: 'Day(s)', placeholder: 'e.g. Tuesdays & Thursdays' },
+                { name: 'time', label: 'Time', placeholder: 'e.g. 4:00 PM – 5:00 PM' },
+                { name: 'location', label: 'Location', placeholder: 'Address or venue' },
+                { name: 'coach', label: 'Coach / Instructor', placeholder: 'Name' },
+                { name: 'phone', label: 'Phone', placeholder: 'Contact phone' },
+                { name: 'notes', label: 'Notes', placeholder: 'Season dates, fees, gear needed', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'classes', tab: 'activities',
+            icon: '🎨', title: 'Classes & Lessons',
+            fields: [
+                { name: 'name', label: 'Class', placeholder: 'e.g. Piano, Swimming, Art' },
+                { name: 'instructor', label: 'Instructor', placeholder: 'Teacher name' },
+                { name: 'day', label: 'Day(s)', placeholder: 'e.g. Saturdays' },
+                { name: 'time', label: 'Time', placeholder: 'e.g. 10:00 AM – 10:45 AM' },
+                { name: 'location', label: 'Location', placeholder: 'Address or venue' },
+                { name: 'notes', label: 'Notes', placeholder: 'Cost, supplies, progress', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'playgroups', tab: 'activities',
+            icon: '👧', title: 'Playdates & Groups',
+            fields: [
+                { name: 'name', label: 'Group / Friend', placeholder: 'Playgroup name or friend' },
+                { name: 'day', label: 'Day(s)', placeholder: 'e.g. Fridays' },
+                { name: 'time', label: 'Time', placeholder: 'e.g. 2:00 PM' },
+                { name: 'location', label: 'Location', placeholder: 'Where they meet' },
+                { name: 'parent', label: 'Parent Contact', placeholder: 'Name & phone' },
+                { name: 'notes', label: 'Notes', placeholder: 'Allergies to know, preferences', type: 'textarea' }
+            ]
+        },
+        // ── Child Care Tab ──
+        {
+            key: 'caregivers', tab: 'childcare',
+            icon: '🤱', title: 'Caregivers & Babysitters',
+            fields: [
+                { name: 'name', label: 'Name', placeholder: 'Caregiver name' },
+                { name: 'role', label: 'Role', placeholder: 'Nanny, Babysitter, Grandparent, etc.' },
+                { name: 'phone', label: 'Phone', placeholder: 'Phone number' },
+                { name: 'email', label: 'Email', placeholder: 'Email address' },
+                { name: 'availability', label: 'Availability', placeholder: 'e.g. Weekdays, Evenings, On-call' },
+                { name: 'rate', label: 'Rate', placeholder: 'e.g. $15/hr, Volunteer' },
+                { name: 'notes', label: 'Notes', placeholder: 'CPR certified, allergies aware, etc.', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'daycareInfo', tab: 'childcare',
+            icon: '🧒', title: 'Daycare / Center Info',
+            fields: [
+                { name: 'name', label: 'Center Name', placeholder: 'Daycare or center name' },
+                { name: 'address', label: 'Address', placeholder: 'Street address' },
+                { name: 'phone', label: 'Phone', placeholder: 'Phone number' },
+                { name: 'director', label: 'Director', placeholder: 'Director / manager name' },
+                { name: 'hours', label: 'Hours', placeholder: 'e.g. 6:30 AM – 6:00 PM' },
+                { name: 'cost', label: 'Cost', placeholder: 'e.g. $250/week' },
+                { name: 'notes', label: 'Notes', placeholder: 'Pickup code, policies, closures', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'emergencyContacts', tab: 'childcare',
+            icon: '🚨', title: 'Emergency Contacts',
+            fields: [
+                { name: 'name', label: 'Name', placeholder: 'Contact name' },
+                { name: 'relationship', label: 'Relationship', placeholder: 'e.g. Grandmother, Uncle, Neighbor' },
+                { name: 'phone', label: 'Phone', placeholder: 'Phone number' },
+                { name: 'address', label: 'Address', placeholder: 'Home address' },
+                { name: 'authorized', label: 'Pickup Authorized?', placeholder: 'Yes / No' },
+                { name: 'notes', label: 'Notes', placeholder: 'Backup contact, special instructions', type: 'textarea' }
+            ]
+        },
+        // ── Religion Tab ──
+        {
+            key: 'church', tab: 'religion',
+            icon: '⛪', title: 'Church / Place of Worship',
+            fields: [
+                { name: 'name', label: 'Name', placeholder: 'Church or organization name' },
+                { name: 'denomination', label: 'Denomination', placeholder: 'e.g. Catholic, Baptist, Non-denominational' },
+                { name: 'address', label: 'Address', placeholder: 'Street address' },
+                { name: 'phone', label: 'Phone', placeholder: 'Phone number' },
+                { name: 'pastor', label: 'Pastor / Leader', placeholder: 'Name' },
+                { name: 'serviceTimes', label: 'Service Times', placeholder: 'e.g. Sunday 9 AM & 11 AM' },
+                { name: 'notes', label: 'Notes', placeholder: 'Nursery available, parking, etc.', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'religiousEd', tab: 'religion',
+            icon: '📖', title: 'Religious Education',
+            fields: [
+                { name: 'name', label: 'Program', placeholder: 'e.g. Sunday School, VBS, CCD' },
+                { name: 'day', label: 'Day(s)', placeholder: 'e.g. Sundays, Wednesday evenings' },
+                { name: 'time', label: 'Time', placeholder: 'e.g. 9:00 AM – 10:00 AM' },
+                { name: 'teacher', label: 'Teacher', placeholder: 'Instructor name' },
+                { name: 'notes', label: 'Notes', placeholder: 'Curriculum, milestones, dates', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'sacraments', tab: 'religion',
+            icon: '✝️', title: 'Sacraments & Milestones',
+            fields: [
+                { name: 'name', label: 'Sacrament / Event', placeholder: 'e.g. Baptism, First Communion, Dedication' },
+                { name: 'date', label: 'Date', placeholder: 'MM/DD/YYYY' },
+                { name: 'location', label: 'Location', placeholder: 'Where it took place' },
+                { name: 'officiant', label: 'Officiant', placeholder: 'Who performed it' },
+                { name: 'notes', label: 'Notes', placeholder: 'Godparents, special details', type: 'textarea' }
+            ]
+        },
+        // ── Co-Parent Tab ──
+        {
+            key: 'parentContacts', tab: 'coparent',
+            icon: '📱', title: 'Parent Contact Info',
+            fields: [
+                { name: 'name', label: 'Name', placeholder: 'Parent full name' },
+                { name: 'phone', label: 'Phone', placeholder: 'Phone number' },
+                { name: 'address', label: 'Home Address', placeholder: 'Home address' }
             ]
         }
     ];
@@ -1810,7 +2089,20 @@
             { id: 'tr-2', name: 'Human Metapneumovirus', result: 'Positive', date: '', notes: 'Stridor' }
         ],
         conditions: [],
-        procedures: []
+        procedures: [],
+        schools: [],
+        teachers: [],
+        classSchedules: [],
+        activities: [],
+        classes: [],
+        playgroups: [],
+        caregivers: [],
+        daycareInfo: [],
+        emergencyContacts: [],
+        church: [],
+        religiousEd: [],
+        sacraments: [],
+        parentContacts: []
     };
 
     var infoBank = {};
@@ -1840,73 +2132,103 @@
         } catch(e) { console.error('[InfoBank] Save error:', e); }
     }
 
+    // Info Bank sub-tab switching
+    var currentIbTab = 'medical';
+    document.getElementById('ibSubtabs').addEventListener('click', function(e) {
+        var btn = e.target.closest('.ib-subtab');
+        if (!btn) return;
+        var tab = btn.dataset.ibtab;
+        if (tab === currentIbTab) return;
+        currentIbTab = tab;
+        document.querySelectorAll('.ib-subtab').forEach(function(b) { b.classList.remove('active'); });
+        btn.classList.add('active');
+        document.querySelectorAll('.ib-subtab-content').forEach(function(c) { c.classList.remove('active'); });
+        document.getElementById('ibtab-' + tab).classList.add('active');
+    });
+
     function renderInfoBank() {
-        var container = document.getElementById('infoBankSections');
-        var html = '';
-
+        // Group sections by tab
+        var tabGroups = {};
         infoBankSchema.forEach(function(section) {
-            var items = infoBank[section.key] || [];
-            var isOpen = items.length > 0 ? ' open' : '';
+            var tab = section.tab || 'medical';
+            if (!tabGroups[tab]) tabGroups[tab] = [];
+            tabGroups[tab].push(section);
+        });
 
-            html += '<div class="ib-section' + isOpen + '" data-section="' + section.key + '">';
-            html += '<div class="ib-header">';
-            html += '<div class="ib-header-left">';
-            html += '<span class="ib-icon">' + section.icon + '</span>';
-            html += '<span class="ib-title">' + section.title + '</span>';
-            html += '<span class="ib-count">' + items.length + '</span>';
-            html += '</div>';
-            html += '<div class="ib-header-right">';
-            html += '<button class="ib-add-btn" data-section="' + section.key + '" title="Add"><i class="fa-solid fa-plus"></i></button>';
-            html += '<i class="fa-solid fa-chevron-down ib-chevron"></i>';
-            html += '</div></div>';
+        // Render each tab's content into its container
+        Object.keys(tabGroups).forEach(function(tab) {
+            var container = document.getElementById('ibtab-' + tab);
+            if (!container) return;
+            var html = '';
 
-            html += '<div class="ib-body">';
-            if (items.length === 0) {
-                html += '<div class="ib-empty">No entries yet. Tap + to add.</div>';
-            } else {
-                items.forEach(function(item) {
-                    html += renderInfoRow(section, item);
+            tabGroups[tab].forEach(function(section) {
+                var items = infoBank[section.key] || [];
+                var isOpen = items.length > 0 ? ' open' : '';
+
+                html += '<div class="ib-section' + isOpen + '" data-section="' + section.key + '">';
+                html += '<div class="ib-header">';
+                html += '<div class="ib-header-left">';
+                html += '<span class="ib-icon">' + section.icon + '</span>';
+                html += '<span class="ib-title">' + section.title + '</span>';
+                html += '<span class="ib-count">' + items.length + '</span>';
+                html += '</div>';
+                html += '<div class="ib-header-right">';
+                html += '<button class="ib-add-btn" data-section="' + section.key + '" title="Add"><i class="fa-solid fa-plus"></i></button>';
+                html += '<i class="fa-solid fa-chevron-down ib-chevron"></i>';
+                html += '</div></div>';
+
+                html += '<div class="ib-body">';
+                if (items.length === 0) {
+                    html += '<div class="ib-empty">No entries yet. Tap + to add.</div>';
+                } else {
+                    items.forEach(function(item) {
+                        html += renderInfoRow(section, item);
+                    });
+                }
+                html += '<div class="ib-form-slot" data-section="' + section.key + '"></div>';
+                html += '</div></div>';
+            });
+
+            container.innerHTML = html;
+        });
+
+        // Wire all containers
+        var allContainers = document.querySelectorAll('.ib-subtab-content');
+        allContainers.forEach(function(container) {
+            // Wire toggle
+            container.querySelectorAll('.ib-header').forEach(function(header) {
+                header.addEventListener('click', function(e) {
+                    if (e.target.closest('.ib-add-btn')) return;
+                    this.closest('.ib-section').classList.toggle('open');
                 });
-            }
-            html += '<div class="ib-form-slot" data-section="' + section.key + '"></div>';
-            html += '</div></div>';
-        });
-
-        container.innerHTML = html;
-
-        // Wire toggle
-        container.querySelectorAll('.ib-header').forEach(function(header) {
-            header.addEventListener('click', function(e) {
-                if (e.target.closest('.ib-add-btn')) return;
-                this.closest('.ib-section').classList.toggle('open');
             });
-        });
 
-        // Wire add buttons
-        container.querySelectorAll('.ib-add-btn').forEach(function(btn) {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                var sectionKey = this.dataset.section;
-                var sec = this.closest('.ib-section');
-                sec.classList.add('open');
-                showInfoForm(sectionKey, null);
+            // Wire add buttons
+            container.querySelectorAll('.ib-add-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var sectionKey = this.dataset.section;
+                    var sec = this.closest('.ib-section');
+                    sec.classList.add('open');
+                    showInfoForm(sectionKey, null);
+                });
             });
-        });
 
-        // Wire edit/delete
-        container.querySelectorAll('.ib-edit-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                showInfoForm(this.dataset.section, this.dataset.id);
+            // Wire edit/delete
+            container.querySelectorAll('.ib-edit-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    showInfoForm(this.dataset.section, this.dataset.id);
+                });
             });
-        });
-        container.querySelectorAll('.ib-del-btn').forEach(function(btn) {
-            btn.addEventListener('click', function() {
-                if (!confirm('Delete this entry?')) return;
-                var items = infoBank[this.dataset.section] || [];
-                infoBank[this.dataset.section] = items.filter(function(i) { return i.id !== btn.dataset.id; });
-                renderInfoBank();
-                saveInfoBank();
-                showToast('Entry deleted');
+            container.querySelectorAll('.ib-del-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    if (!confirm('Delete this entry?')) return;
+                    var items = infoBank[this.dataset.section] || [];
+                    infoBank[this.dataset.section] = items.filter(function(i) { return i.id !== btn.dataset.id; });
+                    renderInfoBank();
+                    saveInfoBank();
+                    showToast('Entry deleted');
+                });
             });
         });
     }

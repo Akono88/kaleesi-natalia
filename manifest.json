@@ -1,15 +1,15 @@
 {
-    "name": "Kaleesi Natalia",
+    "name": "Kaleesi Natalia Knopko",
     "short_name": "Kaleesi",
-    "description": "Daily schedule & care tracker for Kaleesi Natalia",
+    "description": "✦ Daily care & schedule tracker for Kaleesi Natalia Knopko ✦",
     "start_url": "/kaleesi-natalia/",
     "scope": "/kaleesi-natalia/",
     "display": "standalone",
-    "background_color": "#f3e8ff",
-    "theme_color": "#7c3aed",
+    "background_color": "#f5eef9",
+    "theme_color": "#C58ACD",
     "icons": [
         {
-            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>👸</text></svg>",
+            "src": "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='80' font-size='80'>🦋</text></svg>",
             "sizes": "any",
             "type": "image/svg+xml",
             "purpose": "any"
