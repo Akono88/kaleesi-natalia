@@ -1085,7 +1085,7 @@
     var SUPABASE_URL = 'https://ynhotsrphuewesdwqcet.supabase.co';
     var SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InluaG90c3JwaHVld2VzZHdxY2V0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU2MzMyNjEsImV4cCI6MjA4MTIwOTI2MX0.nGBRoKiJh2y1BjEZex5CYVY6R-GzAWy7iaPv9r3gs_8';
     var sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-    var VAPID_PUBLIC_KEY = 'BFslLD6EcYoUUcAPbL_tAJEzWvbVcpUAdh8K5eBlrAJgW9MUMtdn8J9on9J0M5xIR8MEgjT1bXmjJMGq5LVXfdI';
+    var VAPID_PUBLIC_KEY = 'BHJuh7KrG2Bj_Y9I60xlvyX3I8KjoQwKLYvgbw49hoqIpZtrKK6gz27LKXMPqrbVFO_Koyj9z0r-qC6GRJCbreU';
     var PUSH_FUNCTION_URL = SUPABASE_URL + '/functions/v1/push-notify';
 
     // ─── Device ID ───
@@ -1827,36 +1827,102 @@
         setTimeout(function() { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; }, 3000);
         setTimeout(function() { t.remove(); }, 3500);
     }
+    var pushSubscription = null;
+
     async function initServiceWorker() {
-        if (!('serviceWorker' in navigator) || !('PushManager' in window)) return;
-        try { await navigator.serviceWorker.register('sw.js'); } catch(e) {}
-        try { swRegistration = await navigator.serviceWorker.ready; } catch(e) { return; }
-        if (!swRegistration) return;
+        if (!('serviceWorker' in navigator) || !('PushManager' in window)) {
+            console.log('[SW] Push not supported');
+            return;
+        }
         try {
-            var pad = '='.repeat((4 - VAPID_PUBLIC_KEY.length % 4) % 4);
-            var b64 = (VAPID_PUBLIC_KEY + pad).replace(/-/g, '+').replace(/_/g, '/');
-            var raw = atob(b64); var arr = new Uint8Array(raw.length);
-            for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
-            var sub = await swRegistration.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: arr });
-            await sb.from('push_subscriptions').upsert({ device_id: DEVICE_ID, subscription: sub.toJSON() }, { onConflict: 'device_id' });
-        } catch(e) {}
+            await navigator.serviceWorker.register('sw.js');
+            swRegistration = await navigator.serviceWorker.ready;
+            console.log('[SW] Ready:', swRegistration.scope);
+            // Check existing push subscription
+            pushSubscription = await swRegistration.pushManager.getSubscription();
+            if (pushSubscription) {
+                console.log('[Push] Already subscribed');
+                await savePushSubscription(pushSubscription);
+            } else if (Notification.permission === 'granted') {
+                // Permission was granted before but no subscription — auto-subscribe
+                console.log('[Push] Permission granted, auto-subscribing...');
+                await subscribeToPush();
+            }
+        } catch(e) { console.error('[SW] Registration failed:', e); }
     }
+
+    async function subscribeToPush() {
+        if (!swRegistration && 'serviceWorker' in navigator) {
+            try {
+                swRegistration = await navigator.serviceWorker.ready;
+            } catch(e) { console.error('[Push] SW not ready:', e); return null; }
+        }
+        if (!swRegistration) { console.error('[Push] No SW registration'); return null; }
+        try {
+            var padding = '='.repeat((4 - VAPID_PUBLIC_KEY.length % 4) % 4);
+            var b64 = (VAPID_PUBLIC_KEY + padding).replace(/-/g, '+').replace(/_/g, '/');
+            var raw = atob(b64);
+            var arr = new Uint8Array(raw.length);
+            for (var i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+
+            pushSubscription = await swRegistration.pushManager.subscribe({
+                userVisibleOnly: true,
+                applicationServerKey: arr
+            });
+            console.log('[Push] Subscribed:', JSON.stringify(pushSubscription));
+            await savePushSubscription(pushSubscription);
+            return pushSubscription;
+        } catch(e) { console.error('[Push] Subscribe failed:', e); return null; }
+    }
+
+    async function savePushSubscription(sub) {
+        if (!sub) return;
+        try {
+            var subJson = sub.toJSON();
+            await sb.from('push_subscriptions').upsert({
+                device_id: DEVICE_ID,
+                subscription: subJson,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'device_id' });
+            console.log('[Push] Subscription saved to DB');
+        } catch(e) { console.error('[Push] Save subscription error:', e); }
+    }
+
     async function sendPushToAll(title, body, tag) {
         try {
-            await fetch(PUSH_FUNCTION_URL, {
+            var resp = await fetch(PUSH_FUNCTION_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + SUPABASE_KEY },
                 body: JSON.stringify({ title: title, body: body, tag: tag || ('kn-' + Date.now()), sender_device: DEVICE_ID })
             });
-        } catch(e) {}
+            var result = await resp.json();
+            console.log('[Push] Sent:', result);
+        } catch(e) { console.error('[Push] Send error:', e); }
     }
+
     function renderNotifBanner() {
-        var b = document.getElementById('notifBanner');
-        if ('Notification' in window && Notification.permission === 'default') {
-            b.style.display = 'block';
-            b.addEventListener('click', async function() {
+        var el = document.getElementById('notifBanner');
+        var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+        var isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
+
+        if (!('Notification' in window) || (isIOS && !isStandalone)) {
+            el.innerHTML = '<div class="notif-banner"><h4>📱 Add to Home Screen First</h4><p>Tap <strong>Share</strong> → <strong>Add to Home Screen</strong>, then open from there to enable push notifications.</p></div>';
+            return;
+        }
+
+        var perm = Notification.permission;
+        if (perm === 'granted') {
+            el.innerHTML = '<div class="notif-banner" style="opacity:0.7;"><h4>🔔 Push Notifications Active</h4><p>You\'ll get real-time alerts even when this app is closed.</p></div>';
+            if (!pushSubscription) subscribeToPush();
+        } else {
+            el.innerHTML = '<div class="notif-banner" id="enableNotifBtn"><h4>🔔 Enable Push Notifications</h4><p>Tap to get real-time alerts on this device — even when the app is closed.</p></div>';
+            document.getElementById('enableNotifBtn').addEventListener('click', async function() {
                 var p = await Notification.requestPermission();
-                if (p === 'granted') { b.style.display = 'none'; await initServiceWorker(); showToast('Notifications on!'); }
+                if (p === 'granted') {
+                    await subscribeToPush();
+                    showToast('🔔 Notifications enabled!');
+                }
+                renderNotifBanner();
             });
         }
     }
