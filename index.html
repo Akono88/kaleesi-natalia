@@ -2068,16 +2068,28 @@
             { id: 'ins-1', name: 'Adam Konopko', policyNum: 'E04050/QMG920941454', memberId: '', notes: '' },
             { id: 'ins-2', name: 'Kaleesi Konopko', policyNum: '69661500600/1749469', memberId: '', notes: '' }
         ],
-        providers: [],
+        providers: [
+            { id: 'prov-1', name: 'Dr. George Skarpathiotis M.D.', specialty: 'Pediatrician', phone: '(708) 923-6300', notes: 'New Lenox Pediatrics & Associates\n400 E Lincoln Hwy, New Lenox, IL 60451\nMon–Thu: 10am–6pm | Fri: 10am–6pm | Sat: 9am–3pm\n\nPalos Office: 7110 W 127th St, Ste 130, Palos Heights, IL 60463\nMon–Thu: 8am–6pm | Fri: 9am–6pm | Sat: 9am–3pm\nFax: 708-923-6303\n\nPatient Portal: mycw34.eclinicalweb.com/portal3682' }
+        ],
         medications: [
             { id: 'med-1', name: 'Dexamethasone', dosage: '', frequency: '', date: '4/28/2025', notes: '' },
             { id: 'med-2', name: 'Albuterol', dosage: '', frequency: 'As needed', date: '4/30/2025', notes: '' },
             { id: 'med-3', name: 'Nystatin topical 100,000 units/g', dosage: '', frequency: '', date: '10/02/2025', notes: '' }
         ],
         immunizations: [
-            { id: 'imm-1', name: 'ENGERIX-B', date: '10/7/2023', notes: '' },
-            { id: 'imm-2', name: 'Recombivax-HB Ped/Adol', date: '11/6/2023', notes: '' },
-            { id: 'imm-3', name: 'PENTACEL', date: '12/27/2023', notes: '' }
+            { id: 'imm-1', name: 'ENGERIX-B', date: '10/07/2023', notes: 'Unknown route' },
+            { id: 'imm-2', name: 'Recombivax-HB Ped/Adol', date: '11/06/2023', notes: 'IM Intramuscular' },
+            { id: 'imm-3', name: 'Pentacel', date: '12/27/2023', notes: 'IM Intramuscular' },
+            { id: 'imm-4', name: 'Prevnar 20', date: '01/24/2024', notes: 'IM Intramuscular' },
+            { id: 'imm-5', name: 'Pentacel', date: '02/06/2024', notes: 'IM Intramuscular' },
+            { id: 'imm-6', name: 'Prevnar 20', date: '03/08/2024', notes: 'IM Intramuscular' },
+            { id: 'imm-7', name: 'Pentacel', date: '04/09/2024', notes: 'IM Intramuscular' },
+            { id: 'imm-8', name: 'Prevnar 20', date: '05/14/2024', notes: 'IM Intramuscular' },
+            { id: 'imm-9', name: 'Varivax', date: '10/08/2024', notes: 'SC Subcutaneous' },
+            { id: 'imm-10', name: 'Pentacel', date: '03/01/2025', notes: 'IM Intramuscular' },
+            { id: 'imm-11', name: 'MMR II', date: '03/08/2025', notes: 'SC Subcutaneous' },
+            { id: 'imm-12', name: 'Prevnar 20', date: '05/17/2025', notes: 'IM Intramuscular' },
+            { id: 'imm-13', name: 'Vaqta Ped/Adol', date: '10/25/2025', notes: 'IM Intramuscular' }
         ],
         incidents: [
             { id: 'inc-1', name: 'Coronavirus (Seasonal)', date: '1/31/2025', notes: '' },
@@ -2098,7 +2110,9 @@
         playgroups: [],
         caregivers: [],
         daycareInfo: [],
-        emergencyContacts: [],
+        emergencyContacts: [
+            { id: 'ec-1', name: 'Adam Konopko', relationship: 'Father', phone: '779-379-0858', address: '', authorized: 'Yes', notes: '' }
+        ],
         church: [],
         religiousEd: [],
         sacraments: [],
