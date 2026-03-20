@@ -589,18 +589,23 @@
 
         /* ═══ INFO BANK SUB-TABS ═══ */
         .ib-subtabs {
-            display: flex; gap: 4px; padding: 0 2px; margin-bottom: 10px;
+            display: flex; flex-wrap: nowrap; gap: 6px; padding: 4px 2px;
+            margin-bottom: 10px; margin-left: -14px; margin-right: -14px;
+            padding-left: 14px; padding-right: 14px;
             overflow-x: auto; -webkit-overflow-scrolling: touch;
-            scrollbar-width: none;
+            scrollbar-width: none; scroll-snap-type: x proximity;
+            mask-image: linear-gradient(90deg, transparent 0%, black 3%, black 92%, transparent 100%);
+            -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 3%, black 92%, transparent 100%);
         }
         .ib-subtabs::-webkit-scrollbar { display: none; }
         .ib-subtab {
-            flex-shrink: 0; padding: 8px 14px; border-radius: 20px;
+            flex: 0 0 auto; padding: 8px 14px; border-radius: 20px;
             font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
             letter-spacing: 0.5px; cursor: pointer; border: 2px solid var(--border);
             background: var(--white); color: var(--text-mid);
             font-family: 'Montserrat', sans-serif; transition: all 0.2s;
             display: flex; align-items: center; gap: 5px;
+            scroll-snap-align: start; white-space: nowrap;
         }
         .ib-subtab .ib-subtab-icon { font-size: 0.85rem; }
         .ib-subtab.active {
