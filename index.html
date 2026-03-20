@@ -537,6 +537,97 @@
             background: var(--purple-glow); border-radius: 12px; cursor: pointer;
             font-size: 0.65rem; font-weight: 700; color: var(--purple-mid); font-family: 'Outfit', sans-serif;
         }
+
+        /* ═══ INFO BANK ═══ */
+        .ib-section {
+            background: var(--white); border-radius: var(--radius); margin-top: 10px;
+            box-shadow: var(--shadow); overflow: hidden;
+        }
+        .ib-header {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 14px; cursor: pointer; user-select: none;
+        }
+        .ib-header-left {
+            display: flex; align-items: center; gap: 8px;
+        }
+        .ib-icon { font-size: 1rem; }
+        .ib-title { font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: var(--text); }
+        .ib-count {
+            font-size: 0.5rem; font-weight: 800; background: var(--purple-whisper);
+            color: var(--purple-mid); padding: 2px 7px; border-radius: 10px;
+        }
+        .ib-header-right { display: flex; align-items: center; gap: 6px; }
+        .ib-add-btn {
+            background: var(--purple-deep); color: white; border: none;
+            width: 26px; height: 26px; border-radius: 50%; font-size: 0.8rem;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+        }
+        .ib-add-btn:active { opacity: 0.8; }
+        .ib-chevron {
+            color: var(--text-light); font-size: 0.6rem; transition: transform 0.2s;
+        }
+        .ib-section.open .ib-chevron { transform: rotate(180deg); }
+        .ib-body {
+            display: none; padding: 0 14px 12px; animation: fadeUp 0.2s ease;
+        }
+        .ib-section.open .ib-body { display: block; }
+        .ib-empty {
+            text-align: center; font-size: 0.65rem; color: var(--text-light);
+            padding: 12px 0; font-style: italic;
+        }
+        .ib-row {
+            display: flex; align-items: center; gap: 8px; padding: 8px 0;
+            border-bottom: 1px solid var(--border); font-size: 0.68rem;
+        }
+        .ib-row:last-child { border-bottom: none; }
+        .ib-row-main { flex: 1; min-width: 0; }
+        .ib-row-name { font-weight: 700; color: var(--text); word-break: break-word; }
+        .ib-row-detail { font-size: 0.55rem; color: var(--text-light); margin-top: 1px; }
+        .ib-row-date {
+            font-size: 0.55rem; font-weight: 700; color: var(--purple-mid);
+            background: var(--purple-whisper); padding: 2px 6px; border-radius: 6px;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .ib-row-actions { display: flex; gap: 4px; flex-shrink: 0; }
+        .ib-edit-btn, .ib-del-btn {
+            background: none; border: none; cursor: pointer; font-size: 0.7rem;
+            width: 26px; height: 26px; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center;
+        }
+        .ib-edit-btn { color: var(--purple-mid); background: var(--purple-whisper); }
+        .ib-edit-btn:active { background: var(--purple-soft); }
+        .ib-del-btn { color: var(--cat-med); background: var(--cat-med-bg); }
+        .ib-del-btn:active { background: #fecaca; }
+
+        /* Info bank edit form (inline) */
+        .ib-form {
+            background: var(--purple-whisper); border-radius: 12px; padding: 10px;
+            margin: 6px 0; animation: fadeUp 0.2s ease;
+        }
+        .ib-form-row { display: flex; gap: 6px; margin-bottom: 6px; }
+        .ib-form-row:last-child { margin-bottom: 0; }
+        .ib-form-row input, .ib-form-row textarea {
+            flex: 1; padding: 8px; border: 1px solid var(--border); border-radius: 8px;
+            font-family: 'Outfit', sans-serif; font-size: 0.72rem; background: var(--white);
+        }
+        .ib-form-row textarea { min-height: 40px; resize: vertical; }
+        .ib-form-actions { display: flex; gap: 6px; justify-content: flex-end; margin-top: 6px; }
+        .ib-form-btn {
+            padding: 7px 14px; border-radius: 10px; font-size: 0.65rem; font-weight: 700;
+            cursor: pointer; border: none; font-family: 'Outfit', sans-serif;
+        }
+        .ib-form-btn.save { background: var(--purple-deep); color: white; }
+        .ib-form-btn.cancel { background: var(--white); color: var(--text-mid); border: 1px solid var(--border); }
+
+        /* Status badges */
+        .ib-status {
+            font-size: 0.45rem; font-weight: 800; padding: 2px 5px; border-radius: 5px;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        .ib-status.active { background: var(--safe-bg); color: var(--safe-text); }
+        .ib-status.inactive { background: var(--border); color: var(--text-light); }
+        .ib-status.positive { background: var(--cat-med-bg); color: var(--cat-med); }
+        .ib-status.negative { background: var(--safe-bg); color: var(--safe-text); }
     </style>
 </head>
 <body>
@@ -668,6 +759,11 @@
             </div>
         </div>
 
+        <!-- ═══════════ TAB: INFO BANK ═══════════ -->
+        <div class="tab-view" id="tab-info">
+            <div id="infoBankSections"></div>
+        </div>
+
         <!-- ═══════════ TAB: LOG ═══════════ -->
         <div class="tab-view" id="tab-log">
             <div class="card">
@@ -681,6 +777,7 @@
     <div class="bottom-nav">
         <button class="nav-btn active" data-tab="tab-actions"><i class="fa-solid fa-bolt"></i><span>ACTIONS</span></button>
         <button class="nav-btn" data-tab="tab-calendar"><i class="fa-solid fa-calendar-days"></i><span>CALENDAR</span></button>
+        <button class="nav-btn" data-tab="tab-info"><i class="fa-solid fa-folder-open"></i><span>INFO</span></button>
         <button class="nav-btn" data-tab="tab-care"><i class="fa-solid fa-heart-pulse"></i><span>CARE</span></button>
         <button class="nav-btn" data-tab="tab-log"><i class="fa-solid fa-clock-rotate-left"></i><span>LOG</span></button>
     </div>
@@ -1529,6 +1626,10 @@
                 logEntries = Array.isArray(c.entries) ? c.entries : [];
                 renderLog();
             }
+            if (p.new.id === INFO_BANK_ID && c.data) {
+                infoBank = c.data;
+                renderInfoBank();
+            }
         }).subscribe();
         sb.channel('custody-sync').on('postgres_changes', { event: '*', schema: 'public', table: 'schedule' }, function(p) {
             if (p.new && p.new.data) { custodySchedule = p.new.data; renderCalendar(); }
@@ -1589,6 +1690,327 @@
     }
 
     // ═══════════════════════════════════════
+    //  INFO BANK
+    // ═══════════════════════════════════════
+    var INFO_BANK_ID = 'kaleesi-infobank';
+
+    var infoBankSchema = [
+        {
+            key: 'insurance',
+            icon: '🛡️',
+            title: 'Insurance',
+            fields: [
+                { name: 'name', label: 'Name', placeholder: 'Policy holder name' },
+                { name: 'policyNum', label: 'Policy #', placeholder: 'Policy number' },
+                { name: 'memberId', label: 'Member ID', placeholder: 'Member ID' },
+                { name: 'notes', label: 'Notes', placeholder: 'Group, phone, etc.', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'providers',
+            icon: '👨‍⚕️',
+            title: 'Health Providers',
+            fields: [
+                { name: 'name', label: 'Name', placeholder: 'Doctor name' },
+                { name: 'specialty', label: 'Specialty', placeholder: 'Pediatrician, ENT, etc.' },
+                { name: 'phone', label: 'Phone', placeholder: 'Phone number' },
+                { name: 'notes', label: 'Notes', placeholder: 'Office address, hours, etc.', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'medications',
+            icon: '💊',
+            title: 'Medications',
+            fields: [
+                { name: 'name', label: 'Medication', placeholder: 'Medication name' },
+                { name: 'dosage', label: 'Dosage', placeholder: 'e.g. 6.5 mL, 100mg' },
+                { name: 'frequency', label: 'Frequency', placeholder: 'e.g. 2x daily, as needed' },
+                { name: 'date', label: 'Start Date', placeholder: 'MM/DD/YYYY' },
+                { name: 'notes', label: 'Notes', placeholder: 'Instructions, pharmacy, etc.', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'immunizations',
+            icon: '💉',
+            title: 'Immunizations',
+            fields: [
+                { name: 'name', label: 'Vaccine', placeholder: 'Vaccine name' },
+                { name: 'date', label: 'Date Given', placeholder: 'MM/DD/YYYY' },
+                { name: 'notes', label: 'Notes', placeholder: 'Dose #, location, etc.', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'incidents',
+            icon: '🏥',
+            title: 'Incidents & Illness',
+            fields: [
+                { name: 'name', label: 'Incident', placeholder: 'What happened' },
+                { name: 'date', label: 'Date', placeholder: 'MM/DD/YYYY' },
+                { name: 'notes', label: 'Details', placeholder: 'Treatment, outcome, etc.', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'testResults',
+            icon: '🧪',
+            title: 'Test Results',
+            fields: [
+                { name: 'name', label: 'Test', placeholder: 'Test name' },
+                { name: 'result', label: 'Result', placeholder: 'Positive, Negative, value' },
+                { name: 'date', label: 'Date', placeholder: 'MM/DD/YYYY' },
+                { name: 'notes', label: 'Notes', placeholder: 'Doctor remarks, follow-up', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'conditions',
+            icon: '📋',
+            title: 'Health Conditions',
+            fields: [
+                { name: 'name', label: 'Condition', placeholder: 'Condition name' },
+                { name: 'status', label: 'Status', placeholder: 'Active, Resolved, Monitoring' },
+                { name: 'notes', label: 'Notes', placeholder: 'Treatment plan, triggers', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'procedures',
+            icon: '🔧',
+            title: 'Procedures',
+            fields: [
+                { name: 'name', label: 'Procedure', placeholder: 'Procedure name' },
+                { name: 'date', label: 'Date', placeholder: 'MM/DD/YYYY' },
+                { name: 'provider', label: 'Provider', placeholder: 'Doctor / facility' },
+                { name: 'notes', label: 'Notes', placeholder: 'Outcome, recovery, etc.', type: 'textarea' }
+            ]
+        }
+    ];
+
+    // Default data from screenshot
+    var defaultInfoBank = {
+        insurance: [
+            { id: 'ins-1', name: 'Adam Konopko', policyNum: 'E04050/QMG920941454', memberId: '', notes: '' },
+            { id: 'ins-2', name: 'Kaleesi Konopko', policyNum: '69661500600/1749469', memberId: '', notes: '' }
+        ],
+        providers: [],
+        medications: [
+            { id: 'med-1', name: 'Dexamethasone', dosage: '', frequency: '', date: '4/28/2025', notes: '' },
+            { id: 'med-2', name: 'Albuterol', dosage: '', frequency: 'As needed', date: '4/30/2025', notes: '' },
+            { id: 'med-3', name: 'Nystatin topical 100,000 units/g', dosage: '', frequency: '', date: '10/02/2025', notes: '' }
+        ],
+        immunizations: [
+            { id: 'imm-1', name: 'ENGERIX-B', date: '10/7/2023', notes: '' },
+            { id: 'imm-2', name: 'Recombivax-HB Ped/Adol', date: '11/6/2023', notes: '' },
+            { id: 'imm-3', name: 'PENTACEL', date: '12/27/2023', notes: '' }
+        ],
+        incidents: [
+            { id: 'inc-1', name: 'Coronavirus (Seasonal)', date: '1/31/2025', notes: '' },
+            { id: 'inc-2', name: 'Influenza A/H12009', date: '1/31/2025', notes: '' },
+            { id: 'inc-3', name: 'Coronavirus (Seasonal)', date: '2/19/2025', notes: '' }
+        ],
+        testResults: [
+            { id: 'tr-1', name: 'Flu', result: 'Negative', date: '4/26/2025', notes: '' },
+            { id: 'tr-2', name: 'Human Metapneumovirus', result: 'Positive', date: '', notes: 'Stridor' }
+        ],
+        conditions: [],
+        procedures: []
+    };
+
+    var infoBank = {};
+
+    async function loadInfoBank() {
+        try {
+            var res = await sb.from('kaleesi_data').select('content').eq('id', INFO_BANK_ID).single();
+            if (res.data && res.data.content && res.data.content.data) {
+                infoBank = res.data.content.data;
+            } else {
+                infoBank = JSON.parse(JSON.stringify(defaultInfoBank));
+                await saveInfoBank();
+            }
+        } catch(e) {
+            infoBank = JSON.parse(JSON.stringify(defaultInfoBank));
+        }
+        renderInfoBank();
+    }
+
+    async function saveInfoBank() {
+        try {
+            await sb.from('kaleesi_data').upsert({
+                id: INFO_BANK_ID,
+                content: { data: infoBank },
+                updated_at: new Date().toISOString()
+            });
+        } catch(e) { console.error('[InfoBank] Save error:', e); }
+    }
+
+    function renderInfoBank() {
+        var container = document.getElementById('infoBankSections');
+        var html = '';
+
+        infoBankSchema.forEach(function(section) {
+            var items = infoBank[section.key] || [];
+            var isOpen = items.length > 0 ? ' open' : '';
+
+            html += '<div class="ib-section' + isOpen + '" data-section="' + section.key + '">';
+            html += '<div class="ib-header">';
+            html += '<div class="ib-header-left">';
+            html += '<span class="ib-icon">' + section.icon + '</span>';
+            html += '<span class="ib-title">' + section.title + '</span>';
+            html += '<span class="ib-count">' + items.length + '</span>';
+            html += '</div>';
+            html += '<div class="ib-header-right">';
+            html += '<button class="ib-add-btn" data-section="' + section.key + '" title="Add"><i class="fa-solid fa-plus"></i></button>';
+            html += '<i class="fa-solid fa-chevron-down ib-chevron"></i>';
+            html += '</div></div>';
+
+            html += '<div class="ib-body">';
+            if (items.length === 0) {
+                html += '<div class="ib-empty">No entries yet. Tap + to add.</div>';
+            } else {
+                items.forEach(function(item) {
+                    html += renderInfoRow(section, item);
+                });
+            }
+            html += '<div class="ib-form-slot" data-section="' + section.key + '"></div>';
+            html += '</div></div>';
+        });
+
+        container.innerHTML = html;
+
+        // Wire toggle
+        container.querySelectorAll('.ib-header').forEach(function(header) {
+            header.addEventListener('click', function(e) {
+                if (e.target.closest('.ib-add-btn')) return;
+                this.closest('.ib-section').classList.toggle('open');
+            });
+        });
+
+        // Wire add buttons
+        container.querySelectorAll('.ib-add-btn').forEach(function(btn) {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                var sectionKey = this.dataset.section;
+                var sec = this.closest('.ib-section');
+                sec.classList.add('open');
+                showInfoForm(sectionKey, null);
+            });
+        });
+
+        // Wire edit/delete
+        container.querySelectorAll('.ib-edit-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                showInfoForm(this.dataset.section, this.dataset.id);
+            });
+        });
+        container.querySelectorAll('.ib-del-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                if (!confirm('Delete this entry?')) return;
+                var items = infoBank[this.dataset.section] || [];
+                infoBank[this.dataset.section] = items.filter(function(i) { return i.id !== btn.dataset.id; });
+                renderInfoBank();
+                saveInfoBank();
+                showToast('Entry deleted');
+            });
+        });
+    }
+
+    function renderInfoRow(section, item) {
+        var name = item.name || item.policyNum || 'Untitled';
+        var details = [];
+
+        section.fields.forEach(function(f) {
+            if (f.name === 'name' || !item[f.name]) return;
+            if (f.name === 'notes' && item[f.name]) {
+                details.push(item[f.name]);
+            } else if (f.name !== 'date') {
+                details.push(f.label + ': ' + item[f.name]);
+            }
+        });
+
+        var dateStr = item.date || '';
+
+        var html = '<div class="ib-row">';
+        html += '<div class="ib-row-main">';
+        html += '<div class="ib-row-name">' + escHtml(name) + '</div>';
+        if (details.length > 0) {
+            html += '<div class="ib-row-detail">' + escHtml(details.join(' · ')) + '</div>';
+        }
+        html += '</div>';
+        if (dateStr) html += '<div class="ib-row-date">' + escHtml(dateStr) + '</div>';
+        if (item.result) {
+            var rClass = item.result.toLowerCase().indexOf('pos') >= 0 ? 'positive' : 'negative';
+            html += '<span class="ib-status ' + rClass + '">' + escHtml(item.result) + '</span>';
+        }
+        if (item.status) {
+            var sClass = item.status.toLowerCase() === 'active' ? 'active' : 'inactive';
+            html += '<span class="ib-status ' + sClass + '">' + escHtml(item.status) + '</span>';
+        }
+        html += '<div class="ib-row-actions">';
+        html += '<button class="ib-edit-btn" data-section="' + section.key + '" data-id="' + item.id + '"><i class="fa-solid fa-pen"></i></button>';
+        html += '<button class="ib-del-btn" data-section="' + section.key + '" data-id="' + item.id + '"><i class="fa-solid fa-trash"></i></button>';
+        html += '</div></div>';
+        return html;
+    }
+
+    function escHtml(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+
+    function showInfoForm(sectionKey, editId) {
+        var schema = infoBankSchema.find(function(s) { return s.key === sectionKey; });
+        if (!schema) return;
+
+        var existing = editId ? (infoBank[sectionKey] || []).find(function(i) { return i.id === editId; }) : null;
+        var slot = document.querySelector('.ib-form-slot[data-section="' + sectionKey + '"]');
+
+        var html = '<div class="ib-form">';
+        schema.fields.forEach(function(f) {
+            var val = existing ? (existing[f.name] || '') : '';
+            html += '<div class="ib-form-row">';
+            if (f.type === 'textarea') {
+                html += '<textarea data-field="' + f.name + '" placeholder="' + f.placeholder + '">' + escHtml(val) + '</textarea>';
+            } else {
+                html += '<input type="text" data-field="' + f.name + '" placeholder="' + f.placeholder + '" value="' + escHtml(val) + '">';
+            }
+            html += '</div>';
+        });
+        html += '<div class="ib-form-actions">';
+        html += '<button class="ib-form-btn cancel">Cancel</button>';
+        html += '<button class="ib-form-btn save">' + (editId ? 'Update' : 'Add') + '</button>';
+        html += '</div></div>';
+
+        slot.innerHTML = html;
+
+        // Scroll to form
+        setTimeout(function() { slot.scrollIntoView({ behavior: 'smooth', block: 'center' }); }, 100);
+
+        // Focus first input
+        var firstInput = slot.querySelector('input, textarea');
+        if (firstInput) setTimeout(function() { firstInput.focus(); }, 150);
+
+        slot.querySelector('.cancel').addEventListener('click', function() { slot.innerHTML = ''; });
+        slot.querySelector('.save').addEventListener('click', function() {
+            var data = {};
+            slot.querySelectorAll('[data-field]').forEach(function(el) {
+                data[el.dataset.field] = el.value.trim();
+            });
+            if (!data.name && !data.policyNum) { showToast('Please fill in the name'); return; }
+
+            if (!infoBank[sectionKey]) infoBank[sectionKey] = [];
+
+            if (editId) {
+                var idx = infoBank[sectionKey].findIndex(function(i) { return i.id === editId; });
+                if (idx >= 0) {
+                    data.id = editId;
+                    infoBank[sectionKey][idx] = data;
+                }
+            } else {
+                data.id = sectionKey.slice(0,3) + '-' + Date.now();
+                infoBank[sectionKey].push(data);
+            }
+
+            renderInfoBank();
+            saveInfoBank();
+            showToast(editId ? 'Updated!' : 'Added!');
+        });
+    }
+
+    // ═══════════════════════════════════════
     //  INIT
     // ═══════════════════════════════════════
     (async function() {
@@ -1599,6 +2021,7 @@
         } catch(e) {}
         await loadActions();
         await loadLog();
+        await loadInfoBank();
         renderSafeHarbor();
         renderNotifBanner();
         startRealtime();
