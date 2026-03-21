@@ -742,6 +742,10 @@
             max-height: 300px; overflow-y: auto;
         }
         .export-preview.visible { display: block; animation: fadeUp 0.2s ease; }
+        .export-toggles { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+        .export-toggle { display: flex; align-items: center; gap: 4px; font-size: 0.6rem; color: var(--text); cursor: pointer; background: var(--purple-whisper); border: 1px solid var(--border); border-radius: 20px; padding: 4px 10px; transition: all 0.2s; user-select: none; }
+        .export-toggle input { accent-color: var(--purple-deep); width: 14px; height: 14px; margin: 0; }
+        .export-toggle.checked { background: rgba(197,138,205,0.15); border-color: var(--purple-deep); }
     </style>
 </head>
 <body>
@@ -1298,6 +1302,23 @@
         sendPushToAll(c.emoji + ' ' + c.label, entry.time + ' — ' + displayText, 'action-' + entry.id);
         addLog(activeFormCat, notifText);
 
+        // Auto-archive milestones to Info Bank
+        if (activeFormCat === 'milestone') {
+            if (!infoBank.milestones) infoBank.milestones = [];
+            var now = new Date();
+            var cstStr = now.toLocaleString('en-US', { timeZone: 'America/Chicago' });
+            var cstNow = new Date(cstStr);
+            infoBank.milestones.push({
+                id: 'ms-' + Date.now(),
+                name: displayText,
+                date: (cstNow.getMonth()+1) + '/' + cstNow.getDate() + '/' + cstNow.getFullYear(),
+                time: entry.time,
+                notes: ''
+            });
+            saveInfoBank();
+            renderInfoBank();
+        }
+
         // Close form
         document.getElementById('quickForm').classList.remove('active');
         activeFormCat = null;
@@ -1520,9 +1541,14 @@
         container.querySelectorAll('.tl-delete').forEach(function(btn) {
             btn.addEventListener('click', function() {
                 var id = this.dataset.id;
+                var removed = actions.find(function(a) { return a.id === id; });
                 actions = actions.filter(function(a) { return a.id !== id; });
                 renderTimeline();
                 saveActions();
+                if (removed) {
+                    var rc = categories[removed.cat] || { emoji: '🗑️', label: removed.cat };
+                    sendPushToAll('🗑️ Entry Removed', rc.emoji + ' ' + (removed.text || rc.label) + ' deleted', 'del-' + Date.now());
+                }
                 showToast('Entry removed');
             });
         });
@@ -1730,7 +1756,9 @@
             else if (p === '2-2-3') { var c = (d-1)%14; custodySchedule[ds].parent = c<2?'adam':c<4?'marta':c<7?'adam':c<9?'marta':c<11?'adam':'marta'; }
             else if (p === 'weekday-weekend') custodySchedule[ds].parent = (dow===0||dow===6) ? 'marta' : 'adam';
         }
-        renderCalendar(); saveCustodySchedule(); showToast('Pattern applied!');
+        renderCalendar(); saveCustodySchedule();
+        sendPushToAll('📅 Custody Pattern Applied', p + ' pattern set for ' + (calMonth+1) + '/' + calYear, 'cust-pattern-' + Date.now());
+        showToast('Pattern applied!');
     }
 
     // Calendar day edit modal
@@ -1772,13 +1800,22 @@
         if (!Object.keys(custodySchedule[calSelectedDate]).length) delete custodySchedule[calSelectedDate];
         renderCalendar(); if (calSelected) showCalDetail(calSelected);
         document.getElementById('calDayModal').classList.remove('active');
-        await saveCustodySchedule(); showToast('Saved!');
+        await saveCustodySchedule();
+        var parentName = custodySchedule[calSelectedDate] && custodySchedule[calSelectedDate].parent;
+        if (parentName) {
+            sendPushToAll('📅 Custody Updated', calSelectedDate + ' assigned to ' + parentName.charAt(0).toUpperCase() + parentName.slice(1), 'cust-' + Date.now());
+        } else {
+            sendPushToAll('📅 Custody Updated', calSelectedDate + ' schedule updated', 'cust-' + Date.now());
+        }
+        showToast('Saved!');
     });
     document.getElementById('clearCalDay').addEventListener('click', async function() {
         delete custodySchedule[calSelectedDate]; renderCalendar();
         document.getElementById('calDayModal').classList.remove('active');
         document.getElementById('calDetail').innerHTML = '<div class="cal-empty">Tap a date.</div>';
-        await saveCustodySchedule(); showToast('Cleared');
+        await saveCustodySchedule();
+        sendPushToAll('📅 Custody Cleared', calSelectedDate + ' custody cleared', 'cust-clr-' + Date.now());
+        showToast('Cleared');
     });
     function addCalNote(t) { var ta = document.getElementById('calDayNotes'); ta.value = ta.value ? ta.value + '\n' + t : t; }
     window.addCalNote = addCalNote;
@@ -2016,6 +2053,16 @@
                 { name: 'date', label: 'Date', placeholder: 'MM/DD/YYYY' },
                 { name: 'provider', label: 'Provider', placeholder: 'Doctor / facility' },
                 { name: 'notes', label: 'Notes', placeholder: 'Outcome, recovery, etc.', type: 'textarea' }
+            ]
+        },
+        {
+            key: 'milestones', tab: 'medical',
+            icon: '⭐', title: 'Milestones',
+            fields: [
+                { name: 'name', label: 'Milestone', placeholder: 'e.g. First word, First steps' },
+                { name: 'date', label: 'Date', placeholder: 'MM/DD/YYYY' },
+                { name: 'time', label: 'Time', placeholder: 'e.g. 2:30 PM' },
+                { name: 'notes', label: 'Notes', placeholder: 'Details, context, reaction', type: 'textarea' }
             ]
         },
         // ── Education Tab ──
@@ -2298,7 +2345,15 @@
                 html += '<div class="export-card">';
                 html += '<div class="export-card-header">';
                 html += '<div><span class="export-card-icon">📋</span><span class="export-card-title">Daily Care Summary</span></div>';
-                html += '<span class="export-card-sub">Export feeding, meds & sleep for co-parent</span>';
+                html += '<span class="export-card-sub">Select categories to include in the export</span>';
+                html += '</div>';
+                html += '<div class="export-toggles">';
+                html += '<label class="export-toggle checked"><input type="checkbox" class="export-cat-cb" data-cat="feed" checked> 🍼 Feeding</label>';
+                html += '<label class="export-toggle checked"><input type="checkbox" class="export-cat-cb" data-cat="med" checked> 💊 Meds</label>';
+                html += '<label class="export-toggle checked"><input type="checkbox" class="export-cat-cb" data-cat="sleep" checked> 😴 Sleep</label>';
+                html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="note"> 📝 Notes</label>';
+                html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="milestone"> ⭐ Milestones</label>';
+                html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="tantrum"> 🌋 Tantrums</label>';
                 html += '</div>';
                 html += '<button class="export-btn" id="exportDailySummary"><i class="fa-solid fa-copy"></i> Copy Today\'s Summary</button>';
                 html += '<div class="export-preview" id="exportPreview"></div>';
@@ -2381,9 +2436,22 @@
         if (exportBtn) {
             exportBtn.addEventListener('click', exportDailySummary);
         }
+        // Wire export category toggle styling
+        document.querySelectorAll('.export-cat-cb').forEach(function(cb) {
+            cb.addEventListener('change', function() {
+                this.closest('.export-toggle').classList.toggle('checked', this.checked);
+            });
+        });
     }
 
     function exportDailySummary() {
+        // Get selected categories from checkboxes
+        var selectedCats = [];
+        document.querySelectorAll('.export-cat-cb:checked').forEach(function(cb) {
+            selectedCats.push(cb.dataset.cat);
+        });
+        if (selectedCats.length === 0) { showToast('Select at least one category'); return; }
+
         var now = new Date();
         var cstStr = now.toLocaleString('en-US', { timeZone: 'America/Chicago' });
         var cstDate = new Date(cstStr);
@@ -2395,8 +2463,13 @@
             weekday: 'long', year: 'numeric', month: 'long', day: 'numeric', timeZone: 'America/Chicago'
         });
 
-        // Get today's log entries
-        var todayEntries = (logEntries || []).filter(function(e) {
+        // Get today's actions from timeline
+        var todayActions = (actions || []).filter(function(a) {
+            return a.date === todayKey;
+        });
+
+        // Also check log entries as fallback
+        var todayLog = (logEntries || []).filter(function(e) {
             if (!e.time) return false;
             var entryDate = new Date(e.time);
             var entryCST = entryDate.toLocaleString('en-US', { timeZone: 'America/Chicago' });
@@ -2407,25 +2480,23 @@
             return ek === todayKey;
         });
 
-        // Filter to feed, med, sleep only (support both 'cat' and 'type' keys)
-        var relevant = todayEntries.filter(function(e) {
-            var c = e.cat || e.type || '';
-            return c === 'feed' || c === 'med' || c === 'sleep';
-        });
-
-        // Sort by time
-        relevant.sort(function(a, b) {
-            return new Date(a.time) - new Date(b.time);
-        });
-
         // Helper to get display text from an entry
         function getEntryText(e) {
-            // Use msg field (strip leading emoji + space)
+            if (e.text) return e.time ? e.time + ' — ' + e.text : e.text;
             if (e.msg) return e.msg.replace(/^[\u{1F000}-\u{1FFFF}]\s*/u, '').replace(/^[^\w]*\s*/, '');
-            if (e.text) return e.text;
             if (e.chipLabel) return e.chipLabel + (e.amount ? ' — ' + e.amount : '') + (e.notes ? ' — ' + e.notes : '');
             return '';
         }
+
+        // Category config for export
+        var catConfig = {
+            feed: { emoji: '🍼', title: 'FEEDING' },
+            med: { emoji: '💊', title: 'MEDICATIONS' },
+            sleep: { emoji: '😴', title: 'SLEEP' },
+            note: { emoji: '📝', title: 'NOTES' },
+            milestone: { emoji: '⭐', title: 'MILESTONES' },
+            tantrum: { emoji: '🌋', title: 'TANTRUMS' }
+        };
 
         // Build summary
         var lines = [];
@@ -2433,36 +2504,28 @@
         lines.push('📅 ' + todayLabel);
         lines.push('');
 
-        var feeds = relevant.filter(function(e) { return (e.cat || e.type) === 'feed'; });
-        var meds = relevant.filter(function(e) { return (e.cat || e.type) === 'med'; });
-        var sleeps = relevant.filter(function(e) { return (e.cat || e.type) === 'sleep'; });
+        var hasAny = false;
+        selectedCats.forEach(function(cat) {
+            var cfg = catConfig[cat];
+            if (!cfg) return;
+            // Get from timeline actions first
+            var items = todayActions.filter(function(a) { return a.cat === cat; });
+            // Fallback to log entries
+            if (items.length === 0) {
+                items = todayLog.filter(function(e) { return (e.cat || e.type) === cat; });
+            }
+            if (items.length > 0) {
+                hasAny = true;
+                lines.push(cfg.emoji + ' ' + cfg.title);
+                items.forEach(function(e) {
+                    lines.push('  \u2022 ' + getEntryText(e));
+                });
+                lines.push('');
+            }
+        });
 
-        if (feeds.length > 0) {
-            lines.push('🍼 FEEDING');
-            feeds.forEach(function(e) {
-                lines.push('  • ' + getEntryText(e));
-            });
-            lines.push('');
-        }
-
-        if (meds.length > 0) {
-            lines.push('💊 MEDICATIONS');
-            meds.forEach(function(e) {
-                lines.push('  • ' + getEntryText(e));
-            });
-            lines.push('');
-        }
-
-        if (sleeps.length > 0) {
-            lines.push('😴 SLEEP');
-            sleeps.forEach(function(e) {
-                lines.push('  • ' + getEntryText(e));
-            });
-            lines.push('');
-        }
-
-        if (feeds.length === 0 && meds.length === 0 && sleeps.length === 0) {
-            lines.push('No feeding, medication, or sleep entries logged yet today.');
+        if (!hasAny) {
+            lines.push('No entries logged yet today for the selected categories.');
             lines.push('');
         }
 
