@@ -746,6 +746,33 @@
         .export-toggle { display: flex; align-items: center; gap: 4px; font-size: 0.6rem; color: var(--text); cursor: pointer; background: var(--purple-whisper); border: 1px solid var(--border); border-radius: 20px; padding: 4px 10px; transition: all 0.2s; user-select: none; }
         .export-toggle input { accent-color: var(--purple-deep); width: 14px; height: 14px; margin: 0; }
         .export-toggle.checked { background: rgba(197,138,205,0.15); border-color: var(--purple-deep); }
+
+        /* View a Day */
+        .day-picker { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+        .day-picker-btn {
+            padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border);
+            background: var(--purple-whisper); font-size: 0.6rem; font-weight: 700;
+            color: var(--text-mid); cursor: pointer; font-family: 'Montserrat', sans-serif;
+            transition: all 0.2s;
+        }
+        .day-picker-btn.active, .day-picker-btn:active {
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid));
+            color: white; border-color: var(--purple-deep);
+        }
+        .day-picker-date {
+            padding: 5px 10px; border-radius: 20px; border: 1px solid var(--border);
+            background: var(--white); font-size: 0.6rem; font-family: 'Montserrat', sans-serif;
+            color: var(--text); cursor: pointer; font-weight: 600;
+        }
+        .day-picker-label {
+            font-size: 0.6rem; color: var(--text-light); font-weight: 600;
+            font-family: 'Montserrat', sans-serif; margin-left: 2px;
+        }
+        .viewing-date-banner {
+            text-align: center; font-size: 0.65rem; font-weight: 700;
+            color: var(--purple-mid); padding: 6px 0; margin-bottom: 4px;
+            font-family: 'Montserrat', sans-serif;
+        }
     </style>
 </head>
 <body>
@@ -777,11 +804,18 @@
 
             <div class="card">
                 <div style="display:flex;align-items:center;justify-content:space-between;">
-                    <div class="card-label" style="margin-bottom:0;"><i class="fa-solid fa-timeline"></i> TODAY'S TIMELINE</div>
+                    <div class="card-label" style="margin-bottom:0;" id="timelineLabel"><i class="fa-solid fa-timeline"></i> TODAY'S TIMELINE</div>
                     <div class="schedule-toggle">
                         <input type="checkbox" id="showSchedule" checked>
                         <label for="showSchedule">Guide</label>
                     </div>
+                </div>
+                <div class="day-picker" style="margin-top:8px;">
+                    <button class="day-picker-btn" id="dayYesterday">Yesterday</button>
+                    <button class="day-picker-btn active" id="dayToday">Today</button>
+                    <button class="day-picker-btn" id="dayTomorrow">Tomorrow</button>
+                    <input type="date" class="day-picker-date" id="dayCustom">
+                    <span class="day-picker-label" id="dayPickerLabel"></span>
                 </div>
                 <div class="timeline" id="timeline" style="margin-top:8px;"></div>
             </div>
@@ -1155,6 +1189,7 @@
     // ─── CST Helpers ───
     function getCSTNow() { return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })); }
     function getCSTDate() { var d = getCSTNow(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+    var viewingDate = null; // null = today (live)
     function getCSTTimeStr() { var d = getCSTNow(); var h = d.getHours(); var m = String(d.getMinutes()).padStart(2,'0'); var ap = h >= 12 ? 'PM' : 'AM'; if (h === 0) h = 12; else if (h > 12) h -= 12; return h + ':' + m + ' ' + ap; }
     function getCSTTime24() { var d = getCSTNow(); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
     function formatDateNice(ds) { var p = ds.split('-'); return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])).toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' }); }
@@ -1465,21 +1500,63 @@
     // ═══════════════════════════════════════
     //  TIMELINE RENDERING
     // ═══════════════════════════════════════
+    function getViewDate() { return viewingDate || getCSTDate(); }
+    function isViewingToday() { return !viewingDate || viewingDate === getCSTDate(); }
+
+    function setViewingDate(dateStr) {
+        viewingDate = (dateStr === getCSTDate()) ? null : dateStr;
+        // Update button states
+        var today = getCSTDate();
+        var yesterday = (function() { var d = getCSTNow(); d.setDate(d.getDate()-1); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); })();
+        var tomorrow = (function() { var d = getCSTNow(); d.setDate(d.getDate()+1); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); })();
+        var vd = getViewDate();
+        document.getElementById('dayYesterday').classList.toggle('active', vd === yesterday);
+        document.getElementById('dayToday').classList.toggle('active', vd === today);
+        document.getElementById('dayTomorrow').classList.toggle('active', vd === tomorrow);
+        document.getElementById('dayCustom').value = vd;
+        // Update label
+        var label = document.getElementById('timelineLabel');
+        if (isViewingToday()) {
+            label.innerHTML = '<i class="fa-solid fa-timeline"></i> TODAY\'S TIMELINE';
+            document.getElementById('dayPickerLabel').textContent = '';
+        } else {
+            label.innerHTML = '<i class="fa-solid fa-timeline"></i> TIMELINE';
+            document.getElementById('dayPickerLabel').textContent = formatDateNice(vd);
+        }
+        renderTimeline();
+    }
+
+    // Day picker buttons
+    document.getElementById('dayYesterday').addEventListener('click', function() {
+        var d = getCSTNow(); d.setDate(d.getDate()-1);
+        setViewingDate(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
+    });
+    document.getElementById('dayToday').addEventListener('click', function() { setViewingDate(getCSTDate()); });
+    document.getElementById('dayTomorrow').addEventListener('click', function() {
+        var d = getCSTNow(); d.setDate(d.getDate()+1);
+        setViewingDate(d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'));
+    });
+    document.getElementById('dayCustom').addEventListener('change', function() {
+        if (this.value) setViewingDate(this.value);
+    });
+
     function renderTimeline() {
         var container = document.getElementById('timeline');
         var showGuide = document.getElementById('showSchedule').checked;
+        var vDate = getViewDate();
+        var isToday = isViewingToday();
         var nowMin = (function() { var d = getCSTNow(); return d.getHours() * 60 + d.getMinutes(); })();
 
         // Build combined timeline items
         var items = [];
 
-        // Add actual actions
+        // Add actual actions for the viewed date
         actions.forEach(function(a) {
-            if (a.date !== getCSTDate()) return;
+            if (a.date !== vDate) return;
             items.push({ type: 'action', min: timeToMinutes(a.time), data: a });
         });
 
-        // Add schedule guide markers
+        // Add schedule guide markers (always show — it's the daily schedule template)
         if (showGuide) {
             safeHarborSchedule.forEach(function(s) {
                 items.push({ type: 'guide', min: timeToMinutes(s.time), data: s });
@@ -1489,12 +1566,11 @@
         // Sort by time
         items.sort(function(a, b) {
             if (a.min !== b.min) return a.min - b.min;
-            // Actions before guides at same time
             return a.type === 'action' ? -1 : 1;
         });
 
         if (items.length === 0) {
-            container.innerHTML = '<div class="timeline-empty">Tap a category above to log your first entry today.</div>';
+            container.innerHTML = '<div class="timeline-empty">' + (isToday ? 'Tap a category above to log your first entry today.' : 'No entries logged for ' + formatDateNice(vDate) + '.') + '</div>';
             return;
         }
 
@@ -1502,8 +1578,8 @@
         var nowInserted = false;
 
         items.forEach(function(item) {
-            // Insert "NOW" marker
-            if (!nowInserted && item.min > nowMin) {
+            // Insert "NOW" marker only for today
+            if (isToday && !nowInserted && item.min > nowMin) {
                 html += '<div class="tl-now-marker"><span class="tl-now-label">Now — ' + getCSTTimeStr() + '</span><div class="tl-now-line"></div></div>';
                 nowInserted = true;
             }
@@ -1525,13 +1601,13 @@
                     '<span class="tl-emoji">' + c.emoji + '</span>' +
                     '<span class="tl-cat-badge ' + a.cat + '">' + c.label + '</span>' +
                     '<span class="tl-text">' + a.text + '</span>' +
-                    '<button class="tl-delete" data-id="' + a.id + '"><i class="fa-solid fa-xmark"></i></button>' +
+                    (isToday ? '<button class="tl-delete" data-id="' + a.id + '"><i class="fa-solid fa-xmark"></i></button>' : '') +
                     '</div></div>';
             }
         });
 
-        // If now is after all items
-        if (!nowInserted) {
+        // If now is after all items (today only)
+        if (isToday && !nowInserted) {
             html += '<div class="tl-now-marker"><span class="tl-now-label">Now — ' + getCSTTimeStr() + '</span><div class="tl-now-line"></div></div>';
         }
 
