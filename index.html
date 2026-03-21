@@ -1902,28 +1902,34 @@
 
     function renderNotifBanner() {
         var el = document.getElementById('notifBanner');
+        if (!el) return;
+        el.style.display = 'block';
         var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
         var isStandalone = window.navigator.standalone || window.matchMedia('(display-mode: standalone)').matches;
 
         if (!('Notification' in window) || (isIOS && !isStandalone)) {
-            el.innerHTML = '<div class="notif-banner"><h4>📱 Add to Home Screen First</h4><p>Tap <strong>Share</strong> → <strong>Add to Home Screen</strong>, then open from there to enable push notifications.</p></div>';
+            el.innerHTML = '<h4>📱 Add to Home Screen First</h4><p>Tap <strong>Share</strong> → <strong>Add to Home Screen</strong>, then open from there to enable push notifications.</p>';
             return;
         }
 
         var perm = Notification.permission;
         if (perm === 'granted') {
-            el.innerHTML = '<div class="notif-banner" style="opacity:0.7;"><h4>🔔 Push Notifications Active</h4><p>You\'ll get real-time alerts even when this app is closed.</p></div>';
+            el.style.opacity = '0.7';
+            el.innerHTML = '<h4>🔔 Push Notifications Active</h4><p>You\'ll get real-time alerts even when this app is closed.</p>';
             if (!pushSubscription) subscribeToPush();
+        } else if (perm === 'denied') {
+            el.innerHTML = '<h4>🚫 Notifications Blocked</h4><p>Open your browser settings to re-enable notifications for this site.</p>';
         } else {
-            el.innerHTML = '<div class="notif-banner" id="enableNotifBtn"><h4>🔔 Enable Push Notifications</h4><p>Tap to get real-time alerts on this device — even when the app is closed.</p></div>';
-            document.getElementById('enableNotifBtn').addEventListener('click', async function() {
+            el.style.cursor = 'pointer';
+            el.innerHTML = '<h4>🔔 Enable Push Notifications</h4><p>Tap to get real-time alerts on this device — even when the app is closed.</p>';
+            el.onclick = async function() {
                 var p = await Notification.requestPermission();
                 if (p === 'granted') {
                     await subscribeToPush();
                     showToast('🔔 Notifications enabled!');
                 }
                 renderNotifBanner();
-            });
+            };
         }
     }
 
