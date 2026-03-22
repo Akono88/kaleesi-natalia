@@ -1649,6 +1649,7 @@
     }
 
     async function saveActions() {
+        broadcastSync('actions', actions);
         try {
             await sb.from('kaleesi_data').upsert({
                 id: ACTIONS_ID,
@@ -1665,6 +1666,7 @@
         saveLog();
     }
     async function saveLog() {
+        broadcastSync('log', logEntries);
         try { await sb.from('kaleesi_data').upsert({ id: LOG_ID, content: { entries: logEntries }, updated_at: new Date().toISOString() }); }
         catch(e) {}
     }
@@ -1784,6 +1786,7 @@
         renderCalendar(); saveCustodySchedule();
     }
     async function saveCustodySchedule() {
+        broadcastSync('custody', custodySchedule);
         try { await sb.from('schedule').upsert({ id: 'main', data: custodySchedule, updated_at: new Date().toISOString() }); } catch(e) {}
     }
     function updateCalStats() {
@@ -1897,10 +1900,52 @@
     window.addCalNote = addCalNote;
 
     // ═══════════════════════════════════════
-    //  REALTIME SYNC
+    //  REALTIME SYNC (Broadcast + DB fallback)
     // ═══════════════════════════════════════
+    var broadcastChannel = null;
+
     function startRealtime() {
-        sb.channel('kaleesi-sync').on('postgres_changes', { event: '*', schema: 'public', table: 'kaleesi_data' }, function(p) {
+        // ── Instant Broadcast channel (device-to-device, <100ms) ──
+        broadcastChannel = sb.channel('kaleesi-broadcast', { config: { broadcast: { self: false } } });
+        broadcastChannel.on('broadcast', { event: 'sync' }, function(payload) {
+            var d = payload.payload;
+            if (!d || d.sender === DEVICE_ID) return;
+            console.log('[Broadcast] Received:', d.type);
+            if (d.type === 'actions' && Array.isArray(d.data)) {
+                actions = d.data;
+                renderTimeline();
+                showToast('📡 Updated from another device');
+            }
+            if (d.type === 'log' && Array.isArray(d.data)) {
+                logEntries = d.data;
+                renderLog();
+            }
+            if (d.type === 'infobank' && d.data) {
+                infoBank = d.data;
+                renderInfoBank();
+                showToast('📡 Info Bank updated');
+            }
+            if (d.type === 'custody' && d.data) {
+                custodySchedule = d.data;
+                renderCalendar();
+                showToast('📡 Calendar updated');
+            }
+        });
+        broadcastChannel.subscribe(function(status) {
+            console.log('[Broadcast] Status:', status);
+            var badge = document.getElementById('syncBadge');
+            if (status === 'SUBSCRIBED') {
+                badge.className = 'sync-badge connected';
+                badge.innerHTML = '<i class="fa-solid fa-cloud"></i> Live';
+            } else if (status === 'CLOSED' || status === 'CHANNEL_ERROR') {
+                badge.className = 'sync-badge disconnected';
+                badge.innerHTML = '<i class="fa-solid fa-cloud-exclamation"></i> Reconnecting…';
+                setTimeout(function() { broadcastChannel.subscribe(); }, 3000);
+            }
+        });
+
+        // ── DB fallback (postgres_changes, 1-3s latency) ──
+        sb.channel('kaleesi-db').on('postgres_changes', { event: '*', schema: 'public', table: 'kaleesi_data' }, function(p) {
             if (!p.new || !p.new.content) return;
             var c = p.new.content;
             if (p.new.id === ACTIONS_ID && Array.isArray(c.actions)) {
@@ -1916,9 +1961,19 @@
                 renderInfoBank();
             }
         }).subscribe();
-        sb.channel('custody-sync').on('postgres_changes', { event: '*', schema: 'public', table: 'schedule' }, function(p) {
+        sb.channel('custody-db').on('postgres_changes', { event: '*', schema: 'public', table: 'schedule' }, function(p) {
             if (p.new && p.new.data) { custodySchedule = p.new.data; renderCalendar(); }
         }).subscribe();
+    }
+
+    // Broadcast sync to other devices instantly
+    function broadcastSync(type, data) {
+        if (!broadcastChannel) return;
+        broadcastChannel.send({
+            type: 'broadcast',
+            event: 'sync',
+            payload: { type: type, data: data, sender: DEVICE_ID, ts: Date.now() }
+        });
     }
 
     // ═══════════════════════════════════════
@@ -2378,6 +2433,7 @@
     }
 
     async function saveInfoBank() {
+        broadcastSync('infobank', infoBank);
         try {
             await sb.from('kaleesi_data').upsert({
                 id: INFO_BANK_ID,
