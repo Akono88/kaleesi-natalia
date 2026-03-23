@@ -1900,9 +1900,38 @@
     window.addCalNote = addCalNote;
 
     // ═══════════════════════════════════════
-    //  REALTIME SYNC (Broadcast + DB fallback)
+    //  REALTIME SYNC (Broadcast + DB + Visibility refresh)
     // ═══════════════════════════════════════
     var broadcastChannel = null;
+    var lastSyncTs = Date.now();
+
+    // Force-refresh all data from DB (catches anything missed)
+    async function refreshAllFromDB() {
+        console.log('[Sync] Full refresh from DB');
+        try {
+            var res = await sb.from('kaleesi_data').select('*');
+            if (res.data) {
+                res.data.forEach(function(row) {
+                    if (!row.content) return;
+                    if (row.id === ACTIONS_ID && Array.isArray(row.content.actions)) {
+                        actions = row.content.actions;
+                        renderTimeline();
+                    }
+                    if (row.id === LOG_ID && Array.isArray(row.content.entries)) {
+                        logEntries = row.content.entries;
+                        renderLog();
+                    }
+                    if (row.id === INFO_BANK_ID && row.content.data) {
+                        infoBank = row.content.data;
+                        renderInfoBank();
+                    }
+                });
+            }
+            var sRes = await sb.from('schedule').select('data').eq('id', 'main').single();
+            if (sRes.data && sRes.data.data) { custodySchedule = sRes.data.data; renderCalendar(); }
+        } catch(e) { console.error('[Sync] Refresh error:', e); }
+        lastSyncTs = Date.now();
+    }
 
     function startRealtime() {
         // ── Instant Broadcast channel (device-to-device, <100ms) ──
@@ -1910,7 +1939,8 @@
         broadcastChannel.on('broadcast', { event: 'sync' }, function(payload) {
             var d = payload.payload;
             if (!d || d.sender === DEVICE_ID) return;
-            console.log('[Broadcast] Received:', d.type);
+            console.log('[Broadcast] Received:', d.type, 'from', d.sender);
+            lastSyncTs = Date.now();
             if (d.type === 'actions' && Array.isArray(d.data)) {
                 actions = d.data;
                 renderTimeline();
@@ -1964,6 +1994,41 @@
         sb.channel('custody-db').on('postgres_changes', { event: '*', schema: 'public', table: 'schedule' }, function(p) {
             if (p.new && p.new.data) { custodySchedule = p.new.data; renderCalendar(); }
         }).subscribe();
+
+        // ── Visibility change: refresh when app returns to foreground ──
+        document.addEventListener('visibilitychange', function() {
+            if (document.visibilityState === 'visible') {
+                var elapsed = Date.now() - lastSyncTs;
+                console.log('[Sync] App visible, elapsed since last sync:', elapsed + 'ms');
+                // If more than 5 seconds since last sync, force refresh
+                if (elapsed > 5000) {
+                    refreshAllFromDB();
+                    showToast('📡 Syncing…');
+                }
+                // Re-subscribe broadcast in case WebSocket died while backgrounded
+                if (broadcastChannel) {
+                    try { broadcastChannel.subscribe(); } catch(e) {}
+                }
+            }
+        });
+
+        // ── Focus event: also catches iOS PWA resume ──
+        window.addEventListener('focus', function() {
+            var elapsed = Date.now() - lastSyncTs;
+            if (elapsed > 5000) {
+                refreshAllFromDB();
+            }
+        });
+
+        // ── Periodic poll every 30 seconds as safety net ──
+        setInterval(function() {
+            if (document.visibilityState === 'visible') {
+                var elapsed = Date.now() - lastSyncTs;
+                if (elapsed > 25000) {
+                    refreshAllFromDB();
+                }
+            }
+        }, 30000);
     }
 
     // Broadcast sync to other devices instantly
