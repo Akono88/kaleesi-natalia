@@ -798,6 +798,7 @@
         .import-header p { font-size: 0.6rem; color: var(--text-light); margin-top: 4px; }
         .import-body { padding: 14px; }
         .import-drop-zone {
+            display: block; position: relative;
             border: 2px dashed var(--teal); border-radius: 14px; padding: 24px;
             text-align: center; cursor: pointer; transition: all 0.2s;
             background: var(--teal-light); margin-bottom: 12px;
@@ -1126,11 +1127,11 @@
                     <input type="password" id="importApiKey" placeholder="sk-ant-..." value="">
                     <button class="import-btn" style="padding:4px 10px;font-size:0.5rem;background:var(--teal);color:white;" onclick="saveImportApiKey()">Save</button>
                 </div>
-                <div class="import-drop-zone" id="importDropZone" onclick="document.getElementById('importFileInput').click()">
+                <label class="import-drop-zone" id="importDropZone" for="importFileInput">
                     <div class="drop-icon">📱</div>
                     <div class="drop-text">Tap to select Procare screenshot</div>
-                    <input type="file" id="importFileInput" accept="image/*" style="display:none">
-                </div>
+                    <input type="file" id="importFileInput" accept="image/*" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none;">
+                </label>
                 <img class="import-preview-img" id="importPreviewImg">
                 <div class="import-status" id="importStatus">
                     <span class="spinner">⏳</span> Analyzing screenshot...
