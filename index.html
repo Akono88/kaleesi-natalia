@@ -839,15 +839,6 @@
         .import-btn-cancel { background: var(--purple-whisper); color: var(--text-mid); }
         .import-btn-confirm { background: linear-gradient(135deg, var(--teal), #7cc4b2); color: white; }
         .import-btn-confirm:active { transform: translateY(1px); }
-        .import-api-key {
-            display: flex; align-items: center; gap: 6px; margin-bottom: 12px;
-            font-size: 0.55rem;
-        }
-        .import-api-key input {
-            flex: 1; padding: 6px 10px; border: 1px solid var(--border); border-radius: 8px;
-            font-size: 0.55rem; font-family: 'Montserrat', sans-serif;
-        }
-        .import-api-key label { font-weight: 700; color: var(--text-mid); white-space: nowrap; }
     </style>
 </head>
 <body>
@@ -1122,11 +1113,6 @@
                 <p>Upload a screenshot and we'll extract the entries</p>
             </div>
             <div class="import-body">
-                <div class="import-api-key" id="importApiKeyRow">
-                    <label>API Key:</label>
-                    <input type="password" id="importApiKey" placeholder="sk-ant-..." value="">
-                    <button class="import-btn" style="padding:4px 10px;font-size:0.5rem;background:var(--teal);color:white;" onclick="saveImportApiKey()">Save</button>
-                </div>
                 <label class="import-drop-zone" id="importDropZone" for="importFileInput">
                     <div class="drop-icon">📱</div>
                     <div class="drop-text">Tap to select Procare screenshot</div>
@@ -1614,13 +1600,11 @@
     // ═══════════════════════════════════════
     var pendingImportEntries = [];
 
+    var PROCARE_OCR_URL = SUPABASE_URL + '/functions/v1/procare-ocr';
+
     function openImportDaycare() {
         var overlay = document.getElementById('importOverlay');
         overlay.classList.add('active');
-        // Load saved API key
-        var savedKey = localStorage.getItem('kn_claude_api_key') || '';
-        document.getElementById('importApiKey').value = savedKey;
-        document.getElementById('importApiKeyRow').style.display = savedKey ? 'none' : 'flex';
         // Reset state
         document.getElementById('importPreviewImg').style.display = 'none';
         document.getElementById('importStatus').classList.remove('active');
@@ -1640,15 +1624,6 @@
         if (e.target === this) closeImportDaycare();
     });
 
-    function saveImportApiKey() {
-        var key = document.getElementById('importApiKey').value.trim();
-        if (key) {
-            localStorage.setItem('kn_claude_api_key', key);
-            document.getElementById('importApiKeyRow').style.display = 'none';
-            showToast('API key saved');
-        }
-    }
-
     document.getElementById('importFileInput').addEventListener('change', function(e) {
         var file = e.target.files[0];
         if (!file) return;
@@ -1665,70 +1640,33 @@
     });
 
     async function processImportScreenshot(dataUrl) {
-        var apiKey = localStorage.getItem('kn_claude_api_key');
-        if (!apiKey) {
-            document.getElementById('importApiKeyRow').style.display = 'flex';
-            showToast('Please enter your Claude API key first');
-            return;
-        }
-
         var status = document.getElementById('importStatus');
         status.classList.add('active');
         status.innerHTML = '<span class="spinner">⏳</span> Analyzing screenshot...';
 
         // Extract base64 and media type from data URL
         var parts = dataUrl.split(',');
-        var meta = parts[0]; // data:image/png;base64
+        var meta = parts[0];
         var base64 = parts[1];
         var mediaType = meta.match(/data:(.*?);/)[1];
 
-        var systemPrompt = 'You extract daycare activity data from Procare app screenshots. ' +
-            'Return ONLY a valid JSON array. Each entry needs: cat, time, text.\n\n' +
-            'Category mapping rules:\n' +
-            '- MEALS → cat: "feed". Include what was eaten and how much (all/some/none) in text.\n' +
-            '- BATHROOM | DIAPER → cat: "potty". Include wet/dirty/BM in text.\n' +
-            '- WONDER TIME or learning activities → cat: "activity". Include lesson name in text.\n' +
-            '- SIGN-IN / SIGN-OUT → cat: "note". Text: "Signed in @ TIME" or "Signed out @ TIME".\n' +
-            '- Music/movement/art activities → cat: "activity". Include activity description.\n' +
-            '- NAP or SLEEP entries → cat: "sleep". Include start/end in text.\n' +
-            '- Any other entry → cat: "note".\n\n' +
-            'Time format: "H:MM AM" or "H:MM PM" (12-hour, e.g. "9:30 AM", "11:45 AM").\n' +
-            'Return ONLY the JSON array, no markdown, no explanation.';
-
         try {
-            var resp = await fetch('https://api.anthropic.com/v1/messages', {
+            var resp = await fetch(PROCARE_OCR_URL, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
-                    'x-api-key': apiKey,
-                    'anthropic-version': '2023-06-01',
-                    'anthropic-dangerous-direct-browser-access': 'true'
+                    'Authorization': 'Bearer ' + SUPABASE_KEY
                 },
-                body: JSON.stringify({
-                    model: 'claude-sonnet-4-6-20250514',
-                    max_tokens: 1024,
-                    messages: [{
-                        role: 'user',
-                        content: [
-                            { type: 'image', source: { type: 'base64', media_type: mediaType, data: base64 } },
-                            { type: 'text', text: systemPrompt }
-                        ]
-                    }]
-                })
+                body: JSON.stringify({ image: base64, media_type: mediaType })
             });
 
             if (!resp.ok) {
                 var errData = await resp.json().catch(function() { return {}; });
-                throw new Error(errData.error?.message || 'API error ' + resp.status);
+                throw new Error(errData.error || 'Server error ' + resp.status);
             }
 
             var data = await resp.json();
-            var text = data.content[0].text.trim();
-            // Strip markdown fences if present
-            if (text.startsWith('```')) {
-                text = text.replace(/^```(?:json)?\s*/, '').replace(/\s*```$/, '');
-            }
-            var entries = JSON.parse(text);
+            var entries = data.entries;
 
             if (!Array.isArray(entries) || entries.length === 0) {
                 status.innerHTML = '⚠️ No entries found in screenshot. Try a different image.';
