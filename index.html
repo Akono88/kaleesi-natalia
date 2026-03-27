@@ -1140,6 +1140,13 @@
             .ib-subtab-content.active > .export-card {
                 grid-column: 1 / -1;
             }
+            #ibtab-coparent-sections {
+                grid-column: 1 / -1;
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                align-items: start;
+            }
 
             /* Calendar detail gets more room */
             #tab-calendar > .card:first-child {
@@ -1347,7 +1354,34 @@
             <div class="ib-subtab-content" id="ibtab-activities"></div>
             <div class="ib-subtab-content" id="ibtab-childcare"></div>
             <div class="ib-subtab-content" id="ibtab-religion"></div>
-            <div class="ib-subtab-content" id="ibtab-coparent"></div>
+            <div class="ib-subtab-content" id="ibtab-coparent">
+                <div class="export-card" id="exportCard" style="display:none;">
+                    <div class="export-card-header">
+                        <div><span class="export-card-icon">📋</span><span class="export-card-title">Daily Care Summary</span></div>
+                        <span class="export-card-sub">Select categories to include in the export</span>
+                    </div>
+                    <div class="export-toggles">
+                        <label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="feed"> 🍼 Feeding</label>
+                        <label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="med"> 💊 Meds</label>
+                        <label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="sleep"> 😴 Sleep</label>
+                        <label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="hygiene"> 🛁 Hygiene</label>
+                        <label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="potty"> 🚽 Potty</label>
+                        <label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="activity"> 🏃 Activity</label>
+                        <label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="note"> 📝 Notes</label>
+                        <label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="milestone"> ⭐ Milestones</label>
+                        <label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="tantrum"> 🌋 Tantrums</label>
+                    </div>
+                    <div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+                        <label style="font-size:0.6rem;font-weight:700;color:var(--text-mid);font-family:Montserrat,sans-serif;">Share date:</label>
+                        <input type="date" id="exportDate" style="padding:5px 10px;border-radius:20px;border:1px solid var(--border);font-size:0.6rem;font-family:Montserrat,sans-serif;">
+                        <button class="day-picker-btn" id="exportToday" style="font-size:0.55rem;">Today</button>
+                        <button class="day-picker-btn" id="exportYesterday" style="font-size:0.55rem;">Yesterday</button>
+                    </div>
+                    <button class="export-btn" id="exportDailySummary"><i class="fa-solid fa-copy"></i> Copy Summary</button>
+                    <div class="export-preview" id="exportPreview"></div>
+                </div>
+                <div id="ibtab-coparent-sections"></div>
+            </div>
         </div>
 
         <!-- ═══════════ TAB: LOG ═══════════ -->
@@ -3120,33 +3154,10 @@
             if (!container) return;
             var html = '';
 
-            // Add export card to co-parent tab
+            // Co-parent tab: render sections into sub-container, show static export card
             if (tab === 'coparent') {
-                html += '<div class="export-card">';
-                html += '<div class="export-card-header">';
-                html += '<div><span class="export-card-icon">📋</span><span class="export-card-title">Daily Care Summary</span></div>';
-                html += '<span class="export-card-sub">Select categories to include in the export</span>';
-                html += '</div>';
-                html += '<div class="export-toggles">';
-                html += '<label class="export-toggle checked"><input type="checkbox" class="export-cat-cb" data-cat="feed" checked> 🍼 Feeding</label>';
-                html += '<label class="export-toggle checked"><input type="checkbox" class="export-cat-cb" data-cat="med" checked> 💊 Meds</label>';
-                html += '<label class="export-toggle checked"><input type="checkbox" class="export-cat-cb" data-cat="sleep" checked> 😴 Sleep</label>';
-                html += '<label class="export-toggle checked"><input type="checkbox" class="export-cat-cb" data-cat="hygiene" checked> 🛁 Hygiene</label>';
-                html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="potty"> 🚽 Potty</label>';
-                html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="activity"> 🏃 Activity</label>';
-                html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="note"> 📝 Notes</label>';
-                html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="milestone"> ⭐ Milestones</label>';
-                html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="tantrum"> 🌋 Tantrums</label>';
-                html += '</div>';
-                html += '<div style="margin-bottom:10px;display:flex;align-items:center;gap:8px;flex-wrap:wrap;">';
-                html += '<label style="font-size:0.6rem;font-weight:700;color:var(--text-mid);font-family:Montserrat,sans-serif;">Share date:</label>';
-                html += '<input type="date" id="exportDate" value="' + getCSTDate() + '" style="padding:5px 10px;border-radius:20px;border:1px solid var(--border);font-size:0.6rem;font-family:Montserrat,sans-serif;">';
-                html += '<button class="day-picker-btn" id="exportToday" style="font-size:0.55rem;">Today</button>';
-                html += '<button class="day-picker-btn" id="exportYesterday" style="font-size:0.55rem;">Yesterday</button>';
-                html += '</div>';
-                html += '<button class="export-btn" id="exportDailySummary"><i class="fa-solid fa-copy"></i> Copy Summary</button>';
-                html += '<div class="export-preview" id="exportPreview"></div>';
-                html += '</div>';
+                container = document.getElementById('ibtab-coparent-sections');
+                document.getElementById('exportCard').style.display = '';
             }
 
             tabGroups[tab].forEach(function(section) {
@@ -3220,28 +3231,40 @@
             });
         });
 
-        // Wire export button
-        var exportBtn = document.getElementById('exportDailySummary');
-        if (exportBtn) {
-            exportBtn.addEventListener('click', exportDailySummary);
-        }
-        // Wire export category toggle styling
-        document.querySelectorAll('.export-cat-cb').forEach(function(cb) {
-            cb.addEventListener('change', function() {
-                this.closest('.export-toggle').classList.toggle('checked', this.checked);
+        // Also wire ibtab-coparent-sections container
+        var coparentSections = document.getElementById('ibtab-coparent-sections');
+        if (coparentSections) {
+            coparentSections.querySelectorAll('.ib-header').forEach(function(header) {
+                header.addEventListener('click', function(e) {
+                    if (e.target.closest('.ib-add-btn')) return;
+                    this.closest('.ib-section').classList.toggle('open');
+                });
             });
-        });
-        // Wire export date quick buttons
-        var exportTodayBtn = document.getElementById('exportToday');
-        var exportYesterdayBtn = document.getElementById('exportYesterday');
-        var exportDateInput = document.getElementById('exportDate');
-        if (exportTodayBtn) exportTodayBtn.addEventListener('click', function() {
-            exportDateInput.value = getCSTDate();
-        });
-        if (exportYesterdayBtn) exportYesterdayBtn.addEventListener('click', function() {
-            var d = getCSTNow(); d.setDate(d.getDate()-1);
-            exportDateInput.value = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
-        });
+            coparentSections.querySelectorAll('.ib-add-btn').forEach(function(btn) {
+                btn.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    var sectionKey = this.dataset.section;
+                    var sec = this.closest('.ib-section');
+                    sec.classList.add('open');
+                    showInfoForm(sectionKey, null);
+                });
+            });
+            coparentSections.querySelectorAll('.ib-edit-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    showInfoForm(this.dataset.section, this.dataset.id);
+                });
+            });
+            coparentSections.querySelectorAll('.ib-del-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    if (!confirm('Delete this entry?')) return;
+                    var items = infoBank[this.dataset.section] || [];
+                    infoBank[this.dataset.section] = items.filter(function(i) { return i.id !== btn.dataset.id; });
+                    renderInfoBank();
+                    saveInfoBank();
+                    showToast('Entry deleted');
+                });
+            });
+        }
     }
 
     function exportDailySummary() {
@@ -3460,6 +3483,30 @@
             showToast(editId ? 'Updated!' : 'Added!');
         });
     }
+
+    // ═══════════════════════════════════════
+    //  EXPORT CARD (static, wired once)
+    // ═══════════════════════════════════════
+    (function() {
+        var exportDateInput = document.getElementById('exportDate');
+        exportDateInput.value = getCSTDate();
+
+        document.getElementById('exportDailySummary').addEventListener('click', exportDailySummary);
+
+        document.querySelectorAll('.export-cat-cb').forEach(function(cb) {
+            cb.addEventListener('change', function() {
+                this.closest('.export-toggle').classList.toggle('checked', this.checked);
+            });
+        });
+
+        document.getElementById('exportToday').addEventListener('click', function() {
+            exportDateInput.value = getCSTDate();
+        });
+        document.getElementById('exportYesterday').addEventListener('click', function() {
+            var d = getCSTNow(); d.setDate(d.getDate()-1);
+            exportDateInput.value = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+        });
+    })();
 
     // ═══════════════════════════════════════
     //  INIT
