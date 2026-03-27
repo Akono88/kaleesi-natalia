@@ -865,6 +865,287 @@
         .import-btn-cancel { background: var(--purple-whisper); color: var(--text-mid); }
         .import-btn-confirm { background: linear-gradient(135deg, var(--teal), #7cc4b2); color: white; }
         .import-btn-confirm:active { transform: translateY(1px); }
+
+        /* ═══════════════════════════════════════════════════════
+           DESKTOP LAYOUT — 1024px+
+           All mobile styles above remain completely untouched.
+           ═══════════════════════════════════════════════════════ */
+        @media (min-width: 1024px) {
+            /* ─── Body & Root Layout ─── */
+            body {
+                display: flex; min-height: 100vh;
+                overflow-x: hidden;
+            }
+
+            /* ─── Sidebar Navigation (was bottom-nav) ─── */
+            .bottom-nav {
+                position: fixed; top: 0; left: 0; bottom: 0; right: auto;
+                width: 220px; flex-direction: column;
+                border-top: none; border-right: 1px solid rgba(197,138,205,0.15);
+                border-radius: 0; max-width: none;
+                padding: 0; gap: 0;
+                background: linear-gradient(180deg, rgba(255,255,255,0.98), rgba(248,240,252,0.99));
+                box-shadow: 2px 0 20px rgba(197,138,205,0.08);
+                z-index: 50;
+            }
+
+            /* Sidebar brand header */
+            .bottom-nav::before {
+                content: '🦋 Kaleesi';
+                display: block; padding: 24px 20px 20px;
+                font-family: 'Great Vibes', cursive; font-size: 1.5rem;
+                background: linear-gradient(135deg, #C58ACD 0%, #D85A9C 50%, #C58ACD 100%);
+                -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+                background-clip: text;
+                border-bottom: 1px solid rgba(197,138,205,0.12);
+                text-align: center;
+            }
+
+            .nav-btn {
+                flex: none; flex-direction: row; justify-content: flex-start;
+                padding: 14px 20px; gap: 12px;
+                border-radius: 0; position: relative;
+                transition: background 0.15s ease, color 0.15s ease;
+            }
+            .nav-btn:hover { background: rgba(197,138,205,0.08); }
+            .nav-btn:active { transform: none; }
+            .nav-btn i { font-size: 18px; width: 22px; text-align: center; }
+            .nav-btn span {
+                font-size: 0.65rem; font-weight: 700; letter-spacing: 1px;
+            }
+            .nav-btn.active {
+                background: rgba(216,90,156,0.08);
+                border-right: 3px solid var(--purple-mid);
+            }
+            .nav-btn.active i { filter: none; }
+
+            /* Sidebar sync badge area */
+            .bottom-nav::after {
+                content: '';
+                flex: 1; /* push items to top */
+            }
+
+            /* ─── Main App Container ─── */
+            .app {
+                max-width: none; margin: 0; margin-left: 220px;
+                padding: 24px 40px 40px;
+                width: calc(100% - 220px);
+            }
+
+            /* ─── Header: compact on desktop ─── */
+            header {
+                display: flex; align-items: center; gap: 16px;
+                text-align: left; padding: 16px 24px;
+                border-radius: 16px;
+            }
+            header::after { display: none; }
+            .header-photo {
+                width: 56px; height: 56px; margin: 0;
+                flex-shrink: 0;
+            }
+            h1 { font-size: 1.6rem; white-space: nowrap; }
+            .subtitle { font-size: 0.38rem; letter-spacing: 4px; margin-top: 0; }
+            .cst-clock { margin-top: 2px; font-size: 0.55rem; }
+
+            /* ─── Cards: wider, more breathing room ─── */
+            .card {
+                padding: 20px; margin-top: 14px;
+                border-radius: 18px;
+            }
+
+            /* ─── Quick Add Grid: use more columns ─── */
+            .quick-cats {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 8px;
+            }
+            .cat-btn { padding: 14px 6px 12px; border-radius: 14px; }
+            .cat-btn .cat-icon { font-size: 1.5rem; }
+            .cat-btn .cat-label { font-size: 0.5rem; }
+            .cat-btn[data-cat="tantrum"] { grid-column: span 2; }
+
+            /* ─── Timeline: wider, more readable ─── */
+            .timeline { padding-left: 28px; }
+            .tl-content { padding: 10px 14px; }
+            .tl-text { font-size: 0.78rem; }
+            .tl-time { font-size: 0.58rem; }
+            .tl-cat-badge { font-size: 0.45rem; padding: 3px 8px; }
+
+            /* ─── Day Picker: horizontal with more space ─── */
+            .day-picker { gap: 8px; }
+            .day-picker-btn { padding: 6px 16px; font-size: 0.62rem; }
+
+            /* ─── Calendar: master/detail side-by-side ─── */
+            #tab-calendar > .card:first-child {
+                display: grid;
+                grid-template-columns: 1fr 320px;
+                grid-template-rows: auto auto auto 1fr auto;
+                gap: 0 24px;
+            }
+            /* Nav bar spans full width */
+            #tab-calendar > .card:first-child > .cal-nav-bar {
+                grid-column: 1 / -1;
+            }
+            /* Legend spans full width */
+            #tab-calendar > .card:first-child > .cal-legend {
+                grid-column: 1 / -1;
+            }
+            /* Stats span full width */
+            #tab-calendar > .card:first-child > .cal-stats {
+                grid-column: 1 / -1;
+            }
+            /* Mode toggle spans full width */
+            #tab-calendar > .card:first-child > .cal-mode-toggle {
+                grid-column: 1 / -1;
+            }
+            /* Grid takes left column */
+            #tab-calendar > .card:first-child > .cal-grid {
+                grid-column: 1; grid-row: 5;
+            }
+            /* Detail takes right column */
+            #tab-calendar > .card:first-child > .cal-detail {
+                grid-column: 2; grid-row: 5;
+                margin-top: 0; padding-top: 0;
+                border-top: none; border-left: 1px solid var(--border);
+                padding-left: 20px;
+                position: sticky; top: 24px;
+                max-height: 60vh; overflow-y: auto;
+            }
+            .cal-day { min-height: 52px; font-size: 0.75rem; }
+            .cal-day-parent { font-size: 0.45rem; }
+
+            /* ─── Care Tab: 2-column grid for info blocks ─── */
+            #tab-care {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 14px;
+            }
+            #tab-care > .info-block {
+                margin-bottom: 0;
+            }
+            /* First block (Safe Harbor) spans full width */
+            #tab-care > .info-block:first-child {
+                grid-column: 1 / -1;
+            }
+
+            /* ─── Info Bank: wider sections ─── */
+            .ib-subtabs {
+                gap: 8px; margin-left: 0; margin-right: 0;
+                padding-left: 0; padding-right: 0;
+                mask-image: none; -webkit-mask-image: none;
+                overflow-x: visible; flex-wrap: wrap;
+            }
+            .ib-subtab { padding: 10px 18px; font-size: 0.62rem; }
+
+            /* ─── Log: more readable ─── */
+            .log-entry { padding: 10px 0; }
+            .log-msg { font-size: 0.75rem; }
+            .log-time { font-size: 0.58rem; }
+
+            /* ─── Export Card: wider layout ─── */
+            .export-toggles { gap: 8px; }
+            .export-toggle { font-size: 0.62rem; padding: 5px 12px; }
+            .export-preview { max-height: 400px; font-size: 0.65rem; }
+            .export-btn { max-width: 320px; }
+
+            /* ─── Modals: bigger on desktop ─── */
+            .modal { max-width: 560px; max-height: 80vh; }
+            .tantrum-panel { max-width: 520px; }
+            .import-panel { max-width: 500px; }
+
+            /* ─── Quick Form: wider ─── */
+            .quick-form.active { max-height: 700px; }
+            .quick-form-row input[type="time"] { flex: 0 0 140px; }
+
+            /* ─── Toast: right-aligned on desktop ─── */
+            .toast-container {
+                left: auto; right: 24px; top: 24px;
+                transform: none; max-width: 380px;
+            }
+
+            /* ─── Hover states for desktop ─── */
+            .cat-btn:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 4px 16px rgba(197,138,205,0.15);
+            }
+            .quick-chip:hover {
+                background: var(--purple-whisper);
+                border-color: var(--purple-deep);
+            }
+            .ib-subtab:hover:not(.active) {
+                background: var(--purple-whisper);
+                border-color: rgba(197,138,205,0.3);
+            }
+            .pattern-btn:hover {
+                background: rgba(197,138,205,0.15);
+                border-color: var(--purple-deep);
+            }
+            .cal-mode-btn:hover:not(.active) {
+                background: var(--purple-whisper);
+            }
+            .day-picker-btn:hover:not(.active) {
+                background: rgba(197,138,205,0.15);
+            }
+            .assign-btn:hover {
+                border-color: rgba(197,138,205,0.4);
+            }
+            .note-template:hover {
+                background: rgba(197,138,205,0.15);
+                border-color: var(--purple-deep);
+            }
+            .tl-delete:hover { opacity: 1; color: var(--cat-med); transform: scale(1.2); }
+            .ib-edit-btn:hover { background: rgba(197,138,205,0.2); }
+            .ib-del-btn:hover { background: #fecaca; }
+            .ib-header:hover { background: rgba(197,138,205,0.04); border-radius: 12px; }
+            .export-btn:hover { opacity: 0.9; transform: translateY(-1px); box-shadow: 0 6px 20px rgba(216,90,156,0.35); }
+            .quick-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+            .btn-primary:hover { opacity: 0.9; }
+            .notif-banner:hover { opacity: 0.85; transform: translateY(-1px); }
+
+            /* ─── Scrollbar styling for desktop ─── */
+            ::-webkit-scrollbar { width: 6px; }
+            ::-webkit-scrollbar-track { background: transparent; }
+            ::-webkit-scrollbar-thumb {
+                background: rgba(197,138,205,0.25); border-radius: 3px;
+            }
+            ::-webkit-scrollbar-thumb:hover { background: rgba(197,138,205,0.4); }
+        }
+
+        /* ─── Extra-wide desktop (1440px+): even more space ─── */
+        @media (min-width: 1440px) {
+            .app { padding: 28px 60px 40px; }
+            .quick-cats { grid-template-columns: repeat(5, 1fr); gap: 10px; }
+
+            /* Actions tab: side-by-side quick-add and timeline */
+            #tab-actions {
+                display: grid;
+                grid-template-columns: 380px 1fr;
+                gap: 18px;
+                align-items: start;
+            }
+            #tab-actions > .card:first-child {
+                position: sticky; top: 24px;
+                margin-top: 0;
+            }
+            #tab-actions > .card:nth-child(2) { margin-top: 0; }
+            #tab-actions > .notif-banner { grid-column: 1 / -1; }
+            #tab-actions > div:last-child { grid-column: 1 / -1; }
+
+            /* Info Bank: 2 column sections */
+            .ib-subtab-content.active {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                align-items: start;
+            }
+            .ib-subtab-content.active > .export-card {
+                grid-column: 1 / -1;
+            }
+
+            /* Calendar detail gets more room */
+            #tab-calendar > .card:first-child {
+                grid-template-columns: 1fr 380px;
+            }
+        }
     </style>
 </head>
 <body>
