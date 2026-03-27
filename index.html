@@ -65,7 +65,8 @@
             --cat-tantrum: #c44d5e;
             --cat-tantrum-bg: #fdf0f2;
         }
-        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; }
+        html { scroll-behavior: smooth; }
         body {
             font-family: 'Montserrat', system-ui, sans-serif;
             background: #f5eef9; color: var(--text);
@@ -134,17 +135,24 @@
         .nav-btn {
             flex: 1; border: none; background: none; padding: 8px 4px 6px; cursor: pointer;
             display: flex; flex-direction: column; align-items: center; gap: 2px;
-            color: var(--text-light); transition: all 0.2s; font-family: 'Montserrat', sans-serif;
+            color: var(--text-light); transition: color 0.15s ease, transform 0.1s ease; font-family: 'Montserrat', sans-serif;
+            -webkit-touch-callout: none; user-select: none; touch-action: manipulation;
         }
-        .nav-btn i { font-size: 16px; }
+        .nav-btn:active { transform: scale(0.92); }
+        .nav-btn i { font-size: 16px; transition: filter 0.15s ease; }
         .nav-btn span { font-size: 0.5rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
         .nav-btn.active { color: var(--purple-mid); }
         .nav-btn.active i { filter: drop-shadow(0 0 4px rgba(216,90,156,0.3)); }
 
         /* ═══ TABS ═══ */
-        .tab-view { display: none; animation: fadeUp 0.3s ease; }
+        .tab-view { display: none; animation: fadeUp 0.2s ease; }
         .tab-view.active { display: block; }
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translate3d(0,8px,0); } to { opacity: 1; transform: translate3d(0,0,0); } }
+
+        /* GPU-accelerated smooth transitions */
+        .tab-view, .modal-overlay, .tantrum-guide, .import-overlay { will-change: opacity; }
+        .cal-day, .cat-btn, .nav-btn, .quick-chip, .ib-section { will-change: transform; }
+        .tl-entry, .ib-row { contain: content; }
 
         /* ═══ CARDS ═══ */
         .card {
@@ -165,8 +173,9 @@
         .cat-btn {
             display: flex; flex-direction: column; align-items: center; gap: 4px;
             padding: 12px 4px 10px; border: 2px solid var(--border); background: rgba(255,255,255,0.85);
-            border-radius: 16px; cursor: pointer; transition: all 0.2s; font-family: 'Montserrat', sans-serif;
+            border-radius: 16px; cursor: pointer; transition: transform 0.1s ease, box-shadow 0.15s ease; font-family: 'Montserrat', sans-serif;
             box-shadow: 0 2px 8px rgba(197,138,205,0.06);
+            -webkit-touch-callout: none; user-select: none; touch-action: manipulation;
         }
         .cat-btn:active { transform: scale(0.93); box-shadow: 0 1px 4px rgba(197,138,205,0.1); }
         .cat-btn .cat-icon { font-size: 1.3rem; }
@@ -200,10 +209,16 @@
 
         /* ═══ QUICK-ADD FORM ═══ */
         .quick-form {
-            display: none; background: var(--purple-whisper); border-radius: 14px;
-            padding: 12px; margin-bottom: 10px; animation: fadeUp 0.2s ease;
+            background: var(--purple-whisper); border-radius: 14px;
+            padding: 0; margin-bottom: 0; max-height: 0; overflow: hidden;
+            transition: max-height 0.25s ease, padding 0.25s ease, margin-bottom 0.25s ease;
+            opacity: 0;
         }
-        .quick-form.active { display: block; }
+        .quick-form.active {
+            max-height: 600px; padding: 12px; margin-bottom: 10px;
+            opacity: 1; overflow: visible;
+            animation: fadeUp 0.2s ease;
+        }
         .quick-form-header {
             display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;
         }
@@ -233,7 +248,8 @@
         .quick-chip {
             padding: 5px 10px; border-radius: 16px; font-size: 0.6rem; font-weight: 700;
             border: 1px solid var(--border); background: var(--white); cursor: pointer;
-            font-family: 'Montserrat', sans-serif; transition: all 0.15s;
+            font-family: 'Montserrat', sans-serif; transition: transform 0.1s ease, background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+            touch-action: manipulation; user-select: none;
         }
         .quick-chip:active { transform: scale(0.95); }
         .quick-chip.selected { background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid)); color: white; border-color: transparent; box-shadow: 0 2px 6px rgba(197,138,205,0.3); }
@@ -369,6 +385,8 @@
         .cal-mode-btn {
             padding: 6px 10px; border: 2px solid var(--border); background: var(--white);
             border-radius: 20px; cursor: pointer; font-size: 0.6rem; font-weight: 600; font-family: 'Montserrat', sans-serif;
+            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+            touch-action: manipulation;
         }
         .cal-mode-btn.active { background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid)); color: white; border-color: transparent; box-shadow: 0 2px 8px rgba(197,138,205,0.3); }
         .cal-mode-btn.adam-mode.active { background: var(--adam-color); border-color: var(--adam-color); }
@@ -399,11 +417,13 @@
 
         /* Calendar day modal */
         .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(0,0,0,0.5); z-index: 100; align-items: center;
             justify-content: center; padding: 14px;
+            display: flex; opacity: 0; pointer-events: none;
+            transition: opacity 0.2s ease;
         }
-        .modal-overlay.active { display: flex; }
+        .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal {
             background: var(--white); border-radius: var(--radius); width: 100%;
             max-width: 460px; max-height: 85vh; overflow-y: auto;
@@ -505,7 +525,7 @@
             box-shadow: 0 4px 24px rgba(197,138,205,0.35); animation: toastIn 0.3s ease;
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
-        @keyframes toastIn { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes toastIn { from { opacity: 0; transform: translate3d(0,-10px,0); } to { opacity: 1; transform: translate3d(0,0,0); } }
 
         /* ═══ PUSH BANNER ═══ */
         .notif-banner {
@@ -527,11 +547,13 @@
 
         /* ═══ TANTRUM GUIDE ═══ */
         .tantrum-guide {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(220, 38, 38, 0.06); z-index: 150;
             align-items: center; justify-content: center; padding: 14px;
+            display: flex; opacity: 0; pointer-events: none;
+            transition: opacity 0.2s ease;
         }
-        .tantrum-guide.active { display: flex; }
+        .tantrum-guide.active { opacity: 1; pointer-events: auto; }
         .tantrum-panel {
             background: var(--white); border-radius: 20px; width: 100%;
             max-width: 420px; max-height: 90vh; overflow-y: auto;
@@ -607,9 +629,10 @@
             font-size: 0.6rem; font-weight: 700; text-transform: uppercase;
             letter-spacing: 0.5px; cursor: pointer; border: 2px solid var(--border);
             background: var(--white); color: var(--text-mid);
-            font-family: 'Montserrat', sans-serif; transition: all 0.2s;
+            font-family: 'Montserrat', sans-serif; transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
             display: flex; align-items: center; gap: 5px;
             scroll-snap-align: start; white-space: nowrap;
+            -webkit-touch-callout: none; user-select: none; touch-action: manipulation;
         }
         .ib-subtab .ib-subtab-icon { font-size: 0.85rem; }
         .ib-subtab.active {
@@ -619,7 +642,7 @@
             text-shadow: 0 1px 2px rgba(0,0,0,0.1);
         }
         .ib-subtab-content { display: none; }
-        .ib-subtab-content.active { display: block; }
+        .ib-subtab-content.active { display: block; animation: fadeUp 0.15s ease; }
 
         /* ═══ INFO BANK ═══ */
         .ib-section {
@@ -757,7 +780,8 @@
             padding: 5px 12px; border-radius: 20px; border: 1px solid var(--border);
             background: var(--purple-whisper); font-size: 0.6rem; font-weight: 700;
             color: var(--text-mid); cursor: pointer; font-family: 'Montserrat', sans-serif;
-            transition: all 0.2s;
+            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
+            touch-action: manipulation;
         }
         .day-picker-btn.active, .day-picker-btn:active {
             background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid));
@@ -779,11 +803,13 @@
         }
         /* ═══ PROCARE IMPORT ═══ */
         .import-overlay {
-            display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+            position: fixed; top: 0; left: 0; right: 0; bottom: 0;
             background: rgba(197, 138, 205, 0.08); z-index: 150;
             align-items: center; justify-content: center; padding: 14px;
+            display: flex; opacity: 0; pointer-events: none;
+            transition: opacity 0.2s ease;
         }
-        .import-overlay.active { display: flex; }
+        .import-overlay.active { opacity: 1; pointer-events: auto; }
         .import-panel {
             background: var(--white); border-radius: 20px; width: 100%;
             max-width: 420px; max-height: 90vh; overflow-y: auto;
@@ -1309,14 +1335,21 @@
     setInterval(updateClock, 1000);
     updateClock();
 
-    // ─── Tab Navigation ───
+    // ─── Tab Navigation (optimized: instant switching, lazy init) ───
+    var activeNavBtn = document.querySelector('.nav-btn.active');
+    var activeTabView = document.querySelector('.tab-view.active');
+    var calInitialized = false;
     document.querySelectorAll('.nav-btn').forEach(function(btn) {
         btn.addEventListener('click', function() {
-            document.querySelectorAll('.nav-btn').forEach(function(b) { b.classList.remove('active'); });
-            document.querySelectorAll('.tab-view').forEach(function(t) { t.classList.remove('active'); });
+            if (btn === activeNavBtn) return; // already active, skip
+            if (activeNavBtn) activeNavBtn.classList.remove('active');
+            if (activeTabView) activeTabView.classList.remove('active');
             btn.classList.add('active');
-            document.getElementById(btn.dataset.tab).classList.add('active');
-            if (btn.dataset.tab === 'tab-calendar') initCalendar();
+            var tab = document.getElementById(btn.dataset.tab);
+            tab.classList.add('active');
+            activeNavBtn = btn;
+            activeTabView = tab;
+            if (btn.dataset.tab === 'tab-calendar') { if (!calInitialized) { initCalendar(); calInitialized = true; } else { renderCalendar(); } }
             if (btn.dataset.tab === 'tab-log') renderLog();
         });
     });
@@ -1763,6 +1796,11 @@
     // ═══════════════════════════════════════
     //  TIMELINE RENDERING
     // ═══════════════════════════════════════
+    var _renderTimelineTimer = null;
+    function renderTimelineDebounced() {
+        if (_renderTimelineTimer) return;
+        _renderTimelineTimer = requestAnimationFrame(function() { _renderTimelineTimer = null; renderTimeline(); });
+    }
     function getViewDate() { return viewingDate || getCSTDate(); }
     function isViewingToday() { return !viewingDate || viewingDate === getCSTDate(); }
 
@@ -1979,6 +2017,7 @@
     function initCalendar() {
         var now = getCSTNow();
         if (!calYear) { calYear = now.getFullYear(); calMonth = now.getMonth(); }
+        calInitialized = true;
         renderCalendar();
     }
     function renderCalendar() {
@@ -2320,8 +2359,8 @@
         var c = document.getElementById('toastContainer');
         var t = document.createElement('div'); t.className = 'toast'; t.textContent = msg;
         c.appendChild(t);
-        setTimeout(function() { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; }, 3000);
-        setTimeout(function() { t.remove(); }, 3500);
+        setTimeout(function() { t.style.opacity = '0'; t.style.transform = 'translate3d(0,-10px,0)'; t.style.transition = 'opacity 0.3s ease, transform 0.3s ease'; }, 3000);
+        setTimeout(function() { t.remove(); }, 3350);
     }
     var pushSubscription = null;
 
@@ -2811,7 +2850,9 @@
                 html += '<label class="export-toggle checked"><input type="checkbox" class="export-cat-cb" data-cat="feed" checked> 🍼 Feeding</label>';
                 html += '<label class="export-toggle checked"><input type="checkbox" class="export-cat-cb" data-cat="med" checked> 💊 Meds</label>';
                 html += '<label class="export-toggle checked"><input type="checkbox" class="export-cat-cb" data-cat="sleep" checked> 😴 Sleep</label>';
+                html += '<label class="export-toggle checked"><input type="checkbox" class="export-cat-cb" data-cat="hygiene" checked> 🛁 Hygiene</label>';
                 html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="potty"> 🚽 Potty</label>';
+                html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="activity"> 🏃 Activity</label>';
                 html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="note"> 📝 Notes</label>';
                 html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="milestone"> ⭐ Milestones</label>';
                 html += '<label class="export-toggle"><input type="checkbox" class="export-cat-cb" data-cat="tantrum"> 🌋 Tantrums</label>';
@@ -2967,7 +3008,9 @@
             feed: { emoji: '🍼', title: 'FEEDING' },
             med: { emoji: '💊', title: 'MEDICATIONS' },
             sleep: { emoji: '😴', title: 'SLEEP' },
+            hygiene: { emoji: '🛁', title: 'HYGIENE' },
             potty: { emoji: '🚽', title: 'POTTY' },
+            activity: { emoji: '🏃', title: 'ACTIVITY' },
             note: { emoji: '📝', title: 'NOTES' },
             milestone: { emoji: '⭐', title: 'MILESTONES' },
             tantrum: { emoji: '🌋', title: 'TANTRUMS' }
