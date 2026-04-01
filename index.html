@@ -90,7 +90,7 @@
                 rgba(248,132,213,0.08) 80%,
                 rgba(151,215,198,0.1) 100%);
             border-radius: var(--radius);
-            padding: 24px 18px 14px; text-align: center;
+            padding: 16px 14px 10px; text-align: center;
             box-shadow: 0 4px 24px rgba(197,138,205,0.12), 0 0 0 1px rgba(197,138,205,0.1);
             margin-bottom: 8px;
             position: relative; overflow: hidden;
@@ -104,7 +104,7 @@
             font-size: 0.4rem; color: var(--purple-soft); letter-spacing: 3px; opacity: 0.7;
         }
         h1 {
-            font-family: 'Great Vibes', cursive; font-weight: 400; font-size: 2rem;
+            font-family: 'Great Vibes', cursive; font-weight: 400; font-size: 1.7rem;
             background: linear-gradient(135deg, #C58ACD 0%, #D85A9C 50%, #C58ACD 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -117,10 +117,10 @@
         }
         .cst-clock { margin-top: 4px; font-size: 0.58rem; font-weight: 600; color: var(--purple-mid); letter-spacing: 0.5px; }
         .header-photo {
-            width: 80px; height: 80px; border-radius: 50%; object-fit: cover;
-            border: 3px solid rgba(197,138,205,0.3);
-            box-shadow: 0 4px 16px rgba(197,138,205,0.25), 0 0 0 4px rgba(248,132,213,0.1);
-            margin: 0 auto 6px;
+            width: 60px; height: 60px; border-radius: 50%; object-fit: cover;
+            border: 2px solid rgba(197,138,205,0.3);
+            box-shadow: 0 4px 16px rgba(197,138,205,0.25), 0 0 0 3px rgba(248,132,213,0.1);
+            margin: 0 auto 4px;
             display: block;
         }
 
@@ -320,18 +320,48 @@
         .tl-delete:hover { opacity: 1; color: var(--cat-med); }
 
         /* Schedule guide markers */
-        .tl-entry.schedule-guide {
-            opacity: 0.55;
-        }
+        .tl-entry.schedule-guide { opacity: 0.65; }
         .tl-entry.schedule-guide::before {
             width: 8px; height: 8px; border: 2px dashed var(--purple-soft);
             background: var(--purple-whisper);
         }
         .tl-entry.schedule-guide .tl-content {
-            background: var(--purple-glow); border: 1px dashed var(--border);
-            box-shadow: none;
+            background: linear-gradient(135deg, rgba(248,240,252,0.5), rgba(240,238,250,0.3));
+            border: 1px dashed rgba(107, 79, 160, 0.15); box-shadow: none;
         }
         .tl-entry.schedule-guide .tl-text { font-size: 0.62rem; font-style: italic; color: var(--text-mid); }
+        .tl-guide-tag {
+            font-size: 0.32rem; font-weight: 800; letter-spacing: 1px; text-transform: uppercase;
+            color: var(--purple-deep); opacity: 0.45; margin-left: 2px;
+        }
+
+        /* ─── Timeline Period Blocks ─── */
+        .tl-period-block { padding: 0; margin-bottom: 2px; border-radius: 8px; }
+        .tl-period-block.morning { background: rgba(248, 196, 113, 0.04); }
+        .tl-period-block.afternoon { background: rgba(151, 215, 198, 0.04); }
+        .tl-period-block.evening { background: rgba(155, 142, 196, 0.06); }
+        .tl-period-label {
+            font-size: 0.4rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--text-light); padding: 8px 0 2px 22px; opacity: 0.5;
+            display: flex; align-items: center; gap: 5px;
+        }
+        .tl-period-label i { font-size: 0.42rem; }
+
+        /* ─── Import from Procare Button ─── */
+        .import-procare-wrap { margin-bottom: 8px; }
+        .import-procare-btn {
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+            width: 100%; padding: 10px; border: 2px dashed var(--teal);
+            background: var(--teal-light); border-radius: 12px; cursor: pointer;
+            font-family: 'Montserrat', sans-serif; transition: all 0.15s ease;
+        }
+        .import-procare-btn:active { transform: scale(0.98); }
+        .import-procare-btn .cat-icon { font-size: 1rem; }
+        .import-procare-btn .cat-label {
+            font-size: 0.55rem; font-weight: 800; letter-spacing: 0.5px;
+            text-transform: uppercase; color: #2a7a5f;
+        }
+        .import-procare-btn:hover { border-color: #6bc4ad; background: rgba(151,215,198,0.2); }
 
         .tl-now-marker {
             position: relative; padding: 6px 0 6px 14px; display: flex; align-items: center; gap: 8px;
@@ -628,12 +658,89 @@
         .sched-ref-name { font-weight: 700; }
         .sched-ref-why { font-size: 0.55rem; color: rgba(0,0,0,0.45); font-style: italic; margin-top: 1px; }
 
+        /* ─── Safe Harbor Collapsible Cards ─── */
+        .sh-section-label {
+            font-size: 0.48rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--info-text); padding: 10px 0 4px; margin-top: 6px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .sh-section-label:first-child { margin-top: 0; }
+        .sh-section-label i { font-size: 0.55rem; opacity: 0.5; }
+        .sh-card {
+            border: 1px solid rgba(107, 79, 160, 0.08); border-radius: 10px;
+            margin-bottom: 4px; overflow: hidden; cursor: pointer;
+            transition: box-shadow 0.15s ease, border-color 0.15s ease;
+            background: rgba(255,255,255,0.5);
+        }
+        .sh-card:hover { border-color: rgba(107, 79, 160, 0.18); }
+        .sh-card-header {
+            display: flex; align-items: center; gap: 8px; padding: 9px 12px; font-size: 0.62rem;
+        }
+        .sh-card-time { font-weight: 800; min-width: 58px; color: var(--info-text); flex-shrink: 0; }
+        .sh-card-name { font-weight: 700; flex: 1; color: var(--text); }
+        .sh-card-chevron {
+            font-size: 0.45rem; color: var(--text-light); transition: transform 0.2s ease; flex-shrink: 0;
+        }
+        .sh-card.open { border-color: rgba(107, 79, 160, 0.18); box-shadow: 0 1px 6px rgba(107,79,160,0.06); }
+        .sh-card.open .sh-card-chevron { transform: rotate(90deg); }
+        .sh-card-body {
+            max-height: 0; overflow: hidden; transition: max-height 0.25s ease, padding 0.25s ease;
+        }
+        .sh-card.open .sh-card-body { max-height: 80px; padding: 0 12px 10px; }
+        .sh-card-why {
+            font-size: 0.55rem; color: rgba(0,0,0,0.45); font-style: italic; padding-left: 66px;
+        }
+
         /* ═══ LOG TAB ═══ */
+        .log-filter-bar { margin-bottom: 12px; }
+        .log-filter-row {
+            display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin-bottom: 6px;
+        }
+        .log-filter-row:last-child { margin-bottom: 0; }
+        .log-date-input {
+            padding: 5px 10px; border-radius: 20px; border: 1px solid var(--border);
+            font-size: 0.58rem; font-family: 'Montserrat', sans-serif;
+        }
+        .log-date-input:focus { border-color: var(--purple-deep); outline: none; }
+        .log-quick-btn {
+            padding: 4px 10px; border-radius: 16px; font-size: 0.52rem; font-weight: 700;
+            border: 1px solid var(--border); background: var(--white); cursor: pointer;
+            font-family: 'Montserrat', sans-serif; transition: all 0.15s ease;
+            color: var(--text-mid);
+        }
+        .log-quick-btn:hover { border-color: var(--purple-deep); }
+        .log-quick-btn.active { background: var(--purple-deep); color: white; border-color: var(--purple-deep); }
+        .log-cat-chip {
+            padding: 3px 8px; border-radius: 12px; font-size: 0.48rem; font-weight: 700;
+            border: 1px solid var(--border); background: var(--white); cursor: pointer;
+            font-family: 'Montserrat', sans-serif; transition: all 0.15s ease;
+            color: var(--text-mid); user-select: none;
+        }
+        .log-cat-chip:hover { border-color: rgba(197,138,205,0.4); }
+        .log-cat-chip.active { color: white; }
+        .log-cat-chip.active[data-cat="feed"] { background: var(--cat-feed); border-color: var(--cat-feed); }
+        .log-cat-chip.active[data-cat="med"] { background: var(--cat-med); border-color: var(--cat-med); }
+        .log-cat-chip.active[data-cat="sleep"] { background: var(--cat-sleep); border-color: var(--cat-sleep); }
+        .log-cat-chip.active[data-cat="potty"],
+        .log-cat-chip.active[data-cat="diaper"] { background: var(--cat-diaper); border-color: var(--cat-diaper); }
+        .log-cat-chip.active[data-cat="hygiene"] { background: var(--cat-hygiene); border-color: var(--cat-hygiene); }
+        .log-cat-chip.active[data-cat="activity"] { background: var(--cat-activity); border-color: var(--cat-activity); }
+        .log-cat-chip.active[data-cat="note"] { background: var(--cat-note); border-color: var(--cat-note); }
+        .log-cat-chip.active[data-cat="milestone"] { background: var(--cat-milestone); border-color: var(--cat-milestone); }
+        .log-cat-chip.active[data-cat="tantrum"] { background: var(--cat-tantrum); border-color: var(--cat-tantrum); }
         .log-entry { padding: 8px 0; border-bottom: 1px solid var(--border); }
         .log-entry:last-child { border-bottom: none; }
         .log-time { font-size: 0.55rem; color: var(--text-light); font-weight: 600; }
         .log-msg { font-size: 0.7rem; }
+        .log-msg.truncated {
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+        }
+        .log-msg-toggle {
+            font-size: 0.48rem; color: var(--purple-deep); font-weight: 700; cursor: pointer;
+            margin-top: 2px; user-select: none;
+        }
         .log-date-header { font-size: 0.6rem; font-weight: 800; color: var(--purple-deep); margin-top: 10px; margin-bottom: 4px; padding-bottom: 4px; border-bottom: 2px solid var(--purple-soft); }
+        .log-empty { text-align: center; color: var(--text-light); font-size: 0.68rem; padding: 20px 0; }
 
         /* ═══ TOAST ═══ */
         .toast-container { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 200; display: flex; flex-direction: column; gap: 6px; max-width: 340px; width: 90%; }
@@ -655,6 +762,14 @@
         }
         .notif-banner h4 { font-size: 0.75rem; margin-bottom: 4px; }
         .notif-banner p { font-size: 0.6rem; opacity: 0.85; }
+        .notif-banner.notif-compact {
+            display: inline-flex; align-items: center; gap: 6px;
+            padding: 5px 14px; background: var(--safe-bg); color: var(--safe-text);
+            box-shadow: none; text-shadow: none; cursor: default; border-radius: 20px;
+            font-size: 0.55rem; font-weight: 700; margin: 6px 0 0; opacity: 1;
+        }
+        .notif-compact h4 { font-size: 0.55rem; margin: 0; display: inline; }
+        .notif-compact p { display: none; }
 
         /* ═══ SYNC ═══ */
         .sync-badge {
@@ -1285,8 +1400,10 @@
                     <button class="cat-btn" data-cat="note"><div class="cat-icon">📝</div><div class="cat-label">Note</div></button>
                     <button class="cat-btn" data-cat="milestone"><div class="cat-icon">⭐</div><div class="cat-label">Milestone</div></button>
                     <button class="cat-btn" data-cat="tantrum" id="tantrumBtn"><div class="cat-icon">🌋</div><div class="cat-label">Tantrum</div></button>
-                    <button class="cat-btn" style="grid-column:1/-1;flex-direction:row;justify-content:center;padding:8px;gap:6px;border-color:var(--teal);background:var(--teal-light);" onclick="openImportDaycare()">
-                        <div class="cat-icon">📸</div><div class="cat-label" style="color:var(--teal);font-size:0.5rem;">Import from Procare</div>
+                </div>
+                <div class="import-procare-wrap">
+                    <button class="import-procare-btn" onclick="openImportDaycare()">
+                        <div class="cat-icon">📸</div><div class="cat-label">Import from Procare</div>
                     </button>
                 </div>
                 <div class="quick-form" id="quickForm"></div>
@@ -1492,7 +1609,16 @@
         <!-- ═══════════ TAB: LOG ═══════════ -->
         <div class="tab-view" id="tab-log">
             <div class="card">
-                <div class="card-label"><i class="fa-solid fa-clock-rotate-left"></i> Full Activity History (CST)</div>
+                <div class="card-label"><i class="fa-solid fa-clock-rotate-left"></i> Activity History (CST)</div>
+                <div class="log-filter-bar">
+                    <div class="log-filter-row">
+                        <input type="date" class="log-date-input" id="logDatePicker">
+                        <button class="log-quick-btn" id="logToday">Today</button>
+                        <button class="log-quick-btn" id="logYesterday">Yesterday</button>
+                        <button class="log-quick-btn" id="logAllDates">All</button>
+                    </div>
+                    <div class="log-filter-row" id="logCatChips"></div>
+                </div>
                 <div id="logList"></div>
             </div>
         </div>
@@ -2335,17 +2461,30 @@
 
         var html = '';
         var nowInserted = false;
+        var currentPeriod = '';
+        var periodLabels = { morning: ['Morning', 'fa-sun'], afternoon: ['Afternoon', 'fa-cloud-sun'], evening: ['Evening', 'fa-moon'] };
 
         items.forEach(function(item) {
+            var period = item.min < 720 ? 'morning' : item.min < 1020 ? 'afternoon' : 'evening';
+
             // Insert "NOW" marker only for today
             if (isToday && !nowInserted && item.min > nowMin) {
                 html += '<div class="tl-now-marker"><span class="tl-now-label">Now — ' + getCSTTimeStr() + '</span><div class="tl-now-line"></div></div>';
                 nowInserted = true;
             }
 
+            // Period block transitions
+            if (period !== currentPeriod) {
+                if (currentPeriod) html += '</div>';
+                var pl = periodLabels[period];
+                html += '<div class="tl-period-block ' + period + '">';
+                html += '<div class="tl-period-label"><i class="fa-solid ' + pl[1] + '"></i> ' + pl[0] + '</div>';
+                currentPeriod = period;
+            }
+
             if (item.type === 'guide') {
                 html += '<div class="tl-entry schedule-guide">' +
-                    '<div class="tl-time">' + item.data.time + '</div>' +
+                    '<div class="tl-time">' + item.data.time + ' <span class="tl-guide-tag">GUIDE</span></div>' +
                     '<div class="tl-content">' +
                     '<span class="tl-emoji">🔮</span>' +
                     '<div><div class="tl-text">' + item.data.name + '</div>' +
@@ -2364,6 +2503,8 @@
                     '</div></div>';
             }
         });
+
+        if (currentPeriod) html += '</div>';
 
         // If now is after all items (today only)
         if (isToday && !nowInserted) {
@@ -2438,20 +2579,92 @@
             }
         } catch(e) {}
     }
+    var logFilterDate = null;
+    var logFilterCats = [];
+
+    function initLogFilters() {
+        var chipsEl = document.getElementById('logCatChips');
+        if (!chipsEl) return;
+        var catKeys = ['feed', 'med', 'sleep', 'potty', 'hygiene', 'activity', 'note', 'milestone', 'tantrum'];
+        var html = '';
+        catKeys.forEach(function(key) {
+            var c = categories[key];
+            if (!c) return;
+            html += '<button class="log-cat-chip" data-cat="' + key + '">' + c.emoji + ' ' + c.label + '</button>';
+        });
+        chipsEl.innerHTML = html;
+        chipsEl.querySelectorAll('.log-cat-chip').forEach(function(chip) {
+            chip.addEventListener('click', function() {
+                this.classList.toggle('active');
+                var cat = this.dataset.cat;
+                var idx = logFilterCats.indexOf(cat);
+                if (idx >= 0) logFilterCats.splice(idx, 1); else logFilterCats.push(cat);
+                renderLog();
+            });
+        });
+        document.getElementById('logToday').addEventListener('click', function() {
+            var today = getCSTDate();
+            if (logFilterDate === today) { logFilterDate = null; } else { logFilterDate = today; }
+            syncLogDateUI();
+            renderLog();
+        });
+        document.getElementById('logYesterday').addEventListener('click', function() {
+            var d = getCSTNow(); d.setDate(d.getDate() - 1);
+            var yd = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+            if (logFilterDate === yd) { logFilterDate = null; } else { logFilterDate = yd; }
+            syncLogDateUI();
+            renderLog();
+        });
+        document.getElementById('logAllDates').addEventListener('click', function() {
+            logFilterDate = null;
+            syncLogDateUI();
+            renderLog();
+        });
+        document.getElementById('logDatePicker').addEventListener('change', function() {
+            logFilterDate = this.value || null;
+            syncLogDateUI();
+            renderLog();
+        });
+    }
+
+    function syncLogDateUI() {
+        var picker = document.getElementById('logDatePicker');
+        picker.value = logFilterDate || '';
+        var today = getCSTDate();
+        var d = getCSTNow(); d.setDate(d.getDate() - 1);
+        var yesterday = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+        document.getElementById('logToday').classList.toggle('active', logFilterDate === today);
+        document.getElementById('logYesterday').classList.toggle('active', logFilterDate === yesterday);
+        document.getElementById('logAllDates').classList.toggle('active', !logFilterDate);
+    }
+
     function renderLog() {
         var html = '';
         var lastDate = '';
+        var count = 0;
         logEntries.forEach(function(entry) {
             var d = new Date(entry.time);
             var cst = new Date(d.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
-            var dateStr = cst.getFullYear() + '-' + String(cst.getMonth()+1).padStart(2,'0') + '-' + String(cst.getDate()).padStart(2,'0');
+            var dateStr = cst.getFullYear() + '-' + String(cst.getMonth() + 1).padStart(2, '0') + '-' + String(cst.getDate()).padStart(2, '0');
+            if (logFilterDate && dateStr !== logFilterDate) return;
+            var entryType = entry.type || entry.cat || '';
+            if (logFilterCats.length > 0 && logFilterCats.indexOf(entryType) < 0) return;
+            count++;
             if (dateStr !== lastDate) { lastDate = dateStr; html += '<div class="log-date-header">' + formatDateNice(dateStr) + '</div>'; }
             var ts = cst.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
-            var c = categories[entry.type];
-            var badge = c ? '<span class="tl-cat-badge ' + entry.type + '" style="font-size:0.45rem;margin-right:4px;">' + c.label + '</span>' : '';
-            html += '<div class="log-entry"><div class="log-time">' + ts + '</div>' + badge + '<div class="log-msg">' + entry.msg + '</div></div>';
+            var c = categories[entryType];
+            var badge = c ? '<span class="tl-cat-badge ' + entryType + '" style="font-size:0.45rem;margin-right:4px;">' + c.label + '</span>' : '';
+            var msg = entry.msg || '';
+            var isTruncated = msg.length > 140;
+            var msgClass = isTruncated ? 'log-msg truncated' : 'log-msg';
+            html += '<div class="log-entry"><div class="log-time">' + ts + '</div>' + badge +
+                '<div class="' + msgClass + '">' + escHtml(msg) + '</div>' +
+                (isTruncated ? '<div class="log-msg-toggle" onclick="var m=this.previousElementSibling;m.classList.toggle(\'truncated\');this.textContent=m.classList.contains(\'truncated\')?\'show more\':\'show less\'">show more</div>' : '') +
+                '</div>';
         });
-        if (!html) html = '<div style="text-align:center;color:var(--text-light);font-size:0.7rem;padding:20px;">No activity yet.</div>';
+        if (count === 0) {
+            html = '<div class="log-empty">' + (logFilterDate || logFilterCats.length > 0 ? 'No entries match your filters.' : 'No activity yet.') + '</div>';
+        }
         document.getElementById('logList').innerHTML = html;
     }
 
@@ -2459,14 +2672,38 @@
     //  SAFE HARBOR SCHEDULE (Care Tab)
     // ═══════════════════════════════════════
     function renderSafeHarbor() {
-        var html = '';
+        var groups = [
+            { label: 'Morning', icon: 'fa-sun', items: [] },
+            { label: 'Afternoon', icon: 'fa-cloud-sun', items: [] },
+            { label: 'Evening', icon: 'fa-moon', items: [] }
+        ];
         safeHarborSchedule.forEach(function(item) {
-            html += '<div class="sched-ref-item">' +
-                '<div class="sched-ref-time">' + item.time + '</div>' +
-                '<div><div class="sched-ref-name">' + item.name + '</div>' +
-                '<div class="sched-ref-why">' + item.why + '</div></div></div>';
+            var min = timeToMinutes(item.time);
+            if (min < 720) groups[0].items.push(item);
+            else if (min < 1020) groups[1].items.push(item);
+            else groups[2].items.push(item);
         });
-        document.getElementById('safeHarborSchedule').innerHTML = html;
+        var html = '';
+        groups.forEach(function(g) {
+            if (g.items.length === 0) return;
+            html += '<div class="sh-section-label"><i class="fa-solid ' + g.icon + '"></i> ' + g.label + '</div>';
+            g.items.forEach(function(item) {
+                html += '<div class="sh-card">' +
+                    '<div class="sh-card-header">' +
+                    '<div class="sh-card-time">' + item.time + '</div>' +
+                    '<div class="sh-card-name">' + item.name + '</div>' +
+                    '<i class="fa-solid fa-chevron-right sh-card-chevron"></i>' +
+                    '</div>' +
+                    '<div class="sh-card-body"><div class="sh-card-why">' + item.why + '</div></div>' +
+                    '</div>';
+            });
+        });
+        var el = document.getElementById('safeHarborSchedule');
+        el.innerHTML = html;
+        el.addEventListener('click', function(e) {
+            var card = e.target.closest('.sh-card');
+            if (card) card.classList.toggle('open');
+        });
     }
 
     // ═══════════════════════════════════════
@@ -3293,8 +3530,8 @@
 
         var perm = Notification.permission;
         if (perm === 'granted') {
-            el.style.opacity = '0.7';
-            el.innerHTML = '<h4>🔔 Push Notifications Active</h4><p>You\'ll get real-time alerts even when this app is closed.</p>';
+            el.classList.add('notif-compact');
+            el.innerHTML = '<h4><i class="fa-solid fa-bell"></i> Push Active</h4>';
             if (!pushSubscription) subscribeToPush();
         } else if (perm === 'denied') {
             el.innerHTML = '<h4>🚫 Notifications Blocked</h4><p>Open your browser settings to re-enable notifications for this site.</p>';
@@ -4056,6 +4293,7 @@
         await loadLog();
         await loadInfoBank();
         renderSafeHarbor();
+        initLogFilters();
         renderNotifBanner();
         startRealtime();
         initServiceWorker();
