@@ -362,126 +362,245 @@
         .schedule-toggle input { accent-color: var(--purple-deep); cursor: pointer; }
 
         /* ═══ CALENDAR (from Leesitime) ═══ */
-        .cal-nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-        .cal-nav-bar h3 { font-family: 'Great Vibes', cursive; font-size: 1.4rem; color: var(--purple-deep); }
+        /* ─── Calendar Navigation ─── */
+        .cal-nav-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .cal-nav-bar h3 { font-family: 'Montserrat', sans-serif; font-size: 1rem; font-weight: 800; color: var(--text); letter-spacing: 0.5px; }
         .cal-nav-bar button {
-            background: var(--purple-whisper); border: none; width: 32px; height: 32px;
+            background: var(--purple-whisper); border: none; width: 34px; height: 34px;
             border-radius: 50%; cursor: pointer; color: var(--purple-deep); font-size: 0.8rem;
+            transition: background 0.15s ease, transform 0.1s ease;
         }
-        .cal-nav-bar .today-btn { width: auto; padding: 0 10px; font-size: 0.55rem; font-weight: 700; border-radius: 12px; }
-        .cal-legend { display: flex; justify-content: center; gap: 12px; margin-bottom: 10px; font-size: 0.6rem; font-weight: 600; }
-        .cal-legend-item { display: flex; align-items: center; gap: 4px; }
+        .cal-nav-bar button:hover { background: rgba(197,138,205,0.18); }
+        .cal-nav-bar button:active { transform: scale(0.92); }
+        .cal-nav-bar .today-btn { width: auto; padding: 0 12px; font-size: 0.55rem; font-weight: 700; border-radius: 12px; letter-spacing: 0.5px; }
+
+        /* ─── Calendar Legend ─── */
+        .cal-legend { display: flex; justify-content: center; gap: 16px; margin-bottom: 12px; font-size: 0.58rem; font-weight: 600; color: var(--text-mid); }
+        .cal-legend-item { display: flex; align-items: center; gap: 5px; }
         .cal-legend-dot { width: 10px; height: 10px; border-radius: 4px; }
         .cal-legend-dot.adam { background: var(--adam-color); }
         .cal-legend-dot.marta { background: var(--marta-color); }
-        .cal-legend-dot.shared { background: var(--shared-color); }
-        .cal-stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 10px; }
-        .cal-stat { text-align: center; padding: 8px; background: var(--purple-whisper); border-radius: 10px; }
-        .cal-stat.adam { border-top: 3px solid var(--adam-color); }
-        .cal-stat.marta { border-top: 3px solid var(--marta-color); }
-        .cal-stat-val { font-size: 1.1rem; font-weight: 800; }
-        .cal-stat-label { font-size: 0.5rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
-        .cal-mode-toggle { display: flex; justify-content: center; gap: 4px; margin-bottom: 10px; }
-        .cal-mode-btn {
-            padding: 6px 10px; border: 2px solid var(--border); background: var(--white);
-            border-radius: 20px; cursor: pointer; font-size: 0.6rem; font-weight: 600; font-family: 'Montserrat', sans-serif;
-            transition: background 0.15s ease, color 0.15s ease, border-color 0.15s ease;
-            touch-action: manipulation;
+        .cal-legend-dot.exchange { background: linear-gradient(90deg, var(--adam-color) 50%, var(--marta-color) 50%); border-radius: 4px; }
+
+        /* ─── Analytics Panel ─── */
+        .cal-analytics {
+            display: flex; align-items: center; gap: 16px;
+            background: linear-gradient(135deg, rgba(255,255,255,0.95), var(--purple-whisper));
+            border-radius: 14px; padding: 14px 16px; margin-bottom: 12px;
+            border: 1px solid rgba(197,138,205,0.1);
         }
+        .cal-donut-wrap { flex-shrink: 0; position: relative; width: 90px; height: 90px; }
+        .cal-donut-center {
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            text-align: center; line-height: 1.1;
+        }
+        .cal-donut-pct { font-size: 0.75rem; font-weight: 800; color: var(--text); }
+        .cal-donut-label { font-size: 0.4rem; font-weight: 700; color: var(--text-light); text-transform: uppercase; letter-spacing: 0.5px; }
+        .cal-analytics-nums { flex: 1; display: flex; flex-direction: column; gap: 6px; }
+        .cal-analytics-row {
+            display: flex; align-items: center; gap: 8px; font-size: 0.62rem;
+            padding: 6px 10px; border-radius: 8px; background: rgba(255,255,255,0.7);
+        }
+        .cal-analytics-dot { width: 8px; height: 8px; border-radius: 3px; flex-shrink: 0; }
+        .cal-analytics-dot.adam { background: var(--adam-color); }
+        .cal-analytics-dot.marta { background: var(--marta-color); }
+        .cal-analytics-dot.unassigned { background: var(--text-light); }
+        .cal-analytics-name { font-weight: 700; color: var(--text); min-width: 48px; }
+        .cal-analytics-pct { font-weight: 800; color: var(--text); min-width: 36px; }
+        .cal-analytics-hrs { color: var(--text-mid); font-size: 0.55rem; }
+        .cal-analytics-days { color: var(--text-light); font-size: 0.5rem; }
+
+        /* ─── Calendar Mode Toggle ─── */
+        .cal-mode-toggle { display: flex; justify-content: center; gap: 4px; margin-bottom: 12px; }
+        .cal-mode-btn {
+            padding: 6px 12px; border: 1.5px solid var(--border); background: var(--white);
+            border-radius: 20px; cursor: pointer; font-size: 0.58rem; font-weight: 700; font-family: 'Montserrat', sans-serif;
+            transition: all 0.15s ease; touch-action: manipulation; letter-spacing: 0.3px;
+        }
+        .cal-mode-btn:hover { border-color: rgba(197,138,205,0.35); }
         .cal-mode-btn.active { background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid)); color: white; border-color: transparent; box-shadow: 0 2px 8px rgba(197,138,205,0.3); }
         .cal-mode-btn.adam-mode.active { background: var(--adam-color); border-color: var(--adam-color); }
         .cal-mode-btn.marta-mode.active { background: var(--marta-color); border-color: var(--marta-color); }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); }
-        .cal-dow { text-align: center; font-size: 0.5rem; font-weight: 800; color: var(--text-light); padding: 6px 0; text-transform: uppercase; }
+
+        /* ─── Calendar Grid ─── */
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px; }
+        .cal-dow { text-align: center; font-size: 0.48rem; font-weight: 800; color: var(--text-light); padding: 6px 0; text-transform: uppercase; letter-spacing: 0.5px; }
         .cal-day {
-            min-height: 44px; border: 1px solid var(--border); padding: 4px;
+            min-height: 52px; border-radius: 8px; padding: 4px 2px;
             text-align: center; cursor: pointer; position: relative;
-            font-size: 0.7rem; font-weight: 600; display: flex;
+            font-size: 0.72rem; font-weight: 600; display: flex;
             flex-direction: column; align-items: center; gap: 2px;
+            background: rgba(255,255,255,0.6); border: 1.5px solid transparent;
+            transition: transform 0.1s ease, box-shadow 0.15s ease, border-color 0.15s ease;
         }
-        .cal-day:hover { background: var(--purple-glow); }
-        .cal-day.empty { cursor: default; opacity: 0.3; }
-        .cal-day.today { background: rgba(248,132,213,0.1); border: 2px solid var(--purple-soft); font-weight: 800; }
-        .cal-day.selected { background: var(--purple-whisper); border: 2px solid var(--purple-deep); }
-        .cal-day.has-data::after { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--purple-deep); position: absolute; bottom: 3px; }
-        .cal-day.adam-day { background: var(--adam-light); }
-        .cal-day.marta-day { background: var(--marta-light); }
-        .cal-day.shared-day { background: linear-gradient(135deg, var(--adam-light) 50%, var(--marta-light) 50%); }
-        .cal-day-parent { font-size: 0.4rem; font-weight: 800; padding: 1px 3px; border-radius: 3px; color: white; }
+        .cal-day:hover { transform: translateY(-1px); box-shadow: 0 2px 8px rgba(197,138,205,0.12); border-color: rgba(197,138,205,0.2); }
+        .cal-day.empty { cursor: default; opacity: 0.2; background: none; }
+        .cal-day.empty:hover { transform: none; box-shadow: none; }
+        .cal-day.today {
+            border: 2px solid var(--purple-soft); font-weight: 800;
+            box-shadow: 0 0 0 3px rgba(248,132,213,0.15);
+        }
+        .cal-day.selected { background: var(--purple-whisper); border: 2px solid var(--purple-deep); box-shadow: 0 0 0 3px rgba(197,138,205,0.15); }
+        .cal-day.has-data::after { content: ''; width: 4px; height: 4px; border-radius: 50%; background: var(--purple-deep); position: absolute; bottom: 2px; }
+        .cal-day.adam-day { background: var(--adam-light); border-color: rgba(123,163,217,0.2); }
+        .cal-day.marta-day { background: var(--marta-light); border-color: rgba(216,90,156,0.15); }
+        .cal-day.exchange-day {
+            background: linear-gradient(90deg, var(--adam-light) var(--split, 50%), var(--marta-light) var(--split, 50%));
+            border-color: rgba(197,138,205,0.2);
+        }
+        .cal-day.exchange-day.marta-first {
+            background: linear-gradient(90deg, var(--marta-light) var(--split, 50%), var(--adam-light) var(--split, 50%));
+        }
+
+        /* ─── Calendar Day Badges ─── */
+        .cal-day-parent { font-size: 0.4rem; font-weight: 800; padding: 1px 4px; border-radius: 4px; color: white; letter-spacing: 0.3px; }
         .cal-day-parent.adam { background: var(--adam-color); }
         .cal-day-parent.marta { background: var(--marta-color); }
-        .cal-day-parent.shared { background: var(--shared-color); }
-        .cal-detail { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); }
-        .cal-empty { text-align: center; font-size: 0.7rem; color: var(--text-light); padding: 16px 0; }
-        .cal-detail-date { font-family: 'Great Vibes', cursive; font-size: 1.2rem; color: var(--purple-deep); margin-bottom: 8px; }
+        .cal-day-xtime { font-size: 0.38rem; font-weight: 800; padding: 1px 4px; border-radius: 4px; background: rgba(197,138,205,0.85); color: white; letter-spacing: 0.3px; }
 
-        /* Calendar day modal */
+        /* ─── Calendar Detail ─── */
+        .cal-detail { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border); }
+        .cal-empty { text-align: center; font-size: 0.68rem; color: var(--text-light); padding: 20px 0; }
+        .cal-detail-date { font-family: 'Great Vibes', cursive; font-size: 1.2rem; color: var(--purple-deep); margin-bottom: 8px; }
+        .cal-detail-bar {
+            display: flex; height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 8px;
+        }
+        .cal-detail-bar-seg { transition: width 0.3s ease; }
+        .cal-detail-bar-seg.adam { background: var(--adam-color); }
+        .cal-detail-bar-seg.marta { background: var(--marta-color); }
+        .cal-detail-breakdown {
+            display: flex; justify-content: space-between; font-size: 0.58rem; font-weight: 600; margin-bottom: 10px; padding: 0 2px;
+        }
+        .cal-detail-breakdown span { display: flex; align-items: center; gap: 4px; }
+        .cal-detail-xtime {
+            text-align: center; font-size: 0.55rem; font-weight: 700; color: var(--shared-color);
+            background: var(--shared-light); padding: 4px 10px; border-radius: 8px; margin-bottom: 10px;
+        }
+
+        /* ─── Calendar Day Modal ─── */
         .modal-overlay {
             position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0,0,0,0.5); z-index: 100; align-items: center;
+            background: rgba(0,0,0,0.45); z-index: 100; align-items: center;
             justify-content: center; padding: 14px;
             display: flex; opacity: 0; pointer-events: none;
-            transition: opacity 0.2s ease;
+            transition: opacity 0.2s ease; backdrop-filter: blur(4px);
         }
         .modal-overlay.active { opacity: 1; pointer-events: auto; }
         .modal {
-            background: var(--white); border-radius: var(--radius); width: 100%;
-            max-width: 460px; max-height: 85vh; overflow-y: auto;
+            background: var(--white); border-radius: 18px; width: 100%;
+            max-width: 440px; max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 12px 48px rgba(0,0,0,0.15);
         }
         .modal-header {
-            padding: 14px; border-bottom: 1px solid var(--border);
+            padding: 16px 18px; border-bottom: 1px solid var(--border);
             display: flex; justify-content: space-between; align-items: center;
             position: sticky; top: 0; background: var(--white); z-index: 2;
-            border-radius: var(--radius) var(--radius) 0 0;
+            border-radius: 18px 18px 0 0;
         }
         .modal-header h2 { font-family: 'Great Vibes', cursive; font-size: 1.3rem; color: var(--purple-deep); }
         .close-btn {
             background: var(--purple-whisper); border: none; width: 30px; height: 30px;
             border-radius: 50%; font-size: 1rem; cursor: pointer; color: var(--text-mid);
+            transition: background 0.15s ease;
         }
-        .modal-body { padding: 14px; }
-        .quick-assign { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-bottom: 12px; }
-        .assign-btn {
-            padding: 10px 6px; border: 3px solid var(--border); background: var(--white);
+        .close-btn:hover { background: rgba(197,138,205,0.2); }
+        .modal-body { padding: 16px 18px; }
+        .section-title { font-size: 0.52rem; font-weight: 800; color: var(--text-light); margin-bottom: 8px; text-transform: uppercase; letter-spacing: 1.5px; }
+
+        /* ─── Day Type Toggle ─── */
+        .day-type-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 14px; }
+        .day-type-btn {
+            padding: 10px 8px; border: 2px solid var(--border); background: var(--white);
             border-radius: 12px; cursor: pointer; text-align: center; font-family: 'Montserrat', sans-serif;
+            transition: all 0.15s ease;
         }
+        .day-type-btn.active { border-color: var(--purple-deep); background: var(--purple-whisper); }
+        .day-type-btn .day-type-icon { font-size: 1rem; margin-bottom: 2px; }
+        .day-type-btn .day-type-label { font-size: 0.58rem; font-weight: 700; color: var(--text); }
+        .day-type-btn .day-type-desc { font-size: 0.45rem; color: var(--text-light); margin-top: 1px; }
+
+        /* ─── Parent Assign (Full Day) ─── */
+        .quick-assign { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-bottom: 14px; }
+        .assign-btn {
+            padding: 12px 8px; border: 2.5px solid var(--border); background: var(--white);
+            border-radius: 12px; cursor: pointer; text-align: center; font-family: 'Montserrat', sans-serif;
+            transition: all 0.15s ease;
+        }
+        .assign-btn:hover { border-color: rgba(197,138,205,0.35); }
         .assign-btn.adam.active { border-color: var(--adam-color); background: var(--adam-light); }
         .assign-btn.marta.active { border-color: var(--marta-color); background: var(--marta-light); }
-        .assign-btn.shared.active { border-color: var(--shared-color); background: var(--shared-light); }
         .assign-icon { font-size: 1.1rem; }
-        .assign-label { font-size: 0.6rem; font-weight: 700; }
-        .section-title { font-size: 0.55rem; font-weight: 800; color: var(--text-light); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-        .time-section { background: var(--purple-whisper); padding: 10px; border-radius: 12px; margin-bottom: 10px; }
-        .time-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 6px; }
-        .time-row:last-child { margin-bottom: 0; }
-        .form-group { margin-bottom: 4px; }
-        .form-group label { display: block; font-size: 0.55rem; font-weight: 700; margin-bottom: 2px; color: var(--text-mid); }
+        .assign-label { font-size: 0.62rem; font-weight: 700; }
+
+        /* ─── Exchange Config ─── */
+        .exchange-config { display: none; }
+        .exchange-config.active { display: block; }
+        .exchange-preview-bar {
+            display: flex; height: 10px; border-radius: 5px; overflow: hidden; margin-bottom: 10px;
+            box-shadow: inset 0 1px 3px rgba(0,0,0,0.08);
+        }
+        .exchange-preview-seg { transition: flex 0.2s ease; }
+        .exchange-preview-seg.adam { background: var(--adam-color); }
+        .exchange-preview-seg.marta { background: var(--marta-color); }
+        .exchange-parent-row { display: grid; grid-template-columns: 1fr auto 1fr; gap: 8px; align-items: center; margin-bottom: 10px; }
+        .exchange-parent-pick {
+            padding: 8px; border: 2px solid var(--border); border-radius: 10px; text-align: center;
+            cursor: pointer; font-size: 0.6rem; font-weight: 700; font-family: 'Montserrat', sans-serif;
+            transition: all 0.15s ease; background: var(--white);
+        }
+        .exchange-parent-pick.adam.active { border-color: var(--adam-color); background: var(--adam-light); color: var(--adam-color); }
+        .exchange-parent-pick.marta.active { border-color: var(--marta-color); background: var(--marta-light); color: var(--marta-color); }
+        .exchange-arrow { font-size: 0.7rem; color: var(--text-light); text-align: center; }
+        .exchange-time-section { background: var(--purple-whisper); padding: 10px; border-radius: 12px; margin-bottom: 10px; }
+        .exchange-presets { display: flex; gap: 4px; flex-wrap: wrap; margin-top: 6px; }
+        .exchange-preset {
+            padding: 4px 10px; background: var(--white); border: 1px solid var(--border);
+            border-radius: 10px; font-size: 0.55rem; font-weight: 700; cursor: pointer;
+            font-family: 'Montserrat', sans-serif; transition: all 0.15s ease;
+        }
+        .exchange-preset:hover { border-color: var(--purple-deep); }
+        .exchange-preset.active { background: var(--purple-deep); color: white; border-color: var(--purple-deep); }
+
+        /* ─── Notes & Form ─── */
+        .form-group { margin-bottom: 6px; }
+        .form-group label { display: block; font-size: 0.52rem; font-weight: 700; margin-bottom: 3px; color: var(--text-mid); text-transform: uppercase; letter-spacing: 0.5px; }
         .form-group input, .form-group textarea {
-            width: 100%; padding: 8px; border: 1px solid var(--border);
-            border-radius: 8px; font-size: 0.75rem; font-family: 'Montserrat', sans-serif;
+            width: 100%; padding: 9px 10px; border: 1.5px solid var(--border);
+            border-radius: 10px; font-size: 0.72rem; font-family: 'Montserrat', sans-serif;
+            transition: border-color 0.15s ease;
         }
+        .form-group input:focus, .form-group textarea:focus { border-color: var(--purple-deep); outline: none; }
         .form-group textarea { min-height: 50px; resize: vertical; }
-        .note-templates { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 6px; }
+        .note-templates { display: flex; gap: 4px; flex-wrap: wrap; margin-bottom: 8px; }
         .note-template {
-            padding: 3px 8px; background: var(--purple-whisper); border: 1px solid var(--border);
+            padding: 4px 10px; background: var(--purple-whisper); border: 1px solid var(--border);
             border-radius: 12px; font-size: 0.5rem; cursor: pointer; font-family: 'Montserrat', sans-serif;
+            transition: all 0.15s ease;
         }
-        .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+        .note-template:hover { border-color: var(--purple-deep); background: rgba(197,138,205,0.12); }
+        .modal-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 12px; }
         .btn-modal {
-            padding: 10px; border-radius: 12px; font-size: 0.8rem; font-weight: 700;
+            padding: 11px; border-radius: 12px; font-size: 0.78rem; font-weight: 700;
             cursor: pointer; border: none; font-family: 'Montserrat', sans-serif;
+            transition: opacity 0.15s ease, transform 0.1s ease;
         }
+        .btn-modal:active { transform: translateY(1px); }
         .btn-primary { background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid), var(--purple-soft)); color: white; box-shadow: 0 4px 16px rgba(216,90,156,0.25); text-shadow: 0 1px 2px rgba(0,0,0,0.1); }
         .btn-secondary { background: var(--purple-whisper); color: var(--text-mid); }
 
-        /* Quick patterns */
-        .patterns-panel { margin-bottom: 8px; }
-        .patterns-panel h4 { font-size: 0.6rem; font-weight: 800; color: var(--text-light); margin-bottom: 6px; text-transform: uppercase; letter-spacing: 1px; }
-        .pattern-buttons { display: flex; gap: 4px; flex-wrap: wrap; }
-        .pattern-btn {
-            padding: 5px 8px; background: var(--purple-whisper); border: 1px solid var(--border);
-            border-radius: 10px; cursor: pointer; font-size: 0.55rem; font-weight: 600; font-family: 'Montserrat', sans-serif;
+        /* ─── Quick Patterns & Export ─── */
+        .cal-tools-panel {
+            display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 8px;
         }
+        .cal-tools-panel h4 { font-size: 0.55rem; font-weight: 800; color: var(--text-light); text-transform: uppercase; letter-spacing: 1px; width: 100%; margin-bottom: 2px; }
+        .pattern-btn, .export-month-btn {
+            padding: 6px 10px; background: var(--purple-whisper); border: 1px solid var(--border);
+            border-radius: 10px; cursor: pointer; font-size: 0.55rem; font-weight: 600; font-family: 'Montserrat', sans-serif;
+            transition: all 0.15s ease;
+        }
+        .pattern-btn:hover, .export-month-btn:hover { border-color: var(--purple-deep); background: rgba(197,138,205,0.12); }
+        .export-month-btn { background: linear-gradient(135deg, rgba(197,138,205,0.15), rgba(151,215,198,0.15)); border-color: rgba(151,215,198,0.3); color: var(--text); }
+        .export-month-btn i { color: var(--teal); }
 
         /* ═══ CARE TAB ═══ */
         .info-block { border-radius: 14px; padding: 14px; margin-bottom: 10px; }
@@ -977,31 +1096,15 @@
             /* ─── Calendar: master/detail side-by-side ─── */
             #tab-calendar > .card:first-child {
                 display: grid;
-                grid-template-columns: 1fr 320px;
-                grid-template-rows: auto auto auto 1fr auto;
+                grid-template-columns: 1fr 340px;
+                grid-template-rows: auto auto auto auto 1fr;
                 gap: 0 24px;
             }
-            /* Nav bar spans full width */
-            #tab-calendar > .card:first-child > .cal-nav-bar {
-                grid-column: 1 / -1;
-            }
-            /* Legend spans full width */
-            #tab-calendar > .card:first-child > .cal-legend {
-                grid-column: 1 / -1;
-            }
-            /* Stats span full width */
-            #tab-calendar > .card:first-child > .cal-stats {
-                grid-column: 1 / -1;
-            }
-            /* Mode toggle spans full width */
-            #tab-calendar > .card:first-child > .cal-mode-toggle {
-                grid-column: 1 / -1;
-            }
-            /* Grid takes left column */
-            #tab-calendar > .card:first-child > .cal-grid {
-                grid-column: 1; grid-row: 5;
-            }
-            /* Detail takes right column */
+            #tab-calendar > .card:first-child > .cal-nav-bar { grid-column: 1 / -1; }
+            #tab-calendar > .card:first-child > .cal-analytics { grid-column: 1 / -1; }
+            #tab-calendar > .card:first-child > .cal-legend { grid-column: 1 / -1; }
+            #tab-calendar > .card:first-child > .cal-mode-toggle { grid-column: 1 / -1; }
+            #tab-calendar > .card:first-child > .cal-grid { grid-column: 1; grid-row: 5; }
             #tab-calendar > .card:first-child > .cal-detail {
                 grid-column: 2; grid-row: 5;
                 margin-top: 0; padding-top: 0;
@@ -1010,8 +1113,11 @@
                 position: sticky; top: 24px;
                 max-height: 60vh; overflow-y: auto;
             }
-            .cal-day { min-height: 52px; font-size: 0.75rem; }
+            .cal-day { min-height: 56px; font-size: 0.75rem; }
             .cal-day-parent { font-size: 0.45rem; }
+            .cal-day-xtime { font-size: 0.42rem; }
+            .cal-analytics { gap: 20px; padding: 16px 20px; }
+            .cal-analytics-row { font-size: 0.65rem; }
 
             /* ─── Care Tab: 2-column grid for info blocks ─── */
             #tab-care.active {
@@ -1150,8 +1256,9 @@
 
             /* Calendar detail gets more room */
             #tab-calendar > .card:first-child {
-                grid-template-columns: 1fr 380px;
+                grid-template-columns: 1fr 400px;
             }
+            .cal-donut-wrap { width: 100px; height: 100px; }
         }
     </style>
 </head>
@@ -1223,31 +1330,29 @@
                     </div>
                     <button id="calNext"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
+                <div class="cal-analytics" id="calAnalytics">
+                    <div class="cal-donut-wrap" id="calDonut"></div>
+                    <div class="cal-analytics-nums" id="calAnalyticsNums"></div>
+                </div>
                 <div class="cal-legend">
                     <div class="cal-legend-item"><div class="cal-legend-dot adam"></div> Adam</div>
                     <div class="cal-legend-item"><div class="cal-legend-dot marta"></div> Marta</div>
-                    <div class="cal-legend-item"><div class="cal-legend-dot shared"></div> Shared</div>
-                </div>
-                <div class="cal-stats">
-                    <div class="cal-stat adam"><div class="cal-stat-val" id="adamDays">0</div><div class="cal-stat-label">Adam</div></div>
-                    <div class="cal-stat marta"><div class="cal-stat-val" id="martaDays">0</div><div class="cal-stat-label">Marta</div></div>
-                    <div class="cal-stat"><div class="cal-stat-val" id="unassignedDays">0</div><div class="cal-stat-label">Unassigned</div></div>
+                    <div class="cal-legend-item"><div class="cal-legend-dot exchange"></div> Exchange</div>
                 </div>
                 <div class="cal-mode-toggle">
-                    <button class="cal-mode-btn active" id="calModeView">View</button>
+                    <button class="cal-mode-btn active" id="calModeView"><i class="fa-solid fa-eye"></i> View</button>
                     <button class="cal-mode-btn adam-mode" id="calModePaintAdam"><i class="fa-solid fa-paintbrush"></i> Adam</button>
                     <button class="cal-mode-btn marta-mode" id="calModePaintMarta"><i class="fa-solid fa-paintbrush"></i> Marta</button>
                 </div>
                 <div class="cal-grid" id="calGrid"></div>
                 <div class="cal-detail" id="calDetail"><div class="cal-empty">Tap a date to view details.</div></div>
             </div>
-            <div class="card patterns-panel">
-                <h4><i class="fa-solid fa-bolt"></i> Quick Patterns</h4>
-                <div class="pattern-buttons">
-                    <button class="pattern-btn" id="patternAlt">Alternating Weeks</button>
-                    <button class="pattern-btn" id="patternRotation">2-2-3 Rotation</button>
-                    <button class="pattern-btn" id="patternWeekday">Weekdays / Weekends</button>
-                </div>
+            <div class="card cal-tools-panel">
+                <h4><i class="fa-solid fa-sliders"></i> Tools</h4>
+                <button class="pattern-btn" id="patternAlt"><i class="fa-solid fa-arrows-rotate"></i> Alternating Weeks</button>
+                <button class="pattern-btn" id="patternRotation"><i class="fa-solid fa-shuffle"></i> 2-2-3 Rotation</button>
+                <button class="pattern-btn" id="patternWeekday"><i class="fa-solid fa-calendar-week"></i> Weekday / Weekend</button>
+                <button class="export-month-btn" id="exportMonthBtn"><i class="fa-solid fa-file-export"></i> Export Month</button>
             </div>
         </div>
 
@@ -1410,23 +1515,61 @@
                 <button class="close-btn" id="closeCalDayModal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="section-title">Assign Day To</div>
-                <div class="quick-assign">
-                    <button class="assign-btn adam" id="assignAdam"><div class="assign-icon">👨</div><div class="assign-label">Adam</div></button>
-                    <button class="assign-btn marta" id="assignMarta"><div class="assign-icon">👩</div><div class="assign-label">Marta</div></button>
-                    <button class="assign-btn shared" id="assignShared"><div class="assign-icon">👥</div><div class="assign-label">Shared</div></button>
+                <div class="section-title">Day Type</div>
+                <div class="day-type-toggle">
+                    <button class="day-type-btn active" id="dayTypeFull">
+                        <div class="day-type-icon">📅</div>
+                        <div class="day-type-label">Full Day</div>
+                        <div class="day-type-desc">One parent all day</div>
+                    </button>
+                    <button class="day-type-btn" id="dayTypeExchange">
+                        <div class="day-type-icon">🔄</div>
+                        <div class="day-type-label">Exchange Day</div>
+                        <div class="day-type-desc">Handoff at a set time</div>
+                    </button>
                 </div>
-                <div class="time-section">
-                    <div class="section-title">Custom Times (Optional)</div>
-                    <div class="time-row">
-                        <div class="form-group"><label>Adam: Start</label><input type="time" id="adamStart"></div>
-                        <div class="form-group"><label>Adam: End</label><input type="time" id="adamEnd"></div>
-                    </div>
-                    <div class="time-row">
-                        <div class="form-group"><label>Marta: Start</label><input type="time" id="martaStart"></div>
-                        <div class="form-group"><label>Marta: End</label><input type="time" id="martaEnd"></div>
+
+                <div id="fullDayConfig">
+                    <div class="section-title">Assign To</div>
+                    <div class="quick-assign">
+                        <button class="assign-btn adam" id="assignAdam"><div class="assign-icon">👨</div><div class="assign-label">Adam</div></button>
+                        <button class="assign-btn marta" id="assignMarta"><div class="assign-icon">👩</div><div class="assign-label">Marta</div></button>
                     </div>
                 </div>
+
+                <div class="exchange-config" id="exchangeConfig">
+                    <div class="section-title">Exchange Preview</div>
+                    <div class="exchange-preview-bar" id="exchangePreviewBar">
+                        <div class="exchange-preview-seg adam" style="flex:1"></div>
+                        <div class="exchange-preview-seg marta" style="flex:1"></div>
+                    </div>
+                    <div class="exchange-parent-row">
+                        <div>
+                            <div style="font-size:0.45rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;text-align:center;">Before</div>
+                            <button class="exchange-parent-pick adam active" id="xParentBefore">👨 Adam</button>
+                        </div>
+                        <div class="exchange-arrow"><i class="fa-solid fa-arrow-right"></i></div>
+                        <div>
+                            <div style="font-size:0.45rem;font-weight:700;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin-bottom:4px;text-align:center;">After</div>
+                            <button class="exchange-parent-pick marta active" id="xParentAfter">👩 Marta</button>
+                        </div>
+                    </div>
+                    <div class="exchange-time-section">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>Exchange Time</label>
+                            <input type="time" id="exchangeTimeInput" value="18:00">
+                        </div>
+                        <div class="exchange-presets">
+                            <button class="exchange-preset" data-time="08:00">8 AM</button>
+                            <button class="exchange-preset" data-time="12:00">Noon</button>
+                            <button class="exchange-preset" data-time="15:00">3 PM</button>
+                            <button class="exchange-preset" data-time="17:00">5 PM</button>
+                            <button class="exchange-preset" data-time="18:00" style="background:var(--purple-deep);color:white;border-color:var(--purple-deep);">6 PM</button>
+                            <button class="exchange-preset" data-time="19:00">7 PM</button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="section-title">Notes</div>
                 <div class="note-templates">
                     <button class="note-template" onclick="addCalNote('Pickup from school')">🏫 School</button>
@@ -1438,8 +1581,8 @@
                 </div>
                 <div class="form-group"><textarea id="calDayNotes" placeholder="Add notes..."></textarea></div>
                 <div class="modal-actions">
-                    <button class="btn-modal btn-secondary" id="clearCalDay">🗑️ Clear</button>
-                    <button class="btn-modal btn-primary" id="saveCalDay">💾 Save</button>
+                    <button class="btn-modal btn-secondary" id="clearCalDay"><i class="fa-solid fa-trash-can"></i> Clear</button>
+                    <button class="btn-modal btn-primary" id="saveCalDay"><i class="fa-solid fa-check"></i> Save</button>
                 </div>
             </div>
         </div>
@@ -2329,98 +2472,293 @@
     // ═══════════════════════════════════════
     //  CALENDAR (Co-Parenting from Leesitime)
     // ═══════════════════════════════════════
+    // ── Data Migration (v1 → v2) ──
+    function migrateScheduleV2(schedule) {
+        var changed = false;
+        Object.keys(schedule).forEach(function(ds) {
+            var entry = schedule[ds];
+            if (entry.type) return; // already migrated
+            changed = true;
+            if (entry.parent === 'shared') {
+                entry.type = 'exchange';
+                entry.exchangeTime = '12:00';
+                entry.parentBefore = 'adam';
+                entry.parentAfter = 'marta';
+                delete entry.parent;
+            } else if (entry.parent) {
+                entry.type = 'full';
+            }
+            delete entry.adamStart; delete entry.adamEnd;
+            delete entry.martaStart; delete entry.martaEnd;
+        });
+        return changed;
+    }
+
+    // ── Time Calculation Engine ──
+    function parseTimeToHours(timeStr) {
+        if (!timeStr) return 0;
+        var parts = timeStr.split(':');
+        return parseInt(parts[0]) + parseInt(parts[1]) / 60;
+    }
+    function formatHours(h) { return h.toFixed(1); }
+    function formatCompactTime(timeStr) {
+        var h = parseInt(timeStr.split(':')[0]);
+        var m = parseInt(timeStr.split(':')[1]);
+        var ap = h >= 12 ? 'p' : 'a';
+        if (h === 0) h = 12; else if (h > 12) h -= 12;
+        return m > 0 ? h + ':' + String(m).padStart(2,'0') + ap : h + ap;
+    }
+    function formatCompactTimeLong(timeStr) {
+        var h = parseInt(timeStr.split(':')[0]);
+        var m = parseInt(timeStr.split(':')[1]);
+        var ap = h >= 12 ? ' PM' : ' AM';
+        if (h === 0) h = 12; else if (h > 12) h -= 12;
+        return m > 0 ? h + ':' + String(m).padStart(2,'0') + ap : h + ap;
+    }
+
+    function calculateMonthlyTime(year, month, throughDay) {
+        var daysInMonth = new Date(year, month + 1, 0).getDate();
+        var maxDay = throughDay ? Math.min(throughDay, daysInMonth) : daysInMonth;
+        var adamHours = 0, martaHours = 0, unassignedHours = 0;
+        var exchanges = [];
+
+        for (var d = 1; d <= maxDay; d++) {
+            var ds = year + '-' + String(month + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+            var entry = custodySchedule[ds];
+            if (!entry || !entry.type) {
+                unassignedHours += 24;
+                continue;
+            }
+            if (entry.type === 'full') {
+                if (entry.parent === 'adam') adamHours += 24;
+                else if (entry.parent === 'marta') martaHours += 24;
+                else unassignedHours += 24;
+            } else if (entry.type === 'exchange') {
+                var xHours = parseTimeToHours(entry.exchangeTime || '12:00');
+                var beforeHrs = xHours;
+                var afterHrs = 24 - xHours;
+                if (entry.parentBefore === 'adam') adamHours += beforeHrs; else martaHours += beforeHrs;
+                if (entry.parentAfter === 'adam') adamHours += afterHrs; else martaHours += afterHrs;
+                exchanges.push({ date: ds, time: entry.exchangeTime, parentBefore: entry.parentBefore, parentAfter: entry.parentAfter });
+            }
+        }
+
+        var assignedHours = adamHours + martaHours;
+        var totalHours = maxDay * 24;
+        return {
+            adamHours: adamHours, martaHours: martaHours, unassignedHours: unassignedHours,
+            adamPct: assignedHours > 0 ? Math.round(adamHours / assignedHours * 100) : 0,
+            martaPct: assignedHours > 0 ? Math.round(martaHours / assignedHours * 100) : 0,
+            adamDays: (adamHours / 24).toFixed(1), martaDays: (martaHours / 24).toFixed(1),
+            exchanges: exchanges, totalDays: maxDay, totalHours: totalHours,
+            assignedHours: assignedHours
+        };
+    }
+
+    // ── SVG Donut Renderer ──
+    function renderDonut(stats) {
+        var container = document.getElementById('calDonut');
+        if (!container) return;
+        var size = container.offsetWidth || 90;
+        var r = (size / 2) - 6;
+        var circ = 2 * Math.PI * r;
+        var cx = size / 2, cy = size / 2;
+
+        var adamArc = stats.assignedHours > 0 ? (stats.adamHours / stats.assignedHours) * circ : 0;
+        var martaArc = stats.assignedHours > 0 ? (stats.martaHours / stats.assignedHours) * circ : 0;
+        var gap = stats.assignedHours > 0 && stats.adamHours > 0 && stats.martaHours > 0 ? 3 : 0;
+
+        var svg = '<svg width="' + size + '" height="' + size + '" viewBox="0 0 ' + size + ' ' + size + '">';
+        // Background track
+        svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="rgba(197,138,205,0.08)" stroke-width="10"/>';
+        if (stats.assignedHours > 0) {
+            // Adam arc
+            svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="var(--adam-color)" stroke-width="10" stroke-linecap="round"' +
+                ' stroke-dasharray="' + Math.max(0, adamArc - gap) + ' ' + circ + '"' +
+                ' transform="rotate(-90 ' + cx + ' ' + cy + ')" style="transition:stroke-dasharray 0.4s ease;"/>';
+            // Marta arc
+            svg += '<circle cx="' + cx + '" cy="' + cy + '" r="' + r + '" fill="none" stroke="var(--marta-color)" stroke-width="10" stroke-linecap="round"' +
+                ' stroke-dasharray="' + Math.max(0, martaArc - gap) + ' ' + circ + '"' +
+                ' stroke-dashoffset="-' + (adamArc + gap) + '"' +
+                ' transform="rotate(-90 ' + cx + ' ' + cy + ')" style="transition:stroke-dasharray 0.4s ease;"/>';
+        }
+        svg += '</svg>';
+        svg += '<div class="cal-donut-center"><div class="cal-donut-pct">' + stats.adamPct + '/' + stats.martaPct + '</div><div class="cal-donut-label">% split</div></div>';
+        container.innerHTML = svg;
+    }
+
+    // ── Analytics Panel Renderer ──
+    function updateCalAnalytics() {
+        var stats = calculateMonthlyTime(calYear, calMonth);
+        renderDonut(stats);
+
+        var numsEl = document.getElementById('calAnalyticsNums');
+        if (!numsEl) return;
+        numsEl.innerHTML =
+            '<div class="cal-analytics-row">' +
+                '<div class="cal-analytics-dot adam"></div>' +
+                '<div class="cal-analytics-name">Adam</div>' +
+                '<div class="cal-analytics-pct">' + stats.adamPct + '%</div>' +
+                '<div class="cal-analytics-hrs">' + formatHours(stats.adamHours) + ' hrs</div>' +
+                '<div class="cal-analytics-days">' + stats.adamDays + ' days</div>' +
+            '</div>' +
+            '<div class="cal-analytics-row">' +
+                '<div class="cal-analytics-dot marta"></div>' +
+                '<div class="cal-analytics-name">Marta</div>' +
+                '<div class="cal-analytics-pct">' + stats.martaPct + '%</div>' +
+                '<div class="cal-analytics-hrs">' + formatHours(stats.martaHours) + ' hrs</div>' +
+                '<div class="cal-analytics-days">' + stats.martaDays + ' days</div>' +
+            '</div>' +
+            '<div class="cal-analytics-row">' +
+                '<div class="cal-analytics-dot unassigned"></div>' +
+                '<div class="cal-analytics-name" style="color:var(--text-light)">Open</div>' +
+                '<div class="cal-analytics-pct" style="color:var(--text-light)">' + (stats.totalDays - parseFloat(stats.adamDays) - parseFloat(stats.martaDays)).toFixed(1) + 'd</div>' +
+                '<div class="cal-analytics-hrs" style="color:var(--text-light)">' + formatHours(stats.unassignedHours) + ' hrs</div>' +
+                '<div class="cal-analytics-days"></div>' +
+            '</div>';
+    }
+
+    // ── Calendar Init & Render ──
     function initCalendar() {
         var now = getCSTNow();
         if (!calYear) { calYear = now.getFullYear(); calMonth = now.getMonth(); }
         calInitialized = true;
         renderCalendar();
     }
+
     function renderCalendar() {
-        var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
         document.getElementById('calMonthLabel').textContent = months[calMonth] + ' ' + calYear;
         var grid = document.getElementById('calGrid');
         var html = '';
-        ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'].forEach(function(d) { html += '<div class="cal-dow">' + d + '</div>'; });
+        ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'].forEach(function(d) { html += '<div class="cal-dow">' + d + '</div>'; });
         var firstDay = new Date(calYear, calMonth, 1).getDay();
-        var daysInMonth = new Date(calYear, calMonth+1, 0).getDate();
+        var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
         var todayStr = getCSTDate();
         var tp = todayStr.split('-');
-        var todayY = parseInt(tp[0]), todayM = parseInt(tp[1])-1, todayD = parseInt(tp[2]);
+        var todayY = parseInt(tp[0]), todayM = parseInt(tp[1]) - 1, todayD = parseInt(tp[2]);
+
         for (var i = 0; i < firstDay; i++) html += '<div class="cal-day empty"></div>';
+
         for (var d = 1; d <= daysInMonth; d++) {
-            var ds = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+            var ds = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
             var cls = 'cal-day';
             if (calYear === todayY && calMonth === todayM && d === todayD) cls += ' today';
             if (calSelected === ds) cls += ' selected';
-            var cust = custodySchedule[ds] || {};
-            if (cust.parent === 'adam') cls += ' adam-day';
-            if (cust.parent === 'marta') cls += ' marta-day';
-            if (cust.parent === 'shared') cls += ' shared-day';
+
+            var entry = custodySchedule[ds] || {};
             var hasActions = actions.some(function(a) { return a.date === ds; });
             if (hasActions) cls += ' has-data';
-            var badge = cust.parent ? '<span class="cal-day-parent ' + cust.parent + '">' + cust.parent.charAt(0).toUpperCase() + cust.parent.slice(1) + '</span>' : '';
-            html += '<div class="' + cls + '" data-date="' + ds + '">' + d + badge + '</div>';
+
+            var badge = '';
+            var inlineStyle = '';
+
+            if (entry.type === 'full') {
+                cls += entry.parent === 'adam' ? ' adam-day' : ' marta-day';
+                badge = '<span class="cal-day-parent ' + entry.parent + '">' + entry.parent.charAt(0).toUpperCase() + '</span>';
+            } else if (entry.type === 'exchange') {
+                var xHours = parseTimeToHours(entry.exchangeTime || '12:00');
+                var splitPct = (xHours / 24 * 100).toFixed(1);
+                cls += ' exchange-day';
+                if (entry.parentBefore === 'marta') cls += ' marta-first';
+                inlineStyle = ' style="--split:' + splitPct + '%"';
+                badge = '<span class="cal-day-xtime">' + formatCompactTime(entry.exchangeTime || '12:00') + '</span>';
+            } else if (entry.parent) {
+                // Legacy unmigrated (shouldn't happen but handle gracefully)
+                if (entry.parent === 'adam') cls += ' adam-day';
+                else if (entry.parent === 'marta') cls += ' marta-day';
+                badge = '<span class="cal-day-parent ' + entry.parent + '">' + entry.parent.charAt(0).toUpperCase() + '</span>';
+            }
+
+            html += '<div class="' + cls + '" data-date="' + ds + '"' + inlineStyle + '>' + d + badge + '</div>';
         }
+
         grid.innerHTML = html;
         grid.querySelectorAll('.cal-day:not(.empty)').forEach(function(el) {
             el.addEventListener('click', function() { handleCalClick(this.dataset.date); });
         });
-        updateCalStats();
+        updateCalAnalytics();
     }
+
     function handleCalClick(ds) {
         if (calMode === 'view') { calSelected = ds; renderCalendar(); showCalDetail(ds); }
         else { paintCalDay(ds); }
     }
+
     function showCalDetail(ds) {
         var detail = document.getElementById('calDetail');
-        var cust = custodySchedule[ds] || {};
+        var entry = custodySchedule[ds] || {};
         var dayActions = actions.filter(function(a) { return a.date === ds; });
         var html = '<div class="cal-detail-date">' + formatDateNice(ds) + '</div>';
-        if (cust.parent) {
-            var colors = { adam: 'var(--adam-color)', marta: 'var(--marta-color)', shared: 'var(--shared-color)' };
-            html += '<div style="font-size:0.65rem;color:' + (colors[cust.parent]||'') + ';font-weight:700;margin-bottom:6px;">' + cust.parent.charAt(0).toUpperCase() + cust.parent.slice(1) + '\'s day</div>';
+
+        if (entry.type === 'full') {
+            var color = entry.parent === 'adam' ? 'var(--adam-color)' : 'var(--marta-color)';
+            var pName = entry.parent.charAt(0).toUpperCase() + entry.parent.slice(1);
+            html += '<div style="font-size:0.65rem;color:' + color + ';font-weight:700;margin-bottom:6px;">' + pName + '\'s full day</div>';
+            html += '<div class="cal-detail-bar"><div class="cal-detail-bar-seg ' + entry.parent + '" style="width:100%"></div></div>';
+            html += '<div class="cal-detail-breakdown"><span style="color:' + color + '">' + pName + ' — 24 hrs</span></div>';
+        } else if (entry.type === 'exchange') {
+            var xHrs = parseTimeToHours(entry.exchangeTime || '12:00');
+            var beforePct = (xHrs / 24 * 100).toFixed(0);
+            var afterPct = (100 - parseFloat(beforePct)).toFixed(0);
+            var bName = (entry.parentBefore || 'adam').charAt(0).toUpperCase() + (entry.parentBefore || 'adam').slice(1);
+            var aName = (entry.parentAfter || 'marta').charAt(0).toUpperCase() + (entry.parentAfter || 'marta').slice(1);
+            var bColor = entry.parentBefore === 'adam' ? 'var(--adam-color)' : 'var(--marta-color)';
+            var aColor = entry.parentAfter === 'adam' ? 'var(--adam-color)' : 'var(--marta-color)';
+
+            html += '<div style="font-size:0.62rem;font-weight:700;color:var(--shared-color);margin-bottom:6px;">Exchange Day</div>';
+            html += '<div class="cal-detail-bar">' +
+                '<div class="cal-detail-bar-seg ' + (entry.parentBefore || 'adam') + '" style="width:' + beforePct + '%"></div>' +
+                '<div class="cal-detail-bar-seg ' + (entry.parentAfter || 'marta') + '" style="width:' + afterPct + '%"></div></div>';
+            html += '<div class="cal-detail-breakdown">' +
+                '<span style="color:' + bColor + '">' + bName + ' ' + formatHours(xHrs) + 'h</span>' +
+                '<span style="color:' + aColor + '">' + aName + ' ' + formatHours(24 - xHrs) + 'h</span></div>';
+            html += '<div class="cal-detail-xtime"><i class="fa-solid fa-arrow-right-arrow-left"></i> Exchange at ' + formatCompactTimeLong(entry.exchangeTime || '12:00') + '</div>';
+        } else if (entry.parent) {
+            // Legacy
+            var legColor = entry.parent === 'adam' ? 'var(--adam-color)' : 'var(--marta-color)';
+            html += '<div style="font-size:0.65rem;color:' + legColor + ';font-weight:700;margin-bottom:6px;">' + entry.parent.charAt(0).toUpperCase() + entry.parent.slice(1) + '\'s day</div>';
         }
-        if (cust.note) html += '<div style="font-size:0.6rem;color:var(--text-mid);margin-bottom:8px;background:var(--purple-glow);padding:6px;border-radius:6px;">📝 ' + cust.note + '</div>';
+
+        if (entry.note) html += '<div style="font-size:0.58rem;color:var(--text-mid);margin-bottom:8px;background:var(--purple-glow);padding:8px 10px;border-radius:8px;line-height:1.4;">📝 ' + escHtml(entry.note) + '</div>';
+
         if (dayActions.length > 0) {
+            html += '<div style="font-size:0.48rem;font-weight:800;color:var(--text-light);text-transform:uppercase;letter-spacing:1px;margin:10px 0 6px;">Activity Log</div>';
             dayActions.forEach(function(a) {
                 var c = categories[a.cat] || categories.note;
-                html += '<div style="display:flex;align-items:center;gap:6px;padding:4px 0;border-bottom:1px solid var(--border);font-size:0.65rem;">' +
+                html += '<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-bottom:1px solid var(--border);font-size:0.62rem;">' +
                     '<span>' + c.emoji + '</span><span class="tl-cat-badge ' + a.cat + '">' + c.label + '</span>' +
-                    '<span style="font-weight:600;flex:1">' + a.text + '</span>' +
-                    '<span style="color:var(--text-light);font-size:0.55rem;">' + a.time + '</span></div>';
+                    '<span style="font-weight:600;flex:1">' + escHtml(a.text) + '</span>' +
+                    '<span style="color:var(--text-light);font-size:0.52rem;">' + a.time + '</span></div>';
             });
         } else {
-            html += '<div class="cal-empty">No actions logged for this date.</div>';
+            html += '<div class="cal-empty" style="padding:12px 0;">No actions logged.</div>';
         }
-        html += '<button class="edit-sched-btn" onclick="openCalDayModal(\'' + ds + '\')"><i class="fa-solid fa-pen"></i> Edit Custody</button>';
+
+        html += '<button class="edit-sched-btn" onclick="openCalDayModal(\'' + ds + '\')"><i class="fa-solid fa-pen"></i> Edit Day</button>';
         detail.innerHTML = html;
     }
+
+    // ── Paint Mode (full days only) ──
     function paintCalDay(ds) {
         var parent = calMode === 'paintAdam' ? 'adam' : 'marta';
         if (!custodySchedule[ds]) custodySchedule[ds] = {};
-        if (custodySchedule[ds].parent === parent) { delete custodySchedule[ds].parent; if (!Object.keys(custodySchedule[ds]).length) delete custodySchedule[ds]; }
-        else custodySchedule[ds].parent = parent;
+        var entry = custodySchedule[ds];
+        if (entry.type === 'full' && entry.parent === parent) {
+            delete custodySchedule[ds];
+        } else {
+            custodySchedule[ds] = { type: 'full', parent: parent, note: entry.note || '' };
+            if (!custodySchedule[ds].note) delete custodySchedule[ds].note;
+        }
         renderCalendar(); saveCustodySchedule();
     }
+
     async function saveCustodySchedule() {
         broadcastSync('custody', custodySchedule);
         try { await sb.from('schedule').upsert({ id: 'main', data: custodySchedule, updated_at: new Date().toISOString() }); } catch(e) {}
     }
-    function updateCalStats() {
-        var days = new Date(calYear, calMonth+1, 0).getDate();
-        var adam = 0, marta = 0;
-        for (var d = 1; d <= days; d++) {
-            var ds = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-            var c = custodySchedule[ds];
-            if (c && c.parent === 'adam') adam++;
-            if (c && c.parent === 'marta') marta++;
-        }
-        document.getElementById('adamDays').textContent = adam;
-        document.getElementById('martaDays').textContent = marta;
-        document.getElementById('unassignedDays').textContent = days - adam - marta;
-    }
 
-    // Calendar nav
+    // ── Calendar Navigation ──
     document.getElementById('calPrev').addEventListener('click', function() { calMonth--; if (calMonth < 0) { calMonth = 11; calYear--; } calSelected = null; renderCalendar(); document.getElementById('calDetail').innerHTML = '<div class="cal-empty">Tap a date.</div>'; });
     document.getElementById('calNext').addEventListener('click', function() { calMonth++; if (calMonth > 11) { calMonth = 0; calYear++; } calSelected = null; renderCalendar(); document.getElementById('calDetail').innerHTML = '<div class="cal-empty">Tap a date.</div>'; });
     document.getElementById('calToday').addEventListener('click', function() { var n = getCSTNow(); calYear = n.getFullYear(); calMonth = n.getMonth(); calSelected = getCSTDate(); renderCalendar(); showCalDetail(getCSTDate()); });
@@ -2435,84 +2773,274 @@
         else if (m === 'paintMarta') document.getElementById('calModePaintMarta').classList.add('active');
     }
 
-    // Patterns
+    // ── Patterns (write type:'full' entries) ──
     document.getElementById('patternAlt').addEventListener('click', function() { applyPattern('alternating'); });
     document.getElementById('patternRotation').addEventListener('click', function() { applyPattern('2-2-3'); });
     document.getElementById('patternWeekday').addEventListener('click', function() { applyPattern('weekday-weekend'); });
     function applyPattern(p) {
-        if (!confirm('Apply pattern to this month?')) return;
-        var days = new Date(calYear, calMonth+1, 0).getDate();
+        if (!confirm('Apply pattern to this month? This overwrites existing assignments.')) return;
+        var days = new Date(calYear, calMonth + 1, 0).getDate();
         var first = new Date(calYear, calMonth, 1);
         for (var d = 1; d <= days; d++) {
-            var ds = calYear + '-' + String(calMonth+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+            var ds = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
             var dow = new Date(calYear, calMonth, d).getDay();
             var wk = Math.floor((d - 1 + first.getDay()) / 7);
-            if (!custodySchedule[ds]) custodySchedule[ds] = {};
-            if (p === 'alternating') custodySchedule[ds].parent = wk % 2 === 0 ? 'adam' : 'marta';
-            else if (p === '2-2-3') { var c = (d-1)%14; custodySchedule[ds].parent = c<2?'adam':c<4?'marta':c<7?'adam':c<9?'marta':c<11?'adam':'marta'; }
-            else if (p === 'weekday-weekend') custodySchedule[ds].parent = (dow===0||dow===6) ? 'marta' : 'adam';
+            var parent;
+            if (p === 'alternating') parent = wk % 2 === 0 ? 'adam' : 'marta';
+            else if (p === '2-2-3') { var c = (d - 1) % 14; parent = c < 2 ? 'adam' : c < 4 ? 'marta' : c < 7 ? 'adam' : c < 9 ? 'marta' : c < 11 ? 'adam' : 'marta'; }
+            else if (p === 'weekday-weekend') parent = (dow === 0 || dow === 6) ? 'marta' : 'adam';
+            custodySchedule[ds] = { type: 'full', parent: parent };
         }
         renderCalendar(); saveCustodySchedule();
-        sendPushToAll('📅 Custody Pattern Applied', p + ' pattern set for ' + (calMonth+1) + '/' + calYear, 'cust-pattern-' + Date.now());
+        sendPushToAll('📅 Custody Pattern Applied', p + ' pattern set for ' + (calMonth + 1) + '/' + calYear, 'cust-pattern-' + Date.now());
         showToast('Pattern applied!');
     }
 
-    // Calendar day edit modal
+    // ── Monthly Export ──
+    document.getElementById('exportMonthBtn').addEventListener('click', function() {
+        var btn = this;
+        var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var stats = calculateMonthlyTime(calYear, calMonth);
+        var lines = [];
+        lines.push('═══════════════════════════════════════');
+        lines.push('  PARENTING TIME REPORT');
+        lines.push('  ' + months[calMonth] + ' ' + calYear);
+        lines.push('═══════════════════════════════════════');
+        lines.push('');
+        lines.push('TIME SPLIT SUMMARY');
+        lines.push('─────────────────');
+        lines.push('Adam:   ' + stats.adamPct + '% | ' + formatHours(stats.adamHours) + ' hours | ' + stats.adamDays + ' day-equivalents');
+        lines.push('Marta:  ' + stats.martaPct + '% | ' + formatHours(stats.martaHours) + ' hours | ' + stats.martaDays + ' day-equivalents');
+        if (stats.unassignedHours > 0) {
+            lines.push('Open:   ' + formatHours(stats.unassignedHours) + ' hours unassigned');
+        }
+        lines.push('');
+
+        if (stats.exchanges.length > 0) {
+            lines.push('EXCHANGES (' + stats.exchanges.length + ')');
+            lines.push('──────────');
+            stats.exchanges.forEach(function(x) {
+                var bName = x.parentBefore.charAt(0).toUpperCase() + x.parentBefore.slice(1);
+                var aName = x.parentAfter.charAt(0).toUpperCase() + x.parentAfter.slice(1);
+                lines.push(formatDateNice(x.date) + ' at ' + formatCompactTimeLong(x.time) + '  (' + bName + ' → ' + aName + ')');
+            });
+            lines.push('');
+        }
+
+        lines.push('DAILY BREAKDOWN');
+        lines.push('───────────────');
+        var daysInMonth = new Date(calYear, calMonth + 1, 0).getDate();
+        for (var d = 1; d <= daysInMonth; d++) {
+            var ds = calYear + '-' + String(calMonth + 1).padStart(2, '0') + '-' + String(d).padStart(2, '0');
+            var entry = custodySchedule[ds];
+            var dayLabel = String(d).padStart(2, ' ');
+            if (!entry || !entry.type) {
+                lines.push(dayLabel + '  —  Unassigned');
+            } else if (entry.type === 'full') {
+                lines.push(dayLabel + '  ' + entry.parent.charAt(0).toUpperCase() + entry.parent.slice(1) + ' (full day)');
+            } else if (entry.type === 'exchange') {
+                var bN = entry.parentBefore.charAt(0).toUpperCase() + entry.parentBefore.slice(1);
+                var aN = entry.parentAfter.charAt(0).toUpperCase() + entry.parentAfter.slice(1);
+                lines.push(dayLabel + '  Exchange: ' + bN + ' until ' + formatCompactTimeLong(entry.exchangeTime) + ', then ' + aN);
+            }
+        }
+        lines.push('');
+        lines.push('Generated ' + new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' }) + ' CST');
+        lines.push('Kaleesi Natalia — Co-Parenting Tracker');
+
+        var report = lines.join('\n');
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(report).then(function() {
+                btn.innerHTML = '<i class="fa-solid fa-check"></i> Copied!';
+                showToast('Monthly report copied to clipboard!');
+                setTimeout(function() { btn.innerHTML = '<i class="fa-solid fa-file-export"></i> Export Month'; }, 2500);
+            });
+        } else {
+            // Fallback
+            var ta = document.createElement('textarea');
+            ta.value = report; document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); document.body.removeChild(ta);
+            showToast('Report copied!');
+        }
+    });
+
+    // ── Calendar Day Edit Modal ──
+    var calModalDayType = 'full';
+    var calModalXParentBefore = 'adam';
+    var calModalXParentAfter = 'marta';
+
+    function updateExchangePreview() {
+        var timeVal = document.getElementById('exchangeTimeInput').value || '18:00';
+        var hrs = parseTimeToHours(timeVal);
+        var beforeFlex = hrs;
+        var afterFlex = 24 - hrs;
+        var bar = document.getElementById('exchangePreviewBar');
+        if (!bar) return;
+        var bClass = calModalXParentBefore === 'adam' ? 'adam' : 'marta';
+        var aClass = calModalXParentAfter === 'adam' ? 'adam' : 'marta';
+        bar.innerHTML = '<div class="exchange-preview-seg ' + bClass + '" style="flex:' + beforeFlex + '"></div>' +
+            '<div class="exchange-preview-seg ' + aClass + '" style="flex:' + afterFlex + '"></div>';
+    }
+
+    function setModalDayType(type) {
+        calModalDayType = type;
+        document.getElementById('dayTypeFull').classList.toggle('active', type === 'full');
+        document.getElementById('dayTypeExchange').classList.toggle('active', type === 'exchange');
+        document.getElementById('fullDayConfig').style.display = type === 'full' ? '' : 'none';
+        document.getElementById('exchangeConfig').classList.toggle('active', type === 'exchange');
+        if (type === 'exchange') updateExchangePreview();
+    }
+
     function openCalDayModal(ds) {
         calSelectedDate = ds;
-        var d = custodySchedule[ds] || {};
+        var entry = custodySchedule[ds] || {};
         document.getElementById('calDayModalTitle').textContent = formatDateNice(ds);
+
+        // Reset
         document.querySelectorAll('.assign-btn').forEach(function(b) { b.classList.remove('active'); });
-        if (d.parent === 'adam') document.getElementById('assignAdam').classList.add('active');
-        if (d.parent === 'marta') document.getElementById('assignMarta').classList.add('active');
-        if (d.parent === 'shared') document.getElementById('assignShared').classList.add('active');
-        document.getElementById('adamStart').value = d.adamStart || '';
-        document.getElementById('adamEnd').value = d.adamEnd || '';
-        document.getElementById('martaStart').value = d.martaStart || '';
-        document.getElementById('martaEnd').value = d.martaEnd || '';
-        document.getElementById('calDayNotes').value = d.note || '';
+        calModalXParentBefore = 'adam';
+        calModalXParentAfter = 'marta';
+
+        if (entry.type === 'exchange') {
+            setModalDayType('exchange');
+            calModalXParentBefore = entry.parentBefore || 'adam';
+            calModalXParentAfter = entry.parentAfter || 'marta';
+            document.getElementById('exchangeTimeInput').value = entry.exchangeTime || '18:00';
+            // Update preset highlights
+            document.querySelectorAll('.exchange-preset').forEach(function(b) {
+                b.classList.toggle('active', b.dataset.time === (entry.exchangeTime || '18:00'));
+                if (b.classList.contains('active')) { b.style.background = 'var(--purple-deep)'; b.style.color = 'white'; b.style.borderColor = 'var(--purple-deep)'; }
+                else { b.style.background = ''; b.style.color = ''; b.style.borderColor = ''; }
+            });
+        } else {
+            setModalDayType('full');
+            if (entry.type === 'full' && entry.parent) {
+                document.getElementById('assign' + entry.parent.charAt(0).toUpperCase() + entry.parent.slice(1)).classList.add('active');
+            }
+            document.getElementById('exchangeTimeInput').value = '18:00';
+        }
+
+        // Update exchange parent picks
+        document.getElementById('xParentBefore').className = 'exchange-parent-pick ' + calModalXParentBefore + ' active';
+        document.getElementById('xParentBefore').innerHTML = (calModalXParentBefore === 'adam' ? '👨 Adam' : '👩 Marta');
+        document.getElementById('xParentAfter').className = 'exchange-parent-pick ' + calModalXParentAfter + ' active';
+        document.getElementById('xParentAfter').innerHTML = (calModalXParentAfter === 'adam' ? '👨 Adam' : '👩 Marta');
+
+        document.getElementById('calDayNotes').value = entry.note || '';
         document.getElementById('calDayModal').classList.add('active');
+        updateExchangePreview();
     }
     window.openCalDayModal = openCalDayModal;
+
+    // Modal wiring
     document.getElementById('closeCalDayModal').addEventListener('click', function() { document.getElementById('calDayModal').classList.remove('active'); });
     document.getElementById('calDayModal').addEventListener('click', function(e) { if (e.target === this) this.classList.remove('active'); });
-    ['assignAdam','assignMarta','assignShared'].forEach(function(id) {
+    document.getElementById('dayTypeFull').addEventListener('click', function() { setModalDayType('full'); });
+    document.getElementById('dayTypeExchange').addEventListener('click', function() { setModalDayType('exchange'); });
+
+    // Full day assign buttons
+    ['assignAdam', 'assignMarta'].forEach(function(id) {
         document.getElementById(id).addEventListener('click', function() {
             document.querySelectorAll('.assign-btn').forEach(function(b) { b.classList.remove('active'); });
             this.classList.add('active');
         });
     });
-    document.getElementById('saveCalDay').addEventListener('click', async function() {
-        if (!custodySchedule[calSelectedDate]) custodySchedule[calSelectedDate] = {};
-        var active = document.querySelector('.assign-btn.active');
-        if (active) custodySchedule[calSelectedDate].parent = active.id.replace('assign','').toLowerCase();
-        else delete custodySchedule[calSelectedDate].parent;
-        ['adamStart','adamEnd','martaStart','martaEnd'].forEach(function(k) {
-            var v = document.getElementById(k).value;
-            if (v) custodySchedule[calSelectedDate][k] = v; else delete custodySchedule[calSelectedDate][k];
+
+    // Exchange parent toggle (before)
+    document.getElementById('xParentBefore').addEventListener('click', function() {
+        calModalXParentBefore = calModalXParentBefore === 'adam' ? 'marta' : 'adam';
+        calModalXParentAfter = calModalXParentBefore === 'adam' ? 'marta' : 'adam';
+        this.className = 'exchange-parent-pick ' + calModalXParentBefore + ' active';
+        this.innerHTML = calModalXParentBefore === 'adam' ? '👨 Adam' : '👩 Marta';
+        var afterBtn = document.getElementById('xParentAfter');
+        afterBtn.className = 'exchange-parent-pick ' + calModalXParentAfter + ' active';
+        afterBtn.innerHTML = calModalXParentAfter === 'adam' ? '👨 Adam' : '👩 Marta';
+        updateExchangePreview();
+    });
+    document.getElementById('xParentAfter').addEventListener('click', function() {
+        calModalXParentAfter = calModalXParentAfter === 'adam' ? 'marta' : 'adam';
+        calModalXParentBefore = calModalXParentAfter === 'adam' ? 'marta' : 'adam';
+        this.className = 'exchange-parent-pick ' + calModalXParentAfter + ' active';
+        this.innerHTML = calModalXParentAfter === 'adam' ? '👨 Adam' : '👩 Marta';
+        var beforeBtn = document.getElementById('xParentBefore');
+        beforeBtn.className = 'exchange-parent-pick ' + calModalXParentBefore + ' active';
+        beforeBtn.innerHTML = calModalXParentBefore === 'adam' ? '👨 Adam' : '👩 Marta';
+        updateExchangePreview();
+    });
+
+    // Exchange time input
+    document.getElementById('exchangeTimeInput').addEventListener('input', function() {
+        updateExchangePreview();
+        document.querySelectorAll('.exchange-preset').forEach(function(b) {
+            var match = b.dataset.time === document.getElementById('exchangeTimeInput').value;
+            b.classList.toggle('active', match);
+            if (match) { b.style.background = 'var(--purple-deep)'; b.style.color = 'white'; b.style.borderColor = 'var(--purple-deep)'; }
+            else { b.style.background = ''; b.style.color = ''; b.style.borderColor = ''; }
         });
+    });
+
+    // Exchange time presets
+    document.querySelectorAll('.exchange-preset').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.getElementById('exchangeTimeInput').value = this.dataset.time;
+            document.querySelectorAll('.exchange-preset').forEach(function(b) {
+                b.classList.remove('active');
+                b.style.background = ''; b.style.color = ''; b.style.borderColor = '';
+            });
+            this.classList.add('active');
+            this.style.background = 'var(--purple-deep)'; this.style.color = 'white'; this.style.borderColor = 'var(--purple-deep)';
+            updateExchangePreview();
+        });
+    });
+
+    // Save
+    document.getElementById('saveCalDay').addEventListener('click', async function() {
+        var data = {};
         var note = document.getElementById('calDayNotes').value.trim();
-        if (note) custodySchedule[calSelectedDate].note = note; else delete custodySchedule[calSelectedDate].note;
-        if (!Object.keys(custodySchedule[calSelectedDate]).length) delete custodySchedule[calSelectedDate];
-        renderCalendar(); if (calSelected) showCalDetail(calSelected);
+        if (note) data.note = note;
+
+        if (calModalDayType === 'full') {
+            var active = document.querySelector('.assign-btn.active');
+            if (active) {
+                data.type = 'full';
+                data.parent = active.id.replace('assign', '').toLowerCase();
+            }
+        } else {
+            data.type = 'exchange';
+            data.exchangeTime = document.getElementById('exchangeTimeInput').value || '18:00';
+            data.parentBefore = calModalXParentBefore;
+            data.parentAfter = calModalXParentAfter;
+        }
+
+        if (Object.keys(data).length === 0 || (data.note && Object.keys(data).length === 1 && !data.type)) {
+            delete custodySchedule[calSelectedDate];
+        } else {
+            custodySchedule[calSelectedDate] = data;
+        }
+
+        renderCalendar();
+        if (calSelected) showCalDetail(calSelected);
         document.getElementById('calDayModal').classList.remove('active');
         await saveCustodySchedule();
-        var parentName = custodySchedule[calSelectedDate] && custodySchedule[calSelectedDate].parent;
-        if (parentName) {
-            sendPushToAll('📅 Custody Updated', calSelectedDate + ' assigned to ' + parentName.charAt(0).toUpperCase() + parentName.slice(1), 'cust-' + Date.now());
-        } else {
-            sendPushToAll('📅 Custody Updated', calSelectedDate + ' schedule updated', 'cust-' + Date.now());
-        }
+
+        var pushMsg = calModalDayType === 'exchange'
+            ? calSelectedDate + ' exchange at ' + formatCompactTimeLong(data.exchangeTime || '18:00')
+            : calSelectedDate + ' assigned to ' + ((data.parent || '').charAt(0).toUpperCase() + (data.parent || '').slice(1));
+        sendPushToAll('📅 Custody Updated', pushMsg, 'cust-' + Date.now());
         showToast('Saved!');
     });
+
+    // Clear
     document.getElementById('clearCalDay').addEventListener('click', async function() {
-        delete custodySchedule[calSelectedDate]; renderCalendar();
+        delete custodySchedule[calSelectedDate];
+        renderCalendar();
         document.getElementById('calDayModal').classList.remove('active');
         document.getElementById('calDetail').innerHTML = '<div class="cal-empty">Tap a date.</div>';
         await saveCustodySchedule();
         sendPushToAll('📅 Custody Cleared', calSelectedDate + ' custody cleared', 'cust-clr-' + Date.now());
         showToast('Cleared');
     });
+
     function addCalNote(t) { var ta = document.getElementById('calDayNotes'); ta.value = ta.value ? ta.value + '\n' + t : t; }
     window.addCalNote = addCalNote;
 
@@ -2545,7 +3073,7 @@
                 });
             }
             var sRes = await sb.from('schedule').select('data').eq('id', 'main').single();
-            if (sRes.data && sRes.data.data) { custodySchedule = sRes.data.data; renderCalendar(); }
+            if (sRes.data && sRes.data.data) { custodySchedule = sRes.data.data; migrateScheduleV2(custodySchedule); renderCalendar(); }
         } catch(e) { console.error('[Sync] Refresh error:', e); }
         lastSyncTs = Date.now();
     }
@@ -2574,6 +3102,7 @@
             }
             if (d.type === 'custody' && d.data) {
                 custodySchedule = d.data;
+                migrateScheduleV2(custodySchedule);
                 renderCalendar();
                 showToast('📡 Calendar updated');
             }
@@ -2609,7 +3138,7 @@
             }
         }).subscribe();
         sb.channel('custody-db').on('postgres_changes', { event: '*', schema: 'public', table: 'schedule' }, function(p) {
-            if (p.new && p.new.data) { custodySchedule = p.new.data; renderCalendar(); }
+            if (p.new && p.new.data) { custodySchedule = p.new.data; migrateScheduleV2(custodySchedule); renderCalendar(); }
         }).subscribe();
 
         // ── Visibility change: refresh when app returns to foreground ──
@@ -3515,7 +4044,13 @@
         // Load custody schedule
         try {
             var res = await sb.from('schedule').select('data').eq('id', 'main').single();
-            if (res.data && res.data.data) custodySchedule = res.data.data;
+            if (res.data && res.data.data) {
+                custodySchedule = res.data.data;
+                if (migrateScheduleV2(custodySchedule)) {
+                    await saveCustodySchedule();
+                    console.log('[Init] Schedule migrated to v2');
+                }
+            }
         } catch(e) {}
         await loadActions();
         await loadLog();
