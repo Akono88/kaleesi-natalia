@@ -4,11 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Kaleesi Natalia</title>
+    <!-- BUILD: 2026-04-04-v2 -->
     <link rel="manifest" href="manifest.json">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="Kaleesi">
     <meta name="theme-color" content="#C58ACD">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1331,6 +1335,98 @@
             ::-webkit-scrollbar-thumb:hover { background: rgba(197,138,205,0.4); }
         }
 
+        /* ═══════════════════════════════════════════════════
+           ENHANCED UI — Animations, polish, date-context
+           ═══════════════════════════════════════════════════ */
+
+        /* ─── Date context banner (shown when viewing non-today) ─── */
+        .date-context-banner {
+            display: none; align-items: center; justify-content: center; gap: 7px;
+            padding: 8px 14px; border-radius: 12px; margin-bottom: 10px;
+            font-size: 0.63rem; font-weight: 700;
+            background: linear-gradient(135deg, rgba(197,138,205,0.1), rgba(248,132,213,0.07));
+            border: 1px solid rgba(197,138,205,0.22);
+            color: var(--purple-mid); letter-spacing: 0.3px;
+            animation: fadeUp 0.2s ease;
+        }
+        .date-context-banner.visible { display: flex; }
+        .date-context-banner i { font-size: 0.7rem; opacity: 0.65; }
+
+        /* ─── Timeline entry entrance animation ─── */
+        @keyframes tlEntryIn {
+            from { opacity: 0; transform: translate3d(0, 5px, 0); }
+            to   { opacity: 1; transform: translate3d(0, 0, 0); }
+        }
+        .tl-entry { animation: tlEntryIn 0.2s ease both; }
+        .tl-now-marker { animation: tlEntryIn 0.2s ease both; }
+
+        /* ─── Category button — spring press ─── */
+        .cat-btn {
+            transition: transform 0.12s cubic-bezier(0.34, 1.56, 0.64, 1),
+                        box-shadow 0.15s ease, border-color 0.15s ease;
+        }
+        .cat-btn:active { transform: scale(0.90) !important; box-shadow: none !important; }
+
+        /* ─── Day picker — pill transitions & active glow ─── */
+        .day-picker-btn {
+            transition: background 0.18s ease, color 0.18s ease,
+                        border-color 0.18s ease, box-shadow 0.18s ease,
+                        transform 0.12s cubic-bezier(0.34, 1.4, 0.64, 1);
+        }
+        .day-picker-btn.active {
+            box-shadow: 0 3px 12px rgba(197,138,205,0.28);
+            transform: translateY(-1px);
+        }
+        .day-picker-btn:active { transform: scale(0.95) !important; }
+
+        /* ─── Quick form for-date badge ─── */
+        .qf-for-date {
+            display: inline-flex; align-items: center; gap: 4px;
+            font-size: 0.48rem; font-weight: 800; color: var(--purple-mid);
+            background: rgba(197,138,205,0.12); border-radius: 8px;
+            padding: 2px 7px; letter-spacing: 0.3px; margin-left: 6px;
+            border: 1px solid rgba(197,138,205,0.2);
+        }
+
+        /* ─── Delete button — always visible, spring press ─── */
+        .tl-delete {
+            transition: opacity 0.15s ease, transform 0.12s ease,
+                        color 0.15s ease, background 0.15s ease;
+            border-radius: 50%; width: 24px; height: 24px;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .tl-delete:active { transform: scale(0.82) !important; }
+
+        /* ─── Quick submit button — spring press ─── */
+        .quick-submit {
+            transition: opacity 0.15s ease,
+                        transform 0.12s cubic-bezier(0.34, 1.4, 0.64, 1),
+                        box-shadow 0.15s ease;
+        }
+        .quick-submit:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(216,90,156,0.35); }
+        .quick-submit:active { transform: translateY(2px) !important; box-shadow: none !important; }
+
+        /* ─── Nav button active label gradient ─── */
+        .nav-btn { transition: color 0.15s ease, transform 0.1s ease; }
+        .nav-btn.active span {
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* ─── Tab view: smoother fade-up ─── */
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translate3d(0, 10px, 0); }
+            to   { opacity: 1; transform: translate3d(0, 0, 0); }
+        }
+
+        /* ─── Toast: slide down from top ─── */
+        @keyframes toastIn {
+            from { opacity: 0; transform: translate3d(0, -14px, 0) scale(0.96); }
+            to   { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+        }
+        .toast { animation: toastIn 0.25s cubic-bezier(0.34, 1.4, 0.64, 1); }
+
         /* ─── Extra-wide desktop (1440px+): even more space ─── */
         @media (min-width: 1440px) {
             .app { padding: 28px 60px 40px; }
@@ -1375,10 +1471,141 @@
             }
             .cal-donut-wrap { width: 100px; height: 100px; }
         }
+
+        /* ═══ LOGIN OVERLAY ═══ */
+        .login-overlay {
+            position: fixed; inset: 0; z-index: 9999;
+            background: linear-gradient(160deg, #f5eef9 0%, #fef7ff 40%, #e0f5ef 100%);
+            display: flex; align-items: center; justify-content: center;
+            background-image:
+                radial-gradient(ellipse at 15% 0%, rgba(197,138,205,0.25) 0%, transparent 50%),
+                radial-gradient(ellipse at 85% 10%, rgba(248,132,213,0.15) 0%, transparent 45%),
+                radial-gradient(ellipse at 50% 50%, rgba(151,215,198,0.1) 0%, transparent 60%);
+        }
+        .login-overlay.hidden { display: none; }
+        .login-box {
+            background: rgba(255,255,255,0.97); border-radius: var(--radius); padding: 32px 28px;
+            box-shadow: 0 8px 40px rgba(197,138,205,0.18), 0 0 0 1px rgba(197,138,205,0.1);
+            text-align: center; width: 90%; max-width: 360px;
+        }
+        .login-box h2 {
+            font-family: 'Great Vibes', cursive; font-size: 1.8rem; font-weight: 400;
+            background: linear-gradient(135deg, #C58ACD, #D85A9C);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+            margin-bottom: 4px;
+        }
+        .login-box .login-sub {
+            font-size: 0.5rem; letter-spacing: 4px; text-transform: uppercase;
+            color: var(--text-light); font-weight: 700; margin-bottom: 20px;
+        }
+        .login-field {
+            width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: 12px;
+            font-family: 'Montserrat', sans-serif; font-size: 0.8rem; outline: none;
+            margin-bottom: 10px; transition: border-color 0.2s;
+        }
+        .login-field:focus { border-color: var(--purple-deep); }
+        .login-btn {
+            width: 100%; padding: 12px; border: none; border-radius: 12px; cursor: pointer;
+            font-family: 'Montserrat', sans-serif; font-size: 0.8rem; font-weight: 700;
+            background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid));
+            color: white; margin-top: 6px; transition: opacity 0.2s, transform 0.1s;
+            letter-spacing: 1px;
+        }
+        .login-btn:hover { opacity: 0.92; }
+        .login-btn:active { transform: scale(0.97); }
+        .login-error {
+            color: var(--danger-text); font-size: 0.65rem; font-weight: 600; margin-top: 8px;
+            min-height: 1.2em;
+        }
+        .login-role-badge {
+            display: inline-block; font-size: 0.5rem; font-weight: 700; letter-spacing: 1px;
+            padding: 3px 10px; border-radius: 20px; margin-top: 6px; text-transform: uppercase;
+        }
+
+        /* ═══ ADMIN PANEL ═══ */
+        #tab-admin .admin-card {
+            background: white; border-radius: var(--radius); padding: 16px;
+            box-shadow: var(--shadow); margin-bottom: 12px;
+        }
+        #tab-admin .admin-card-label {
+            font-size: 0.55rem; font-weight: 800; letter-spacing: 2px; text-transform: uppercase;
+            color: var(--purple-mid); margin-bottom: 12px;
+        }
+        .admin-user-row {
+            display: flex; align-items: center; gap: 10px; padding: 10px 12px;
+            border-radius: 12px; background: var(--purple-glow); margin-bottom: 6px;
+        }
+        .admin-user-row .au-name { font-weight: 700; font-size: 0.75rem; flex: 1; color: var(--text); }
+        .admin-user-row .au-role {
+            font-size: 0.5rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+            padding: 2px 8px; border-radius: 10px;
+        }
+        .au-role.admin { background: #fce7f3; color: #D85A9C; }
+        .au-role.parent { background: #e4edfa; color: #7BA3D9; }
+        .au-role.coparent { background: #e6f7f2; color: #2a7a5f; }
+        .admin-user-row .au-actions { display: flex; gap: 6px; }
+        .admin-user-row .au-btn {
+            border: none; background: none; cursor: pointer; font-size: 0.75rem;
+            color: var(--text-mid); padding: 4px; border-radius: 6px; transition: color 0.15s;
+        }
+        .admin-user-row .au-btn:hover { color: var(--purple-mid); }
+        .admin-user-row .au-btn.danger:hover { color: var(--danger-text); }
+        .admin-add-form {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px;
+        }
+        .admin-add-form input, .admin-add-form select {
+            padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 10px;
+            font-family: 'Montserrat', sans-serif; font-size: 0.7rem; outline: none;
+        }
+        .admin-add-form input:focus, .admin-add-form select:focus { border-color: var(--purple-deep); }
+        .admin-add-form .admin-add-btn {
+            grid-column: 1 / -1; padding: 10px; border: none; border-radius: 10px;
+            background: linear-gradient(135deg, var(--teal), #6bbfaa); color: white;
+            font-family: 'Montserrat', sans-serif; font-size: 0.7rem; font-weight: 700;
+            cursor: pointer; letter-spacing: 1px;
+        }
+        .admin-add-form .admin-add-btn:hover { opacity: 0.9; }
+        .admin-add-msg {
+            font-size: 0.6rem; font-weight: 600; margin-top: 6px; text-align: center; min-height: 1em;
+        }
+        .admin-logout-btn {
+            width: 100%; padding: 12px; border: 2px solid var(--border); border-radius: 12px;
+            background: white; color: var(--text-mid); font-family: 'Montserrat', sans-serif;
+            font-size: 0.7rem; font-weight: 700; cursor: pointer; letter-spacing: 1px;
+            transition: border-color 0.2s, color 0.2s;
+        }
+        .admin-logout-btn:hover { border-color: var(--danger-text); color: var(--danger-text); }
+        .session-bar {
+            display: flex; align-items: center; justify-content: space-between; padding: 6px 12px;
+            background: rgba(255,255,255,0.85); border-radius: 10px; margin-bottom: 8px;
+            font-size: 0.55rem; font-weight: 600; color: var(--text-mid); backdrop-filter: blur(6px);
+        }
+        .session-bar .sb-user { color: var(--purple-mid); }
+        .session-bar .sb-logout {
+            border: none; background: none; cursor: pointer; font-size: 0.55rem;
+            color: var(--text-light); font-weight: 700; font-family: 'Montserrat', sans-serif;
+        }
+        .session-bar .sb-logout:hover { color: var(--danger-text); }
     </style>
 </head>
 <body>
-    <div class="app">
+    <!-- ═══ LOGIN SCREEN ═══ -->
+    <div class="login-overlay" id="loginOverlay">
+        <div class="login-box">
+            <h2>Kaleesi Natalia</h2>
+            <div class="login-sub">Secure Login</div>
+            <input class="login-field" type="text" id="loginUser" placeholder="Username" autocomplete="username" autocapitalize="off">
+            <input class="login-field" type="password" id="loginPass" placeholder="Password" autocomplete="current-password">
+            <button class="login-btn" id="loginBtn">SIGN IN</button>
+            <div class="login-error" id="loginError"></div>
+        </div>
+    </div>
+
+    <div class="app" id="mainApp" style="display:none;">
+        <div class="session-bar" id="sessionBar">
+            <span>Signed in as <span class="sb-user" id="sbUserName">—</span></span>
+            <button class="sb-logout" id="sbLogout">Sign out</button>
+        </div>
         <header>
             <img src="kaleesi.png" alt="Kaleesi" class="header-photo">
             <h1>🦋 Kaleesi Natalia Knopko ♡</h1>
@@ -1423,6 +1650,10 @@
                     <button class="day-picker-btn" id="dayTomorrow">Tomorrow</button>
                     <input type="date" class="day-picker-date" id="dayCustom">
                     <span class="day-picker-label" id="dayPickerLabel"></span>
+                </div>
+                <div class="date-context-banner" id="dateContextBanner">
+                    <i class="fa-solid fa-calendar-day"></i>
+                    <span id="dateContextLabel"></span>
                 </div>
                 <div class="timeline" id="timeline" style="margin-top:8px;"></div>
             </div>
@@ -1624,13 +1855,39 @@
         </div>
     </div>
 
+        <!-- ═══════════ TAB: ADMIN (Admin Only) ═══════════ -->
+        <div class="tab-view" id="tab-admin">
+            <div class="admin-card">
+                <div class="admin-card-label"><i class="fa-solid fa-shield-halved"></i> User Management</div>
+                <div id="adminUserList"></div>
+                <div class="admin-add-form" id="adminAddForm">
+                    <input type="text" id="adminNewUser" placeholder="Username" autocapitalize="off">
+                    <input type="text" id="adminNewDisplay" placeholder="Display name">
+                    <input type="password" id="adminNewPass" placeholder="Password">
+                    <select id="adminNewRole">
+                        <option value="parent">Parent</option>
+                        <option value="coparent">Co-Parent</option>
+                        <option value="admin">Admin</option>
+                    </select>
+                    <button class="admin-add-btn" id="adminAddBtn"><i class="fa-solid fa-user-plus"></i> ADD USER</button>
+                </div>
+                <div class="admin-add-msg" id="adminAddMsg"></div>
+            </div>
+            <div class="admin-card">
+                <div class="admin-card-label"><i class="fa-solid fa-right-from-bracket"></i> Session</div>
+                <div id="adminSessionInfo" style="font-size:0.65rem;color:var(--text-mid);margin-bottom:10px;"></div>
+                <button class="admin-logout-btn" id="adminLogoutBtn"><i class="fa-solid fa-right-from-bracket"></i> SIGN OUT</button>
+            </div>
+        </div>
+
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
         <button class="nav-btn active" data-tab="tab-actions"><i class="fa-solid fa-bolt"></i><span>ACTIONS</span></button>
-        <button class="nav-btn" data-tab="tab-calendar"><i class="fa-solid fa-calendar-days"></i><span>CALENDAR</span></button>
+        <button class="nav-btn" data-tab="tab-calendar" id="navCalendar"><i class="fa-solid fa-calendar-days"></i><span>CALENDAR</span></button>
         <button class="nav-btn" data-tab="tab-info"><i class="fa-solid fa-folder-open"></i><span>INFO</span></button>
-        <button class="nav-btn" data-tab="tab-care"><i class="fa-solid fa-heart-pulse"></i><span>CARE</span></button>
+        <button class="nav-btn" data-tab="tab-care" id="navCare"><i class="fa-solid fa-heart-pulse"></i><span>CARE</span></button>
         <button class="nav-btn" data-tab="tab-log"><i class="fa-solid fa-clock-rotate-left"></i><span>LOG</span></button>
+        <button class="nav-btn" data-tab="tab-admin" id="navAdmin" style="display:none;"><i class="fa-solid fa-shield-halved"></i><span>ADMIN</span></button>
     </div>
 
     <!-- Calendar Day Edit Modal -->
@@ -1833,6 +2090,270 @@
     var VAPID_PUBLIC_KEY = 'BHJuh7KrG2Bj_Y9I60xlvyX3I8KjoQwKLYvgbw49hoqIpZtrKK6gz27LKXMPqrbVFO_Koyj9z0r-qC6GRJCbreU';
     var PUSH_FUNCTION_URL = SUPABASE_URL + '/functions/v1/push-notify';
 
+    // ═══════════════════════════════════════
+    //  AUTH SYSTEM
+    // ═══════════════════════════════════════
+    var USERS_ID = 'kaleesi-users';
+    var currentUser = null; // { username, display, role }
+
+    async function hashPassword(password, salt) {
+        var data = new TextEncoder().encode(salt + ':' + password);
+        var hashBuf = await crypto.subtle.digest('SHA-256', data);
+        return Array.from(new Uint8Array(hashBuf)).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }
+
+    function generateSalt() {
+        return Array.from(crypto.getRandomValues(new Uint8Array(16))).map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+    }
+
+    async function loadUsers() {
+        try {
+            var res = await sb.from('kaleesi_data').select('content').eq('id', USERS_ID).single();
+            if (res.data && res.data.content && res.data.content.users) return res.data.content.users;
+        } catch(e) {}
+        return null;
+    }
+
+    async function saveUsers(users) {
+        await sb.from('kaleesi_data').upsert({ id: USERS_ID, content: { users: users }, updated_at: new Date().toISOString() });
+    }
+
+    async function seedDefaultAdmin(users) {
+        if (users && users.length > 0) return users;
+        var salt = generateSalt();
+        var hash = await hashPassword('admin', salt);
+        var defaultUsers = [
+            { username: 'admin', display: 'Admin', role: 'admin', salt: salt, hash: hash }
+        ];
+        await saveUsers(defaultUsers);
+        return defaultUsers;
+    }
+
+    async function attemptLogin(username, password) {
+        var users = await loadUsers();
+        users = await seedDefaultAdmin(users);
+        var user = users.find(function(u) { return u.username.toLowerCase() === username.toLowerCase(); });
+        if (!user) return { ok: false, error: 'User not found' };
+        var hash = await hashPassword(password, user.salt);
+        if (hash !== user.hash) return { ok: false, error: 'Incorrect password' };
+        return { ok: true, user: { username: user.username, display: user.display, role: user.role } };
+    }
+
+    function saveSession(user) {
+        localStorage.setItem('kn_session', JSON.stringify({ username: user.username, display: user.display, role: user.role, ts: Date.now() }));
+    }
+
+    function loadSession() {
+        try {
+            var s = JSON.parse(localStorage.getItem('kn_session'));
+            if (s && s.username && s.role) {
+                // Expire after 30 days
+                if (Date.now() - s.ts > 30 * 24 * 60 * 60 * 1000) { localStorage.removeItem('kn_session'); return null; }
+                return s;
+            }
+        } catch(e) {}
+        return null;
+    }
+
+    function clearSession() {
+        localStorage.removeItem('kn_session');
+        currentUser = null;
+        location.reload();
+    }
+
+    function applyRoleVisibility(role) {
+        var navCalendar = document.getElementById('navCalendar');
+        var navCare = document.getElementById('navCare');
+        var navAdmin = document.getElementById('navAdmin');
+        var ibSubtabs = document.getElementById('ibSubtabs');
+
+        // Show admin nav only for admins
+        navAdmin.style.display = (role === 'admin') ? '' : 'none';
+
+        if (role === 'coparent') {
+            // Hide Calendar and Care tabs
+            navCalendar.style.display = 'none';
+            navCare.style.display = 'none';
+
+            // In Info tab, only show Co-Parent subtab
+            if (ibSubtabs) {
+                ibSubtabs.querySelectorAll('.ib-subtab').forEach(function(btn) {
+                    if (btn.dataset.ibtab === 'coparent') {
+                        btn.style.display = '';
+                        btn.click(); // auto-select co-parent subtab
+                    } else {
+                        btn.style.display = 'none';
+                    }
+                });
+            }
+
+            // Disable quick-add buttons (read-only actions)
+            document.querySelectorAll('.cat-btn').forEach(function(btn) { btn.disabled = true; btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; });
+
+            // Hide procare import if exists
+            var importBtn = document.querySelector('[onclick*="openImportDaycare"]');
+            if (importBtn) importBtn.style.display = 'none';
+        } else {
+            navCalendar.style.display = '';
+            navCare.style.display = '';
+            if (ibSubtabs) {
+                ibSubtabs.querySelectorAll('.ib-subtab').forEach(function(btn) { btn.style.display = ''; });
+            }
+        }
+    }
+
+    // ─── Admin Panel Functions ───
+    async function renderAdminUsers() {
+        var list = document.getElementById('adminUserList');
+        if (!list) return;
+        var users = await loadUsers();
+        users = await seedDefaultAdmin(users);
+        list.innerHTML = '';
+        users.forEach(function(u) {
+            var row = document.createElement('div');
+            row.className = 'admin-user-row';
+            var canDelete = u.username !== currentUser.username;
+            row.innerHTML = '<div class="au-name">' + (u.display || u.username) + ' <span style="font-size:0.55rem;color:var(--text-light);">@' + u.username + '</span></div>' +
+                '<span class="au-role ' + u.role + '">' + u.role + '</span>' +
+                '<div class="au-actions">' +
+                '<button class="au-btn" title="Reset password" data-user="' + u.username + '" data-action="reset"><i class="fa-solid fa-key"></i></button>' +
+                (canDelete ? '<button class="au-btn danger" title="Delete" data-user="' + u.username + '" data-action="delete"><i class="fa-solid fa-trash"></i></button>' : '') +
+                '</div>';
+            list.appendChild(row);
+        });
+        // Bind actions
+        list.querySelectorAll('.au-btn').forEach(function(btn) {
+            btn.addEventListener('click', async function() {
+                var uname = this.dataset.user;
+                var action = this.dataset.action;
+                if (action === 'delete') {
+                    if (!confirm('Delete user "' + uname + '"?')) return;
+                    var users = await loadUsers();
+                    users = users.filter(function(u) { return u.username !== uname; });
+                    await saveUsers(users);
+                    renderAdminUsers();
+                } else if (action === 'reset') {
+                    var newPass = prompt('New password for "' + uname + '":');
+                    if (!newPass || newPass.length < 3) { alert('Password must be at least 3 characters.'); return; }
+                    var users = await loadUsers();
+                    var user = users.find(function(u) { return u.username === uname; });
+                    if (user) {
+                        user.salt = generateSalt();
+                        user.hash = await hashPassword(newPass, user.salt);
+                        await saveUsers(users);
+                        alert('Password reset for "' + uname + '".');
+                    }
+                }
+            });
+        });
+        // Session info
+        var info = document.getElementById('adminSessionInfo');
+        if (info) info.innerHTML = 'Signed in as <strong>' + currentUser.display + '</strong> (' + currentUser.role + ')';
+    }
+
+    async function adminAddUser() {
+        var msg = document.getElementById('adminAddMsg');
+        var uname = document.getElementById('adminNewUser').value.trim().toLowerCase();
+        var display = document.getElementById('adminNewDisplay').value.trim();
+        var pass = document.getElementById('adminNewPass').value;
+        var role = document.getElementById('adminNewRole').value;
+
+        if (!uname || uname.length < 2) { msg.textContent = 'Username must be at least 2 characters.'; msg.style.color = 'var(--danger-text)'; return; }
+        if (!pass || pass.length < 3) { msg.textContent = 'Password must be at least 3 characters.'; msg.style.color = 'var(--danger-text)'; return; }
+
+        var users = await loadUsers();
+        users = await seedDefaultAdmin(users);
+        if (users.find(function(u) { return u.username === uname; })) {
+            msg.textContent = 'Username already exists.'; msg.style.color = 'var(--danger-text)'; return;
+        }
+
+        var salt = generateSalt();
+        var hash = await hashPassword(pass, salt);
+        users.push({ username: uname, display: display || uname, role: role, salt: salt, hash: hash });
+        await saveUsers(users);
+
+        document.getElementById('adminNewUser').value = '';
+        document.getElementById('adminNewDisplay').value = '';
+        document.getElementById('adminNewPass').value = '';
+        msg.textContent = 'User "' + uname + '" added!'; msg.style.color = 'var(--safe-text)';
+        setTimeout(function() { msg.textContent = ''; }, 3000);
+        renderAdminUsers();
+    }
+
+    // ─── Auth Init (gates the app) ───
+    (async function authGate() {
+        var session = loadSession();
+
+        if (session) {
+            // Verify user still exists in DB
+            var users = await loadUsers();
+            users = await seedDefaultAdmin(users);
+            var found = users.find(function(u) { return u.username === session.username; });
+            if (found) {
+                currentUser = { username: found.username, display: found.display, role: found.role };
+                // Update session in case role changed
+                saveSession(currentUser);
+                showApp();
+                return;
+            } else {
+                localStorage.removeItem('kn_session');
+            }
+        }
+
+        // Show login
+        document.getElementById('loginOverlay').classList.remove('hidden');
+
+        // Login handler
+        document.getElementById('loginBtn').addEventListener('click', doLogin);
+        document.getElementById('loginPass').addEventListener('keydown', function(e) { if (e.key === 'Enter') doLogin(); });
+        document.getElementById('loginUser').addEventListener('keydown', function(e) { if (e.key === 'Enter') document.getElementById('loginPass').focus(); });
+
+        async function doLogin() {
+            var btn = document.getElementById('loginBtn');
+            var err = document.getElementById('loginError');
+            btn.disabled = true; btn.textContent = 'SIGNING IN...';
+            err.textContent = '';
+
+            var username = document.getElementById('loginUser').value.trim();
+            var password = document.getElementById('loginPass').value;
+
+            if (!username || !password) { err.textContent = 'Enter username and password.'; btn.disabled = false; btn.textContent = 'SIGN IN'; return; }
+
+            var result = await attemptLogin(username, password);
+            if (!result.ok) {
+                err.textContent = result.error;
+                btn.disabled = false; btn.textContent = 'SIGN IN';
+                return;
+            }
+
+            currentUser = result.user;
+            saveSession(currentUser);
+            showApp();
+        }
+
+        // Seed admin on first load so login works
+        var users = await loadUsers();
+        await seedDefaultAdmin(users);
+    })();
+
+    function showApp() {
+        document.getElementById('loginOverlay').classList.add('hidden');
+        document.getElementById('mainApp').style.display = '';
+        document.getElementById('sbUserName').textContent = currentUser.display + ' (' + currentUser.role + ')';
+        document.getElementById('sbLogout').addEventListener('click', clearSession);
+        if (document.getElementById('adminLogoutBtn')) {
+            document.getElementById('adminLogoutBtn').addEventListener('click', clearSession);
+        }
+        applyRoleVisibility(currentUser.role);
+        // Init admin panel if admin
+        if (currentUser.role === 'admin') {
+            renderAdminUsers();
+            document.getElementById('adminAddBtn').addEventListener('click', adminAddUser);
+        }
+        // Fire custom event so the rest of the app knows auth is done
+        window.dispatchEvent(new Event('kn-auth-ready'));
+    }
+
     // ─── Device ID ───
     var DEVICE_ID = localStorage.getItem('kn_device_id');
     if (!DEVICE_ID) { DEVICE_ID = 'kn-' + Date.now() + '-' + Math.random().toString(36).slice(2,8); localStorage.setItem('kn_device_id', DEVICE_ID); }
@@ -1897,6 +2418,7 @@
     // ─── CST Helpers ───
     function getCSTNow() { return new Date(new Date().toLocaleString('en-US', { timeZone: 'America/Chicago' })); }
     function getCSTDate() { var d = getCSTNow(); return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0'); }
+    function formatShortDate(ds) { var p = ds.split('-'); return new Date(parseInt(p[0]), parseInt(p[1])-1, parseInt(p[2])).toLocaleDateString('en-US', { weekday: 'short', month: 'short', day: 'numeric' }); }
     var viewingDate = null; // null = today (live)
     function getCSTTimeStr() { var d = getCSTNow(); var h = d.getHours(); var m = String(d.getMinutes()).padStart(2,'0'); var ap = h >= 12 ? 'PM' : 'AM'; if (h === 0) h = 12; else if (h > 12) h -= 12; return h + ':' + m + ' ' + ap; }
     function getCSTTime24() { var d = getCSTNow(); return String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0'); }
@@ -1935,6 +2457,7 @@
             activeTabView = tab;
             if (btn.dataset.tab === 'tab-calendar') { if (!calInitialized) { initCalendar(); calInitialized = true; } else { renderCalendar(); } }
             if (btn.dataset.tab === 'tab-log') renderLog();
+            if (btn.dataset.tab === 'tab-admin' && currentUser && currentUser.role === 'admin') renderAdminUsers();
         });
     });
 
@@ -1954,8 +2477,10 @@
         var chips = quickChips[cat] || [];
         var now24 = getCSTTime24();
 
+        var vd = getViewDate();
+        var dateBadge = isViewingToday() ? '' : '<span class="qf-for-date"><i class="fa-solid fa-calendar-day"></i> ' + formatShortDate(vd) + '</span>';
         var html = '<div class="quick-form-header">' +
-            '<div class="quick-form-cat" style="color:var(--cat-' + cat + ')">' + c.emoji + ' ' + c.label + '</div>' +
+            '<div class="quick-form-cat" style="color:var(--cat-' + cat + ')">' + c.emoji + ' ' + c.label + dateBadge + '</div>' +
             '<button class="quick-form-close" id="closeQuickForm">&times;</button></div>';
 
         html += '<div class="quick-form-row">' +
@@ -1975,7 +2500,7 @@
         if (chips.length > 0) {
             html += '<div class="quick-chips">';
             chips.forEach(function(chip) {
-                html += '<button class="quick-chip" data-val="' + chip + '">' + chip + '</button>';
+                html += '<button class="quick-chip" data-val="' + escHtml(chip) + '">' + escHtml(chip) + '</button>';
             });
             html += '</div>';
         }
@@ -2037,7 +2562,7 @@
             time24: timeVal,
             text: displayText,
             timestamp: new Date().toISOString(),
-            date: getCSTDate()
+            date: getViewDate()
         };
 
         actions.push(entry);
@@ -2055,13 +2580,12 @@
         // Auto-archive milestones to Info Bank
         if (activeFormCat === 'milestone') {
             if (!infoBank.milestones) infoBank.milestones = [];
-            var now = new Date();
-            var cstStr = now.toLocaleString('en-US', { timeZone: 'America/Chicago' });
-            var cstNow = new Date(cstStr);
+            var vd = getViewDate();
+            var vp = vd.split('-');
             infoBank.milestones.push({
                 id: 'ms-' + Date.now(),
                 name: displayText,
-                date: (cstNow.getMonth()+1) + '/' + cstNow.getDate() + '/' + cstNow.getFullYear(),
+                date: parseInt(vp[1]) + '/' + parseInt(vp[2]) + '/' + vp[0],
                 time: entry.time,
                 notes: ''
             });
@@ -2101,8 +2625,10 @@
         var chips = quickChips.tantrum || [];
         var now24 = tantrumStartTime || getCSTTime24();
 
+        var tvd = getViewDate();
+        var tdateBadge = isViewingToday() ? '' : '<span class="qf-for-date"><i class="fa-solid fa-calendar-day"></i> ' + formatShortDate(tvd) + '</span>';
         var html = '<div class="quick-form-header">' +
-            '<div class="quick-form-cat" style="color:var(--cat-tantrum)">' + c.emoji + ' Log Tantrum</div>' +
+            '<div class="quick-form-cat" style="color:var(--cat-tantrum)">' + c.emoji + ' Log Tantrum' + tdateBadge + '</div>' +
             '<button class="quick-form-close" id="closeQuickForm">&times;</button></div>';
 
         html += '<div class="quick-form-row">' +
@@ -2112,21 +2638,21 @@
         html += '<div style="font-size:0.55rem;font-weight:700;color:var(--cat-tantrum);margin-bottom:4px;">POSSIBLE TRIGGER:</div>';
         html += '<div class="quick-chips">';
         chips.forEach(function(chip) {
-            html += '<button class="quick-chip" data-val="' + chip + '">' + chip + '</button>';
+            html += '<button class="quick-chip" data-val="' + escHtml(chip) + '">' + escHtml(chip) + '</button>';
         });
         html += '</div>';
 
         html += '<div style="font-size:0.55rem;font-weight:700;color:var(--text-light);margin: 6px 0 4px;">INTENSITY:</div>';
         html += '<div class="quick-chips">';
         ['Mild (fussing)', 'Moderate (crying/screaming)', 'Big (full meltdown)', 'Transition meltdown'].forEach(function(chip) {
-            html += '<button class="quick-chip intensity-chip" data-val="' + chip + '">' + chip + '</button>';
+            html += '<button class="quick-chip intensity-chip" data-val="' + escHtml(chip) + '">' + escHtml(chip) + '</button>';
         });
         html += '</div>';
 
         html += '<div style="font-size:0.55rem;font-weight:700;color:var(--text-light);margin: 6px 0 4px;">DURATION:</div>';
         html += '<div class="quick-chips">';
         ['< 2 min', '2–5 min', '5–10 min', '10+ min'].forEach(function(chip) {
-            html += '<button class="quick-chip duration-chip" data-val="' + chip + '">' + chip + '</button>';
+            html += '<button class="quick-chip duration-chip" data-val="' + escHtml(chip) + '">' + escHtml(chip) + '</button>';
         });
         html += '</div>';
 
@@ -2191,7 +2717,7 @@
                 time24: timeVal,
                 text: displayText,
                 timestamp: new Date().toISOString(),
-                date: getCSTDate()
+                date: getViewDate()
             };
 
             actions.push(entry);
@@ -2326,7 +2852,7 @@
 
     function confirmImportEntries() {
         if (pendingImportEntries.length === 0) return;
-        var today = getCSTDate();
+        var targetDate = getViewDate();
         var count = 0;
 
         pendingImportEntries.forEach(function(e) {
@@ -2343,9 +2869,9 @@
                 t24 = String(h).padStart(2, '0') + ':' + min;
             }
 
-            // Deduplicate: skip if same time + cat already exists
+            // Deduplicate: skip if same time + cat already exists for this date
             var isDupe = actions.some(function(a) {
-                return a.time === timeStr && a.cat === cat && a.date === today;
+                return a.time === timeStr && a.cat === cat && a.date === targetDate;
             });
             if (isDupe) return;
 
@@ -2356,7 +2882,7 @@
                 time24: t24,
                 text: e.text || '',
                 timestamp: new Date().toISOString(),
-                date: today
+                date: targetDate
             };
             actions.push(entry);
             count++;
@@ -2401,12 +2927,17 @@
         document.getElementById('dayCustom').value = vd;
         // Update label
         var label = document.getElementById('timelineLabel');
+        var banner = document.getElementById('dateContextBanner');
+        var bannerLabel = document.getElementById('dateContextLabel');
         if (isViewingToday()) {
             label.innerHTML = '<i class="fa-solid fa-timeline"></i> TODAY\'S TIMELINE';
             document.getElementById('dayPickerLabel').textContent = '';
+            banner.classList.remove('visible');
         } else {
             label.innerHTML = '<i class="fa-solid fa-timeline"></i> TIMELINE';
             document.getElementById('dayPickerLabel').textContent = formatDateNice(vd);
+            bannerLabel.textContent = 'Viewing ' + formatDateNice(vd) + ' — entries will be saved to this date';
+            banner.classList.add('visible');
         }
         renderTimeline();
     }
@@ -2436,8 +2967,10 @@
         var items = [];
 
         // Add actual actions for the viewed date
+        // Entries with no date field are treated as today (legacy data compatibility)
         actions.forEach(function(a) {
-            if (a.date !== vDate) return;
+            var entryDate = a.date || getCSTDate();
+            if (entryDate !== vDate) return;
             items.push({ type: 'action', min: timeToMinutes(a.time), data: a });
         });
 
@@ -2498,8 +3031,8 @@
                     '<div class="tl-content">' +
                     '<span class="tl-emoji">' + c.emoji + '</span>' +
                     '<span class="tl-cat-badge ' + a.cat + '">' + c.label + '</span>' +
-                    '<span class="tl-text">' + a.text + '</span>' +
-                    (isToday ? '<button class="tl-delete" data-id="' + a.id + '"><i class="fa-solid fa-xmark"></i></button>' : '') +
+                    '<span class="tl-text">' + escHtml(a.text) + '</span>' +
+                    '<button class="tl-delete" data-id="' + a.id + '"><i class="fa-solid fa-xmark"></i></button>' +
                     '</div></div>';
             }
         });
@@ -2537,18 +3070,31 @@
     //  DATA PERSISTENCE
     // ═══════════════════════════════════════
     async function loadActions() {
+        if (Date.now() - _actionsWriteLock < 4000) { renderTimeline(); return; }
         try {
             var res = await sb.from('kaleesi_data').select('content').eq('id', ACTIONS_ID).single();
             if (res.data && res.data.content) {
                 var c = res.data.content;
                 actions = Array.isArray(c.actions) ? c.actions : [];
-                // Filter to today only for display, keep all for history
+                // Prune entries older than 90 days to prevent unbounded growth
+                var cutoff = (function() {
+                    var d = getCSTNow(); d.setDate(d.getDate() - 90);
+                    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+                })();
+                var before = actions.length;
+                actions = actions.filter(function(a) { return (a.date || getCSTDate()) >= cutoff; });
+                if (actions.length < before) {
+                    console.log('[Actions] Pruned ' + (before - actions.length) + ' entries older than 90 days');
+                    saveActions();
+                }
             }
         } catch(e) {}
         renderTimeline();
     }
 
+    var _actionsWriteLock = 0; // timestamp of last local save; suppresses remote overwrites for 4s
     async function saveActions() {
+        _actionsWriteLock = Date.now();
         broadcastSync('actions', actions);
         try {
             await sb.from('kaleesi_data').upsert({
@@ -2884,7 +3430,7 @@
             if (calSelected === ds) cls += ' selected';
 
             var entry = custodySchedule[ds] || {};
-            var hasActions = actions.some(function(a) { return a.date === ds; });
+            var hasActions = actions.some(function(a) { return (a.date || getCSTDate()) === ds; });
             if (hasActions) cls += ' has-data';
 
             var badge = '';
@@ -2925,7 +3471,7 @@
     function showCalDetail(ds) {
         var detail = document.getElementById('calDetail');
         var entry = custodySchedule[ds] || {};
-        var dayActions = actions.filter(function(a) { return a.date === ds; });
+        var dayActions = actions.filter(function(a) { return (a.date || getCSTDate()) === ds; });
         var html = '<div class="cal-detail-date">' + formatDateNice(ds) + '</div>';
 
         if (entry.type === 'full') {
@@ -3296,8 +3842,8 @@
                 res.data.forEach(function(row) {
                     if (!row.content) return;
                     if (row.id === ACTIONS_ID && Array.isArray(row.content.actions)) {
-                        actions = row.content.actions;
-                        renderTimeline();
+                        if (Date.now() - _actionsWriteLock < 4000) { /* skip — local write in flight */ }
+                        else { actions = row.content.actions; renderTimeline(); }
                     }
                     if (row.id === LOG_ID && Array.isArray(row.content.entries)) {
                         logEntries = row.content.entries;
@@ -3324,6 +3870,7 @@
             console.log('[Broadcast] Received:', d.type, 'from', d.sender);
             lastSyncTs = Date.now();
             if (d.type === 'actions' && Array.isArray(d.data)) {
+                if (Date.now() - _actionsWriteLock < 4000) return;
                 actions = d.data;
                 renderTimeline();
                 showToast('📡 Updated from another device');
@@ -3362,6 +3909,8 @@
             if (!p.new || !p.new.content) return;
             var c = p.new.content;
             if (p.new.id === ACTIONS_ID && Array.isArray(c.actions)) {
+                // Skip if we just saved locally — our in-memory copy is authoritative for 4s
+                if (Date.now() - _actionsWriteLock < 4000) return;
                 actions = c.actions;
                 renderTimeline();
             }
@@ -4050,7 +4599,7 @@
 
         // Get actions for the selected date
         var dayActions = (actions || []).filter(function(a) {
-            return a.date === targetDate;
+            return (a.date || getCSTDate()) === targetDate;
         });
 
         // Also check log entries as fallback
@@ -4275,9 +4824,9 @@
     })();
 
     // ═══════════════════════════════════════
-    //  INIT
+    //  INIT (waits for auth)
     // ═══════════════════════════════════════
-    (async function() {
+    async function appInit() {
         // Load custody schedule
         try {
             var res = await sb.from('schedule').select('data').eq('id', 'main').single();
@@ -4297,7 +4846,25 @@
         renderNotifBanner();
         startRealtime();
         initServiceWorker();
-    })();
+
+        // Apply co-parent read-only after data loads
+        if (currentUser && currentUser.role === 'coparent') {
+            // Hide add/edit/delete buttons across the app
+            document.querySelectorAll('.ib-add-btn, .ib-edit-btn, .ib-del-btn').forEach(function(btn) {
+                btn.style.display = 'none';
+            });
+            // Hide the Procare import card
+            var importCard = document.querySelector('.import-card');
+            if (importCard) importCard.style.display = 'none';
+        }
+    }
+
+    // Wait for auth to complete before loading app data
+    if (currentUser) {
+        appInit();
+    } else {
+        window.addEventListener('kn-auth-ready', function() { appInit(); });
+    }
     </script>
 </body>
 </html>
