@@ -1543,6 +1543,7 @@
         .au-role.admin { background: #fce7f3; color: #D85A9C; }
         .au-role.parent { background: #e4edfa; color: #7BA3D9; }
         .au-role.coparent { background: #e6f7f2; color: #2a7a5f; }
+        .au-role.viewer { background: #fdf5eb; color: #c67d1a; }
         .admin-user-row .au-actions { display: flex; gap: 6px; }
         .admin-user-row .au-btn {
             border: none; background: none; cursor: pointer; font-size: 0.75rem;
@@ -1867,6 +1868,7 @@
                     <select id="adminNewRole">
                         <option value="parent">Parent</option>
                         <option value="coparent">Co-Parent</option>
+                        <option value="viewer">Viewer</option>
                         <option value="admin">Admin</option>
                     </select>
                     <button class="admin-add-btn" id="adminAddBtn"><i class="fa-solid fa-user-plus"></i> ADD USER</button>
@@ -2193,6 +2195,23 @@
             // Hide procare import if exists
             var importBtn = document.querySelector('[onclick*="openImportDaycare"]');
             if (importBtn) importBtn.style.display = 'none';
+        } else if (role === 'viewer') {
+            // Viewer: can see all tabs but everything is read-only
+            navCalendar.style.display = '';
+            navCare.style.display = '';
+            if (ibSubtabs) {
+                ibSubtabs.querySelectorAll('.ib-subtab').forEach(function(btn) { btn.style.display = ''; });
+            }
+
+            // Disable quick-add buttons
+            document.querySelectorAll('.cat-btn').forEach(function(btn) { btn.disabled = true; btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; });
+
+            // Hide procare import
+            var importBtn = document.querySelector('[onclick*="openImportDaycare"]');
+            if (importBtn) importBtn.style.display = 'none';
+
+            // Disable calendar paint mode buttons
+            document.querySelectorAll('.cal-paint-btn, .cal-pattern-btn, .cal-export-btn').forEach(function(btn) { btn.disabled = true; btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; });
         } else {
             navCalendar.style.display = '';
             navCare.style.display = '';
@@ -4847,8 +4866,8 @@
         startRealtime();
         initServiceWorker();
 
-        // Apply co-parent read-only after data loads
-        if (currentUser && currentUser.role === 'coparent') {
+        // Apply read-only after data loads for restricted roles
+        if (currentUser && (currentUser.role === 'coparent' || currentUser.role === 'viewer')) {
             // Hide add/edit/delete buttons across the app
             document.querySelectorAll('.ib-add-btn, .ib-edit-btn, .ib-del-btn').forEach(function(btn) {
                 btn.style.display = 'none';
