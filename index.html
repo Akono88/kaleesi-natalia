@@ -2233,7 +2233,12 @@
             row.className = 'admin-user-row';
             var canDelete = u.username !== currentUser.username;
             row.innerHTML = '<div class="au-name">' + (u.display || u.username) + ' <span style="font-size:0.55rem;color:var(--text-light);">@' + u.username + '</span></div>' +
-                '<span class="au-role ' + u.role + '">' + u.role + '</span>' +
+                '<select class="au-role-select" data-user="' + u.username + '" style="font-size:0.55rem;font-weight:700;padding:2px 6px;border-radius:8px;border:1.5px solid var(--border);font-family:Montserrat,sans-serif;cursor:pointer;">' +
+                    '<option value="admin"' + (u.role === 'admin' ? ' selected' : '') + '>Admin</option>' +
+                    '<option value="parent"' + (u.role === 'parent' ? ' selected' : '') + '>Parent</option>' +
+                    '<option value="coparent"' + (u.role === 'coparent' ? ' selected' : '') + '>Co-Parent</option>' +
+                    '<option value="viewer"' + (u.role === 'viewer' ? ' selected' : '') + '>Viewer</option>' +
+                '</select>' +
                 '<div class="au-actions">' +
                 '<button class="au-btn" title="Reset password" data-user="' + u.username + '" data-action="reset"><i class="fa-solid fa-key"></i></button>' +
                 (canDelete ? '<button class="au-btn danger" title="Delete" data-user="' + u.username + '" data-action="delete"><i class="fa-solid fa-trash"></i></button>' : '') +
@@ -2262,6 +2267,26 @@
                         await saveUsers(users);
                         alert('Password reset for "' + uname + '".');
                     }
+                }
+            });
+        });
+        // Bind role change selects
+        list.querySelectorAll('.au-role-select').forEach(function(sel) {
+            sel.addEventListener('change', async function() {
+                var uname = this.dataset.user;
+                var newRole = this.value;
+                var users = await loadUsers();
+                var user = users.find(function(u) { return u.username === uname; });
+                if (user) {
+                    user.role = newRole;
+                    await saveUsers(users);
+                    // If changing own role, update session
+                    if (uname === currentUser.username) {
+                        currentUser.role = newRole;
+                        saveSession(currentUser);
+                        document.getElementById('sbUserName').textContent = currentUser.display + ' (' + currentUser.role + ')';
+                    }
+                    renderAdminUsers();
                 }
             });
         });
