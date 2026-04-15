@@ -2272,22 +2272,45 @@
         });
         // Bind role change selects
         list.querySelectorAll('.au-role-select').forEach(function(sel) {
+            // Store original value so we can revert on cancel
+            sel.dataset.original = sel.value;
             sel.addEventListener('change', async function() {
                 var uname = this.dataset.user;
                 var newRole = this.value;
+                var originalRole = this.dataset.original;
                 var users = await loadUsers();
                 var user = users.find(function(u) { return u.username === uname; });
-                if (user) {
-                    user.role = newRole;
-                    await saveUsers(users);
-                    // If changing own role, update session
-                    if (uname === currentUser.username) {
-                        currentUser.role = newRole;
-                        saveSession(currentUser);
-                        document.getElementById('sbUserName').textContent = currentUser.display + ' (' + currentUser.role + ')';
+                if (!user) return;
+
+                // Safeguard 1: Don't allow demoting the last admin
+                if (user.role === 'admin' && newRole !== 'admin') {
+                    var adminCount = users.filter(function(u) { return u.role === 'admin'; }).length;
+                    if (adminCount <= 1) {
+                        alert('Cannot change role: "' + uname + '" is the only admin. Promote another user to admin first.');
+                        this.value = originalRole;
+                        return;
                     }
-                    renderAdminUsers();
                 }
+
+                // Safeguard 2: Warn when demoting yourself
+                if (uname === currentUser.username && newRole !== 'admin') {
+                    if (!confirm('Warning: You are about to change YOUR OWN role from admin to ' + newRole + '. You will lose access to the admin panel. Continue?')) {
+                        this.value = originalRole;
+                        return;
+                    }
+                }
+
+                user.role = newRole;
+                await saveUsers(users);
+                // If changing own role, update session
+                if (uname === currentUser.username) {
+                    currentUser.role = newRole;
+                    saveSession(currentUser);
+                    document.getElementById('sbUserName').textContent = currentUser.display + ' (' + currentUser.role + ')';
+                    // If demoted from admin, reload to re-apply role visibility
+                    if (newRole !== 'admin') { location.reload(); return; }
+                }
+                renderAdminUsers();
             });
         });
         // Session info
