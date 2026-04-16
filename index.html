@@ -16,6 +16,7 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Montserrat:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
             /* ✦ Kaleesi Natalia Knopko Brand Palette ✦ */
@@ -68,6 +69,23 @@
             --cat-milestone-bg: #fdeef8;
             --cat-tantrum: #c44d5e;
             --cat-tantrum-bg: #fdf0f2;
+
+            /* Professional design tokens */
+            --space-1: 4px;
+            --space-2: 8px;
+            --space-3: 12px;
+            --space-4: 16px;
+            --space-5: 24px;
+            --space-6: 32px;
+            --elev-1: 0 1px 3px rgba(60,30,80,0.04), 0 1px 2px rgba(60,30,80,0.06);
+            --elev-2: 0 4px 12px rgba(60,30,80,0.06), 0 2px 4px rgba(60,30,80,0.04);
+            --elev-3: 0 12px 32px rgba(60,30,80,0.08), 0 4px 12px rgba(60,30,80,0.06);
+            --elev-focus: 0 0 0 3px rgba(197,138,205,0.22);
+            --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+            --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+            --dur-fast: 120ms;
+            --dur-base: 220ms;
+            --dur-slow: 380ms;
         }
         * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; -webkit-font-smoothing: antialiased; }
         html { scroll-behavior: smooth; }
@@ -137,14 +155,15 @@
             backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
         }
         .nav-btn {
-            flex: 1; border: none; background: none; padding: 8px 4px 6px; cursor: pointer;
+            flex: 1; border: none; background: none; padding: 8px 2px 6px; cursor: pointer;
             display: flex; flex-direction: column; align-items: center; gap: 2px;
             color: var(--text-light); transition: color 0.15s ease, transform 0.1s ease; font-family: 'Montserrat', sans-serif;
             -webkit-touch-callout: none; user-select: none; touch-action: manipulation;
+            min-width: 0;
         }
         .nav-btn:active { transform: scale(0.92); }
-        .nav-btn i { font-size: 16px; transition: filter 0.15s ease; }
-        .nav-btn span { font-size: 0.5rem; font-weight: 700; letter-spacing: 0.5px; text-transform: uppercase; }
+        .nav-btn i { font-size: 14px; transition: filter 0.15s ease; }
+        .nav-btn span { font-size: 0.45rem; font-weight: 700; letter-spacing: 0.3px; text-transform: uppercase; white-space: nowrap; }
         .nav-btn.active { color: var(--purple-mid); }
         .nav-btn.active i { filter: drop-shadow(0 0 4px rgba(216,90,156,0.3)); }
 
@@ -1587,6 +1606,207 @@
             color: var(--text-light); font-weight: 700; font-family: 'Montserrat', sans-serif;
         }
         .session-bar .sb-logout:hover { color: var(--danger-text); }
+
+        /* ═══ PROFESSIONAL POLISH LAYER ═══ */
+        /* Smooth scrollbars */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(197,138,205,0.25); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(197,138,205,0.45); }
+
+        /* Refined focus ring for keyboard users */
+        button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible {
+            outline: none; box-shadow: var(--elev-focus); border-radius: 10px;
+        }
+
+        /* Tab transitions */
+        .tab-view { animation: fadeSlideIn var(--dur-base) var(--ease-out); }
+        @keyframes fadeSlideIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Card lift on hover (desktop) */
+        @media (hover: hover) {
+            .card { transition: box-shadow var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-out); }
+            .card:hover { box-shadow: var(--elev-2); }
+        }
+
+        /* Refined buttons */
+        button { transition: transform var(--dur-fast) var(--ease-out), box-shadow var(--dur-base) var(--ease-out), background var(--dur-base) var(--ease-out); }
+
+        /* Loading skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, rgba(197,138,205,0.08) 25%, rgba(197,138,205,0.16) 37%, rgba(197,138,205,0.08) 63%);
+            background-size: 400% 100%; animation: skeletonPulse 1.4s ease infinite; border-radius: 10px;
+        }
+        @keyframes skeletonPulse {
+            0% { background-position: 100% 50%; }
+            100% { background-position: 0 50%; }
+        }
+
+        /* Toast refinement */
+        .toast {
+            position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%) translateY(12px);
+            background: var(--text); color: white; padding: 10px 18px; border-radius: 14px;
+            font-size: 0.7rem; font-weight: 600; font-family: 'Montserrat', sans-serif;
+            box-shadow: var(--elev-3); z-index: 1000; opacity: 0; pointer-events: none;
+            transition: opacity var(--dur-base) var(--ease-out), transform var(--dur-base) var(--ease-spring);
+            max-width: 90%; text-align: center;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        /* Version badge */
+        .version-badge {
+            display: inline-block; font-size: 0.5rem; font-weight: 600;
+            color: var(--text-light); margin-left: 6px; letter-spacing: 0.5px;
+            opacity: 0.6;
+        }
+
+        /* Dashboard styling */
+        #tab-dashboard .stat-grid {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px;
+        }
+        #tab-dashboard .stat-card {
+            background: white; border-radius: 16px; padding: 14px;
+            box-shadow: var(--elev-1); position: relative; overflow: hidden;
+            border: 1px solid rgba(197,138,205,0.08);
+        }
+        #tab-dashboard .stat-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--purple-deep), var(--purple-mid));
+        }
+        #tab-dashboard .stat-label {
+            font-size: 0.52rem; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--text-light); margin-bottom: 4px;
+        }
+        #tab-dashboard .stat-value {
+            font-size: 1.6rem; font-weight: 800; color: var(--text); line-height: 1;
+            letter-spacing: -0.02em;
+        }
+        #tab-dashboard .stat-sub {
+            font-size: 0.6rem; font-weight: 600; color: var(--text-mid); margin-top: 4px;
+        }
+        #tab-dashboard .insight-card {
+            background: linear-gradient(135deg, rgba(197,138,205,0.08), rgba(151,215,198,0.08));
+            border: 1px solid rgba(197,138,205,0.15);
+            border-radius: 16px; padding: 14px; margin-bottom: 10px;
+        }
+        #tab-dashboard .insight-emoji { font-size: 1.2rem; margin-right: 6px; }
+        #tab-dashboard .insight-title {
+            font-size: 0.7rem; font-weight: 700; color: var(--text); margin-bottom: 4px;
+        }
+        #tab-dashboard .insight-text {
+            font-size: 0.65rem; color: var(--text-mid); line-height: 1.5;
+        }
+        #tab-dashboard .bar-chart { display: flex; align-items: flex-end; height: 80px; gap: 3px; margin: 10px 0; }
+        #tab-dashboard .bar-chart .bar {
+            flex: 1; background: linear-gradient(180deg, var(--purple-deep), var(--purple-mid));
+            border-radius: 3px 3px 0 0; min-height: 2px; transition: height var(--dur-slow) var(--ease-out);
+            position: relative;
+        }
+        #tab-dashboard .bar-label {
+            font-size: 0.45rem; font-weight: 600; color: var(--text-light);
+            text-align: center; margin-top: 4px;
+        }
+        #tab-dashboard .chart-labels {
+            display: flex; gap: 3px; font-size: 0.45rem; font-weight: 600;
+            color: var(--text-light); text-align: center;
+        }
+        #tab-dashboard .chart-labels > div { flex: 1; }
+
+        /* Pattern bar */
+        .pattern-bar {
+            display: flex; align-items: center; gap: 8px; padding: 8px 0;
+            font-size: 0.65rem; border-bottom: 1px solid rgba(197,138,205,0.08);
+        }
+        .pattern-bar:last-child { border-bottom: none; }
+        .pattern-bar .pb-icon {
+            width: 28px; height: 28px; display: flex; align-items: center; justify-content: center;
+            border-radius: 8px; font-size: 0.9rem; flex-shrink: 0;
+        }
+        .pattern-bar .pb-label { flex: 1; font-weight: 600; color: var(--text); }
+        .pattern-bar .pb-count {
+            font-weight: 800; color: var(--purple-mid); font-size: 0.75rem;
+            background: rgba(216,90,156,0.08); padding: 2px 10px; border-radius: 10px;
+        }
+
+        /* Audit log styling */
+        .audit-row {
+            display: flex; align-items: center; gap: 10px; padding: 8px 0;
+            border-bottom: 1px solid rgba(197,138,205,0.06); font-size: 0.62rem;
+        }
+        .audit-row .au-when { font-size: 0.55rem; color: var(--text-light); min-width: 90px; }
+        .audit-row .au-who { font-weight: 700; color: var(--purple-mid); min-width: 70px; }
+        .audit-row .au-what { color: var(--text-mid); flex: 1; }
+
+        /* Voice input button */
+        .voice-btn {
+            position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+            width: 32px; height: 32px; border: none; background: rgba(197,138,205,0.1);
+            border-radius: 50%; cursor: pointer; color: var(--purple-mid); font-size: 0.9rem;
+            display: flex; align-items: center; justify-content: center;
+            transition: background var(--dur-base), transform var(--dur-fast);
+        }
+        .voice-btn:hover { background: rgba(197,138,205,0.2); }
+        .voice-btn.recording { background: var(--purple-mid); color: white; animation: voicePulse 1.2s ease-in-out infinite; }
+        @keyframes voicePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(216,90,156,0.5); }
+            50% { box-shadow: 0 0 0 8px rgba(216,90,156,0); }
+        }
+
+        /* Search bar */
+        .global-search {
+            position: relative; margin-bottom: 10px;
+        }
+        .global-search input {
+            width: 100%; padding: 10px 16px 10px 38px; border: 1.5px solid var(--border);
+            border-radius: 12px; font-family: 'Montserrat', sans-serif; font-size: 0.72rem;
+            outline: none; background: white; transition: border-color var(--dur-base);
+        }
+        .global-search input:focus { border-color: var(--purple-deep); }
+        .global-search i {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--text-light); font-size: 0.8rem;
+        }
+        .search-result {
+            padding: 10px 12px; border-radius: 10px; background: var(--purple-glow);
+            margin-bottom: 6px; cursor: pointer; font-size: 0.68rem;
+            transition: background var(--dur-base);
+        }
+        .search-result:hover { background: rgba(197,138,205,0.18); }
+        .search-result .sr-type {
+            font-size: 0.5rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+            color: var(--purple-mid); margin-bottom: 2px;
+        }
+
+        /* Appointments */
+        .appt-card {
+            background: white; border-radius: 14px; padding: 12px 14px; margin-bottom: 8px;
+            box-shadow: var(--elev-1); border-left: 3px solid var(--purple-mid);
+            display: flex; align-items: center; gap: 10px;
+        }
+        .appt-when {
+            text-align: center; min-width: 48px;
+        }
+        .appt-day {
+            font-size: 1.2rem; font-weight: 800; color: var(--purple-mid); line-height: 1;
+        }
+        .appt-month {
+            font-size: 0.5rem; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+            color: var(--text-light);
+        }
+        .appt-body { flex: 1; }
+        .appt-title { font-size: 0.72rem; font-weight: 700; color: var(--text); }
+        .appt-sub { font-size: 0.58rem; color: var(--text-mid); margin-top: 2px; }
+        .appt-soon { border-left-color: var(--cat-tantrum); }
+        .appt-soon .appt-day { color: var(--cat-tantrum); }
+
+        /* Growth chart */
+        .growth-chart-svg { width: 100%; height: 180px; }
+        .growth-chart-svg .grid-line { stroke: rgba(197,138,205,0.1); stroke-width: 1; }
+        .growth-chart-svg .data-line { stroke: var(--purple-mid); stroke-width: 2.5; fill: none; }
+        .growth-chart-svg .data-point { fill: var(--purple-mid); }
     </style>
 </head>
 <body>
@@ -1604,7 +1824,7 @@
 
     <div class="app" id="mainApp" style="display:none;">
         <div class="session-bar" id="sessionBar">
-            <span>Signed in as <span class="sb-user" id="sbUserName">—</span></span>
+            <span>Signed in as <span class="sb-user" id="sbUserName">—</span><span class="version-badge" id="versionBadge"></span></span>
             <button class="sb-logout" id="sbLogout">Sign out</button>
         </div>
         <header>
@@ -1856,6 +2076,69 @@
         </div>
     </div>
 
+        <!-- ═══════════ TAB: DASHBOARD ═══════════ -->
+        <div class="tab-view" id="tab-dashboard">
+            <div class="global-search">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                <input type="text" id="globalSearch" placeholder="Search logs, info, notes...">
+            </div>
+            <div id="searchResults" style="display:none;margin-bottom:12px;"></div>
+            <div class="card">
+                <div class="card-label"><i class="fa-solid fa-chart-line"></i> This Week at a Glance</div>
+                <div class="stat-grid" id="statGrid"></div>
+                <div style="margin-top:10px;">
+                    <div style="font-size:0.6rem;font-weight:700;color:var(--text-mid);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">Activity (last 7 days)</div>
+                    <div class="bar-chart" id="weekBarChart"></div>
+                    <div class="chart-labels" id="weekBarLabels"></div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-label"><i class="fa-solid fa-lightbulb"></i> Insights & Patterns</div>
+                <div id="insightsList"></div>
+            </div>
+            <div class="card">
+                <div class="card-label"><i class="fa-solid fa-list-check"></i> Top Activities (last 30 days)</div>
+                <div id="topActivities"></div>
+            </div>
+            <div class="card">
+                <div class="card-label" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span><i class="fa-solid fa-ruler-vertical"></i> Growth Chart</span>
+                    <button id="addGrowthBtn" style="padding:6px 12px;font-size:0.58rem;border:none;background:var(--teal);color:white;border-radius:10px;font-weight:700;cursor:pointer;letter-spacing:1px;"><i class="fa-solid fa-plus"></i> ADD</button>
+                </div>
+                <div style="display:flex;gap:8px;margin-bottom:10px;font-size:0.6rem;">
+                    <button class="growth-toggle-btn active" data-metric="height" style="flex:1;padding:6px;border:1.5px solid var(--border);background:white;border-radius:10px;font-weight:700;cursor:pointer;">Height</button>
+                    <button class="growth-toggle-btn" data-metric="weight" style="flex:1;padding:6px;border:1.5px solid var(--border);background:white;border-radius:10px;font-weight:700;cursor:pointer;">Weight</button>
+                </div>
+                <svg class="growth-chart-svg" id="growthChart" viewBox="0 0 300 180" preserveAspectRatio="none"></svg>
+                <div id="growthList" style="margin-top:10px;"></div>
+            </div>
+        </div>
+
+        <!-- ═══════════ TAB: APPOINTMENTS ═══════════ -->
+        <div class="tab-view" id="tab-appointments">
+            <div class="card">
+                <div class="card-label" style="display:flex;justify-content:space-between;align-items:center;">
+                    <span><i class="fa-solid fa-calendar-check"></i> Upcoming Appointments</span>
+                    <button class="ib-add-btn" id="addApptBtn" style="padding:6px 12px;font-size:0.6rem;border:none;background:var(--purple-deep);color:white;border-radius:10px;font-weight:700;cursor:pointer;letter-spacing:1px;"><i class="fa-solid fa-plus"></i> ADD</button>
+                </div>
+                <div id="apptList"></div>
+            </div>
+            <div class="card" id="apptFormCard" style="display:none;">
+                <div class="card-label"><i class="fa-solid fa-pen"></i> <span id="apptFormTitle">New Appointment</span></div>
+                <input type="text" id="apptTitle" placeholder="Title (e.g., Dr. Smith checkup)" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;margin-bottom:8px;font-family:Montserrat,sans-serif;font-size:0.7rem;outline:none;">
+                <input type="datetime-local" id="apptWhen" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;margin-bottom:8px;font-family:Montserrat,sans-serif;font-size:0.7rem;outline:none;">
+                <input type="text" id="apptLocation" placeholder="Location (optional)" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;margin-bottom:8px;font-family:Montserrat,sans-serif;font-size:0.7rem;outline:none;">
+                <textarea id="apptNotes" placeholder="Notes (optional)" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;margin-bottom:8px;font-family:Montserrat,sans-serif;font-size:0.7rem;outline:none;resize:vertical;min-height:60px;"></textarea>
+                <label style="font-size:0.6rem;color:var(--text-mid);font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:8px;">
+                    <input type="checkbox" id="apptRemind" checked> Send push reminder 1 hour before
+                </label>
+                <div style="display:flex;gap:8px;">
+                    <button id="apptCancel" style="flex:1;padding:10px;border:1.5px solid var(--border);background:white;border-radius:10px;font-family:Montserrat,sans-serif;font-size:0.68rem;font-weight:700;cursor:pointer;">Cancel</button>
+                    <button id="apptSave" style="flex:1;padding:10px;border:none;background:linear-gradient(135deg,var(--purple-deep),var(--purple-mid));color:white;border-radius:10px;font-family:Montserrat,sans-serif;font-size:0.68rem;font-weight:700;cursor:pointer;letter-spacing:1px;">SAVE</button>
+                </div>
+            </div>
+        </div>
+
         <!-- ═══════════ TAB: ADMIN (Admin Only) ═══════════ -->
         <div class="tab-view" id="tab-admin">
             <div class="admin-card">
@@ -1876,6 +2159,11 @@
                 <div class="admin-add-msg" id="adminAddMsg"></div>
             </div>
             <div class="admin-card">
+                <div class="admin-card-label"><i class="fa-solid fa-clock-rotate-left"></i> Audit Log (last 50)</div>
+                <div id="auditList" style="max-height:320px;overflow-y:auto;"></div>
+            </div>
+
+            <div class="admin-card">
                 <div class="admin-card-label"><i class="fa-solid fa-right-from-bracket"></i> Session</div>
                 <div id="adminSessionInfo" style="font-size:0.65rem;color:var(--text-mid);margin-bottom:10px;"></div>
                 <button class="admin-logout-btn" id="adminLogoutBtn"><i class="fa-solid fa-right-from-bracket"></i> SIGN OUT</button>
@@ -1885,7 +2173,9 @@
     <!-- Bottom Navigation -->
     <div class="bottom-nav">
         <button class="nav-btn active" data-tab="tab-actions"><i class="fa-solid fa-bolt"></i><span>ACTIONS</span></button>
+        <button class="nav-btn" data-tab="tab-dashboard" id="navDashboard"><i class="fa-solid fa-chart-line"></i><span>HOME</span></button>
         <button class="nav-btn" data-tab="tab-calendar" id="navCalendar"><i class="fa-solid fa-calendar-days"></i><span>CALENDAR</span></button>
+        <button class="nav-btn" data-tab="tab-appointments" id="navAppts"><i class="fa-solid fa-calendar-check"></i><span>APPTS</span></button>
         <button class="nav-btn" data-tab="tab-info"><i class="fa-solid fa-folder-open"></i><span>INFO</span></button>
         <button class="nav-btn" data-tab="tab-care" id="navCare"><i class="fa-solid fa-heart-pulse"></i><span>CARE</span></button>
         <button class="nav-btn" data-tab="tab-log"><i class="fa-solid fa-clock-rotate-left"></i><span>LOG</span></button>
@@ -2255,6 +2545,7 @@
                     var users = await loadUsers();
                     users = users.filter(function(u) { return u.username !== uname; });
                     await saveUsers(users);
+                    await logAudit('Deleted user', uname);
                     renderAdminUsers();
                 } else if (action === 'reset') {
                     var newPass = prompt('New password for "' + uname + '":');
@@ -2265,6 +2556,7 @@
                         user.salt = generateSalt();
                         user.hash = await hashPassword(newPass, user.salt);
                         await saveUsers(users);
+                        await logAudit('Reset password', uname);
                         alert('Password reset for "' + uname + '".');
                     }
                 }
@@ -2302,6 +2594,7 @@
 
                 user.role = newRole;
                 await saveUsers(users);
+                await logAudit('Changed role of ' + uname, originalRole + ' → ' + newRole);
                 // If changing own role, update session
                 if (uname === currentUser.username) {
                     currentUser.role = newRole;
@@ -2316,6 +2609,21 @@
         // Session info
         var info = document.getElementById('adminSessionInfo');
         if (info) info.innerHTML = 'Signed in as <strong>' + currentUser.display + '</strong> (' + currentUser.role + ')';
+
+        // Audit log
+        await loadAudit();
+        var auditList = document.getElementById('auditList');
+        if (auditList) {
+            if (auditEntries.length === 0) {
+                auditList.innerHTML = '<div style="color:var(--text-light);font-size:0.6rem;text-align:center;padding:10px;">No audit entries yet.</div>';
+            } else {
+                auditList.innerHTML = auditEntries.slice(0, 50).map(function(a) {
+                    var t = new Date(a.ts);
+                    var when = t.toLocaleDateString() + ' ' + t.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+                    return '<div class="audit-row"><div class="au-when">' + when + '</div><div class="au-who">' + (a.display || a.who) + '</div><div class="au-what">' + a.action + (a.detail ? ' — <em style="color:var(--text-light);">' + a.detail + '</em>' : '') + '</div></div>';
+                }).join('');
+            }
+        }
     }
 
     async function adminAddUser() {
@@ -2338,6 +2646,7 @@
         var hash = await hashPassword(pass, salt);
         users.push({ username: uname, display: display || uname, role: role, salt: salt, hash: hash });
         await saveUsers(users);
+        await logAudit('Created user', uname + ' (' + role + ')');
 
         document.getElementById('adminNewUser').value = '';
         document.getElementById('adminNewDisplay').value = '';
@@ -2525,6 +2834,8 @@
             if (btn.dataset.tab === 'tab-calendar') { if (!calInitialized) { initCalendar(); calInitialized = true; } else { renderCalendar(); } }
             if (btn.dataset.tab === 'tab-log') renderLog();
             if (btn.dataset.tab === 'tab-admin' && currentUser && currentUser.role === 'admin') renderAdminUsers();
+            if (btn.dataset.tab === 'tab-dashboard') { renderDashboard(); renderGrowthChart(); }
+            if (btn.dataset.tab === 'tab-appointments') renderAppointments();
         });
     });
 
@@ -4891,6 +5202,588 @@
     })();
 
     // ═══════════════════════════════════════
+    //  AUDIT LOG
+    // ═══════════════════════════════════════
+    var AUDIT_ID = 'kaleesi-audit';
+    var auditEntries = [];
+
+    async function loadAudit() {
+        try {
+            var res = await sb.from('kaleesi_data').select('content').eq('id', AUDIT_ID).single();
+            if (res.data && res.data.content && res.data.content.entries) auditEntries = res.data.content.entries;
+        } catch(e) {}
+    }
+    async function saveAudit() {
+        await sb.from('kaleesi_data').upsert({ id: AUDIT_ID, content: { entries: auditEntries.slice(0, 500) }, updated_at: new Date().toISOString() });
+    }
+    async function logAudit(action, detail) {
+        if (!currentUser) return;
+        auditEntries.unshift({
+            ts: Date.now(),
+            who: currentUser.username,
+            display: currentUser.display,
+            action: action,
+            detail: detail || ''
+        });
+        await saveAudit();
+    }
+
+    // ═══════════════════════════════════════
+    //  DASHBOARD
+    // ═══════════════════════════════════════
+    function renderDashboard() {
+        // This week
+        var now = new Date();
+        var weekAgo = new Date(now.getTime() - 7 * 86400000);
+        var monthAgo = new Date(now.getTime() - 30 * 86400000);
+
+        var weekEntries = logEntries.filter(function(e) { return e.timestamp && new Date(e.timestamp) > weekAgo; });
+        var monthEntries = logEntries.filter(function(e) { return e.timestamp && new Date(e.timestamp) > monthAgo; });
+
+        // Stats
+        var feedCount = weekEntries.filter(function(e) { return e.cat === 'feed'; }).length;
+        var sleepCount = weekEntries.filter(function(e) { return e.cat === 'sleep'; }).length;
+        var medCount = weekEntries.filter(function(e) { return e.cat === 'med'; }).length;
+        var tantrumCount = weekEntries.filter(function(e) { return e.cat === 'tantrum'; }).length;
+
+        var sg = document.getElementById('statGrid');
+        if (sg) {
+            sg.innerHTML =
+                '<div class="stat-card"><div class="stat-label">Feedings</div><div class="stat-value">' + feedCount + '</div><div class="stat-sub">this week</div></div>' +
+                '<div class="stat-card"><div class="stat-label">Sleep logs</div><div class="stat-value">' + sleepCount + '</div><div class="stat-sub">this week</div></div>' +
+                '<div class="stat-card"><div class="stat-label">Medications</div><div class="stat-value">' + medCount + '</div><div class="stat-sub">this week</div></div>' +
+                '<div class="stat-card"><div class="stat-label">Tantrums</div><div class="stat-value">' + tantrumCount + '</div><div class="stat-sub">this week</div></div>';
+        }
+
+        // Bar chart — entries per day for last 7 days
+        var dayBuckets = [];
+        for (var i = 6; i >= 0; i--) {
+            var d = new Date(now.getTime() - i * 86400000);
+            var ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+            var count = logEntries.filter(function(e) { return e.date === ds; }).length;
+            dayBuckets.push({ date: d, count: count, label: ['Su','Mo','Tu','We','Th','Fr','Sa'][d.getDay()] });
+        }
+        var maxCount = Math.max.apply(null, dayBuckets.map(function(b) { return b.count; })) || 1;
+        var chart = document.getElementById('weekBarChart');
+        var labels = document.getElementById('weekBarLabels');
+        if (chart) {
+            chart.innerHTML = dayBuckets.map(function(b) {
+                var pct = (b.count / maxCount) * 100;
+                return '<div class="bar" style="height:' + pct + '%" title="' + b.count + ' entries"></div>';
+            }).join('');
+        }
+        if (labels) {
+            labels.innerHTML = dayBuckets.map(function(b) { return '<div>' + b.label + '</div>'; }).join('');
+        }
+
+        // Insights
+        var insights = [];
+        // Tantrum by day of week
+        if (tantrumCount > 0) {
+            var tByDay = [0,0,0,0,0,0,0];
+            weekEntries.filter(function(e) { return e.cat === 'tantrum' && e.timestamp; }).forEach(function(e) {
+                tByDay[new Date(e.timestamp).getDay()]++;
+            });
+            var worstDay = tByDay.indexOf(Math.max.apply(null, tByDay));
+            var dayNames = ['Sundays','Mondays','Tuesdays','Wednesdays','Thursdays','Fridays','Saturdays'];
+            if (tByDay[worstDay] > 0) {
+                insights.push({ emoji: '🌋', title: 'Tantrum pattern', text: 'Most tantrums this week happened on <strong>' + dayNames[worstDay] + '</strong> (' + tByDay[worstDay] + ' total).' });
+            }
+        }
+        // Sleep coverage
+        var avgPerDay = (weekEntries.length / 7).toFixed(1);
+        insights.push({ emoji: '📊', title: 'Daily average', text: '<strong>' + avgPerDay + '</strong> entries per day this week.' });
+
+        // Missed meds check - days with 0 med entries
+        var medDays = 0;
+        for (var j = 0; j < 7; j++) {
+            var d = new Date(now.getTime() - j * 86400000);
+            var ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+            if (logEntries.some(function(e) { return e.date === ds && e.cat === 'med'; })) medDays++;
+        }
+        if (medDays < 7 && medCount > 0) {
+            insights.push({ emoji: '💊', title: 'Medication coverage', text: 'Medications logged on <strong>' + medDays + ' of 7</strong> days this week.' });
+        }
+
+        var ins = document.getElementById('insightsList');
+        if (ins) {
+            ins.innerHTML = insights.map(function(i) {
+                return '<div class="insight-card"><div class="insight-title"><span class="insight-emoji">' + i.emoji + '</span>' + i.title + '</div><div class="insight-text">' + i.text + '</div></div>';
+            }).join('') || '<div style="color:var(--text-light);font-size:0.65rem;text-align:center;padding:10px;">Not enough data yet — keep logging!</div>';
+        }
+
+        // Top activities (30 days)
+        var catCounts = {};
+        monthEntries.forEach(function(e) { catCounts[e.cat] = (catCounts[e.cat] || 0) + 1; });
+        var sorted = Object.keys(catCounts).map(function(k) { return { cat: k, count: catCounts[k] }; }).sort(function(a,b) { return b.count - a.count; });
+
+        var top = document.getElementById('topActivities');
+        if (top) {
+            top.innerHTML = sorted.map(function(s) {
+                var c = categories[s.cat] || { emoji: '📝', label: s.cat, color: 'note' };
+                return '<div class="pattern-bar"><div class="pb-icon" style="background:var(--cat-' + c.color + '-bg);color:var(--cat-' + c.color + ');">' + c.emoji + '</div><div class="pb-label">' + c.label + '</div><div class="pb-count">' + s.count + '</div></div>';
+            }).join('') || '<div style="color:var(--text-light);font-size:0.65rem;text-align:center;padding:10px;">No activity in last 30 days.</div>';
+        }
+    }
+
+    // ═══════════════════════════════════════
+    //  GLOBAL SEARCH
+    // ═══════════════════════════════════════
+    function setupGlobalSearch() {
+        var input = document.getElementById('globalSearch');
+        var results = document.getElementById('searchResults');
+        if (!input || !results) return;
+        input.addEventListener('input', function() {
+            var q = this.value.trim().toLowerCase();
+            if (!q) { results.style.display = 'none'; results.innerHTML = ''; return; }
+            var matches = [];
+            // Logs
+            logEntries.forEach(function(e) {
+                var hay = ((e.text || '') + ' ' + (e.detail || '')).toLowerCase();
+                if (hay.includes(q)) matches.push({ type: 'Log', date: e.date, text: (e.text || '') + (e.detail ? ' — ' + e.detail : '') });
+            });
+            // Info bank
+            if (typeof infoBank === 'object' && infoBank) {
+                Object.keys(infoBank).forEach(function(sec) {
+                    (infoBank[sec] || []).forEach(function(item) {
+                        var hay = JSON.stringify(item).toLowerCase();
+                        if (hay.includes(q)) matches.push({ type: 'Info · ' + sec, date: '', text: item.name || item.title || Object.values(item).filter(function(v) { return typeof v === 'string'; }).slice(0, 2).join(' — ') });
+                    });
+                });
+            }
+            matches = matches.slice(0, 25);
+            if (matches.length === 0) {
+                results.innerHTML = '<div style="font-size:0.65rem;color:var(--text-light);padding:10px;text-align:center;">No matches.</div>';
+            } else {
+                results.innerHTML = matches.map(function(m) {
+                    return '<div class="search-result"><div class="sr-type">' + m.type + (m.date ? ' · ' + m.date : '') + '</div>' + m.text + '</div>';
+                }).join('');
+            }
+            results.style.display = 'block';
+        });
+    }
+
+    // ═══════════════════════════════════════
+    //  APPOINTMENTS
+    // ═══════════════════════════════════════
+    var APPTS_ID = 'kaleesi-appointments';
+    var appointments = [];
+
+    async function loadAppointments() {
+        try {
+            var res = await sb.from('kaleesi_data').select('content').eq('id', APPTS_ID).single();
+            if (res.data && res.data.content && res.data.content.entries) appointments = res.data.content.entries;
+        } catch(e) {}
+    }
+    async function saveAppointments() {
+        await sb.from('kaleesi_data').upsert({ id: APPTS_ID, content: { entries: appointments }, updated_at: new Date().toISOString() });
+    }
+
+    function renderAppointments() {
+        var list = document.getElementById('apptList');
+        if (!list) return;
+        // Sort upcoming first, filter out >30 days in the past
+        var now = Date.now();
+        var upcoming = appointments.filter(function(a) { return new Date(a.when).getTime() > now - 30 * 86400000; }).sort(function(a,b) { return new Date(a.when) - new Date(b.when); });
+        if (upcoming.length === 0) {
+            list.innerHTML = '<div style="color:var(--text-light);font-size:0.65rem;text-align:center;padding:20px;">No upcoming appointments.</div>';
+            return;
+        }
+        var MONTHS = ['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'];
+        list.innerHTML = upcoming.map(function(a) {
+            var d = new Date(a.when);
+            var diff = d.getTime() - now;
+            var soon = diff > 0 && diff < 86400000; // within 24h
+            var past = diff < 0;
+            var timeLabel = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
+            var relative = past ? 'Past' : (soon ? '⏰ Soon' : (diff < 7 * 86400000 ? 'This week' : d.toLocaleDateString('en-US', { weekday: 'short' })));
+            var coparentOnly = (currentUser && (currentUser.role === 'coparent' || currentUser.role === 'viewer'));
+            return '<div class="appt-card' + (soon ? ' appt-soon' : '') + '" style="' + (past ? 'opacity:0.55;' : '') + '">' +
+                '<div class="appt-when"><div class="appt-day">' + d.getDate() + '</div><div class="appt-month">' + MONTHS[d.getMonth()] + '</div></div>' +
+                '<div class="appt-body"><div class="appt-title">' + a.title + '</div><div class="appt-sub">' + relative + ' · ' + timeLabel + (a.location ? ' · ' + a.location : '') + '</div>' + (a.notes ? '<div style="font-size:0.55rem;color:var(--text-light);margin-top:4px;">' + a.notes + '</div>' : '') + '</div>' +
+                (coparentOnly ? '' : '<div style="display:flex;flex-direction:column;gap:4px;"><button class="au-btn" data-id="' + a.id + '" data-action="edit-appt" style="border:none;background:none;color:var(--text-mid);cursor:pointer;"><i class="fa-solid fa-pen"></i></button><button class="au-btn danger" data-id="' + a.id + '" data-action="del-appt" style="border:none;background:none;color:var(--text-light);cursor:pointer;"><i class="fa-solid fa-trash"></i></button></div>') +
+                '</div>';
+        }).join('');
+        list.querySelectorAll('[data-action="edit-appt"]').forEach(function(b) { b.addEventListener('click', function() { openApptForm(this.dataset.id); }); });
+        list.querySelectorAll('[data-action="del-appt"]').forEach(function(b) {
+            b.addEventListener('click', async function() {
+                if (!confirm('Delete this appointment?')) return;
+                var id = this.dataset.id;
+                var appt = appointments.find(function(a) { return a.id === id; });
+                appointments = appointments.filter(function(a) { return a.id !== id; });
+                await saveAppointments();
+                if (appt) await logAudit('Deleted appointment', appt.title);
+                renderAppointments();
+                showToast('Appointment deleted');
+            });
+        });
+    }
+
+    var editingApptId = null;
+    function openApptForm(id) {
+        editingApptId = id || null;
+        var card = document.getElementById('apptFormCard');
+        document.getElementById('apptFormTitle').textContent = id ? 'Edit Appointment' : 'New Appointment';
+        if (id) {
+            var a = appointments.find(function(x) { return x.id === id; });
+            if (a) {
+                document.getElementById('apptTitle').value = a.title || '';
+                document.getElementById('apptWhen').value = a.when || '';
+                document.getElementById('apptLocation').value = a.location || '';
+                document.getElementById('apptNotes').value = a.notes || '';
+                document.getElementById('apptRemind').checked = a.remind !== false;
+            }
+        } else {
+            document.getElementById('apptTitle').value = '';
+            document.getElementById('apptWhen').value = '';
+            document.getElementById('apptLocation').value = '';
+            document.getElementById('apptNotes').value = '';
+            document.getElementById('apptRemind').checked = true;
+        }
+        card.style.display = '';
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    async function saveApptForm() {
+        var title = document.getElementById('apptTitle').value.trim();
+        var when = document.getElementById('apptWhen').value;
+        var location = document.getElementById('apptLocation').value.trim();
+        var notes = document.getElementById('apptNotes').value.trim();
+        var remind = document.getElementById('apptRemind').checked;
+        if (!title || !when) { showToast('Title and date/time required'); return; }
+        if (editingApptId) {
+            var a = appointments.find(function(x) { return x.id === editingApptId; });
+            if (a) { a.title = title; a.when = when; a.location = location; a.notes = notes; a.remind = remind; }
+            await logAudit('Edited appointment', title);
+        } else {
+            appointments.push({ id: 'a-' + Date.now() + '-' + Math.random().toString(36).slice(2,6), title: title, when: when, location: location, notes: notes, remind: remind, createdBy: currentUser.username });
+            await logAudit('Created appointment', title);
+        }
+        await saveAppointments();
+        document.getElementById('apptFormCard').style.display = 'none';
+        editingApptId = null;
+        renderAppointments();
+        showToast('Appointment saved');
+        checkApptReminders();
+    }
+
+    // Check for appointments within the next hour and schedule reminders
+    var apptReminderTimers = {};
+    function checkApptReminders() {
+        // Clear old timers
+        Object.values(apptReminderTimers).forEach(function(t) { clearTimeout(t); });
+        apptReminderTimers = {};
+        var now = Date.now();
+        appointments.forEach(function(a) {
+            if (!a.remind) return;
+            var apptTs = new Date(a.when).getTime();
+            var reminderTs = apptTs - 60 * 60 * 1000; // 1 hour before
+            var delay = reminderTs - now;
+            if (delay > 0 && delay < 24 * 60 * 60 * 1000) { // within 24h
+                apptReminderTimers[a.id] = setTimeout(function() {
+                    showToast('⏰ Reminder: ' + a.title + ' in 1 hour');
+                    if (swRegistration && swRegistration.showNotification) {
+                        swRegistration.showNotification('⏰ Upcoming: ' + a.title, {
+                            body: 'In 1 hour' + (a.location ? ' at ' + a.location : ''),
+                            icon: '/kaleesi-natalia/icon.png',
+                            tag: 'appt-' + a.id
+                        });
+                    }
+                }, delay);
+            }
+        });
+    }
+
+    // ═══════════════════════════════════════
+    //  VOICE INPUT
+    // ═══════════════════════════════════════
+    function attachVoiceInput(inputEl) {
+        var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SR || !inputEl) return;
+        // Avoid double-wrapping
+        if (inputEl.dataset.voiceAttached) return;
+        inputEl.dataset.voiceAttached = '1';
+        // Wrap input in relative div if not already
+        var parent = inputEl.parentElement;
+        if (getComputedStyle(parent).position === 'static') parent.style.position = 'relative';
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'voice-btn';
+        btn.title = 'Voice input';
+        btn.innerHTML = '<i class="fa-solid fa-microphone"></i>';
+        parent.appendChild(btn);
+        var recognition = new SR();
+        recognition.continuous = false;
+        recognition.interimResults = false;
+        recognition.lang = 'en-US';
+        btn.addEventListener('click', function(e) {
+            e.preventDefault();
+            if (btn.classList.contains('recording')) { recognition.stop(); return; }
+            try { recognition.start(); btn.classList.add('recording'); } catch(err) {}
+        });
+        recognition.addEventListener('result', function(ev) {
+            var transcript = ev.results[0][0].transcript;
+            inputEl.value = (inputEl.value ? inputEl.value + ' ' : '') + transcript;
+            inputEl.dispatchEvent(new Event('input', { bubbles: true }));
+        });
+        recognition.addEventListener('end', function() { btn.classList.remove('recording'); });
+        recognition.addEventListener('error', function() { btn.classList.remove('recording'); });
+    }
+
+    // ═══════════════════════════════════════
+    //  PDF EXPORT
+    // ═══════════════════════════════════════
+    function generatePDFReport() {
+        if (!window.jspdf) { showToast('PDF library not loaded'); return; }
+        var doc = new window.jspdf.jsPDF();
+        var y = 20;
+        doc.setFillColor(197, 138, 205);
+        doc.rect(0, 0, 210, 30, 'F');
+        doc.setTextColor(255, 255, 255);
+        doc.setFontSize(20); doc.setFont('helvetica', 'bold');
+        doc.text('Kaleesi Natalia Knopko', 15, 18);
+        doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+        doc.text('Daily Care Report · Generated ' + new Date().toLocaleString(), 15, 25);
+        y = 40;
+
+        doc.setTextColor(60, 30, 80);
+        var now = new Date();
+        var weekAgo = new Date(now.getTime() - 14 * 86400000);
+        var recent = logEntries.filter(function(e) { return e.timestamp && new Date(e.timestamp) > weekAgo; });
+
+        doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+        doc.text('Last 14 Days — Activity Summary', 15, y); y += 8;
+        doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+
+        // Count by category
+        var byCat = {};
+        recent.forEach(function(e) { byCat[e.cat] = (byCat[e.cat] || 0) + 1; });
+        Object.keys(byCat).forEach(function(cat) {
+            var c = categories[cat] || { label: cat };
+            doc.text('• ' + c.label + ': ' + byCat[cat], 20, y); y += 6;
+            if (y > 270) { doc.addPage(); y = 20; }
+        });
+
+        y += 6;
+        doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+        doc.text('Full Log (Last 14 Days)', 15, y); y += 8;
+        doc.setFontSize(9); doc.setFont('helvetica', 'normal');
+
+        // Group by date
+        var byDate = {};
+        recent.forEach(function(e) {
+            if (!byDate[e.date]) byDate[e.date] = [];
+            byDate[e.date].push(e);
+        });
+        Object.keys(byDate).sort().reverse().forEach(function(date) {
+            if (y > 270) { doc.addPage(); y = 20; }
+            doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+            doc.text(date, 15, y); y += 6;
+            doc.setFont('helvetica', 'normal'); doc.setFontSize(9);
+            byDate[date].forEach(function(e) {
+                if (y > 270) { doc.addPage(); y = 20; }
+                var c = categories[e.cat] || { label: e.cat };
+                var line = '  ' + (e.time || '') + '  ' + c.label + ': ' + (e.text || '') + (e.detail ? ' — ' + e.detail : '');
+                var lines = doc.splitTextToSize(line, 180);
+                lines.forEach(function(l) { doc.text(l, 15, y); y += 5; if (y > 270) { doc.addPage(); y = 20; } });
+            });
+            y += 3;
+        });
+
+        // Appointments
+        if (appointments.length > 0) {
+            if (y > 250) { doc.addPage(); y = 20; }
+            doc.setFontSize(14); doc.setFont('helvetica', 'bold');
+            doc.text('Upcoming Appointments', 15, y); y += 8;
+            doc.setFontSize(10); doc.setFont('helvetica', 'normal');
+            appointments.filter(function(a) { return new Date(a.when) >= now; }).sort(function(a,b) { return new Date(a.when) - new Date(b.when); }).forEach(function(a) {
+                if (y > 270) { doc.addPage(); y = 20; }
+                doc.text('• ' + new Date(a.when).toLocaleString() + ' — ' + a.title + (a.location ? ' @ ' + a.location : ''), 20, y); y += 6;
+            });
+        }
+
+        doc.save('Kaleesi_Report_' + now.toISOString().slice(0,10) + '.pdf');
+        logAudit('Generated PDF report');
+    }
+
+    // ═══════════════════════════════════════
+    //  GROWTH CHART
+    // ═══════════════════════════════════════
+    var GROWTH_ID = 'kaleesi-growth';
+    var growthData = []; // [{ id, date, height_in, weight_lbs, note }]
+    var growthMetric = 'height';
+
+    async function loadGrowth() {
+        try {
+            var res = await sb.from('kaleesi_data').select('content').eq('id', GROWTH_ID).single();
+            if (res.data && res.data.content && res.data.content.entries) growthData = res.data.content.entries;
+        } catch(e) {}
+    }
+    async function saveGrowth() {
+        await sb.from('kaleesi_data').upsert({ id: GROWTH_ID, content: { entries: growthData }, updated_at: new Date().toISOString() });
+    }
+
+    function renderGrowthChart() {
+        var svg = document.getElementById('growthChart');
+        var list = document.getElementById('growthList');
+        if (!svg || !list) return;
+
+        var sorted = growthData.slice().sort(function(a,b) { return new Date(a.date) - new Date(b.date); });
+        var values = sorted.map(function(e) { return growthMetric === 'height' ? e.height_in : e.weight_lbs; }).filter(function(v) { return typeof v === 'number'; });
+        var dates = sorted.filter(function(e) { return typeof (growthMetric === 'height' ? e.height_in : e.weight_lbs) === 'number'; });
+
+        if (values.length === 0) {
+            svg.innerHTML = '<text x="150" y="90" text-anchor="middle" style="font-size:8px;fill:#c4a6d4;font-family:Montserrat,sans-serif;">No ' + growthMetric + ' entries yet</text>';
+        } else {
+            var min = Math.min.apply(null, values) - 1;
+            var max = Math.max.apply(null, values) + 1;
+            var range = max - min || 1;
+            var w = 300, h = 180, pad = 20;
+            // Grid lines
+            var gridLines = '';
+            for (var i = 0; i < 4; i++) {
+                var gy = pad + ((h - pad*2) / 3) * i;
+                gridLines += '<line class="grid-line" x1="' + pad + '" y1="' + gy + '" x2="' + (w - pad) + '" y2="' + gy + '" />';
+            }
+            // Points
+            var points = dates.map(function(e, i) {
+                var x = dates.length === 1 ? w/2 : pad + ((w - pad*2) / (dates.length - 1)) * i;
+                var val = growthMetric === 'height' ? e.height_in : e.weight_lbs;
+                var y = h - pad - ((val - min) / range) * (h - pad*2);
+                return { x: x, y: y, val: val, date: e.date };
+            });
+            var pathData = points.map(function(p, i) { return (i === 0 ? 'M' : 'L') + p.x + ',' + p.y; }).join(' ');
+            var dots = points.map(function(p) { return '<circle class="data-point" cx="' + p.x + '" cy="' + p.y + '" r="3.5"><title>' + p.date + ': ' + p.val + (growthMetric === 'height' ? '"' : ' lbs') + '</title></circle>'; }).join('');
+            svg.innerHTML = gridLines + '<path class="data-line" d="' + pathData + '" />' + dots +
+                '<text x="' + pad + '" y="' + (pad - 5) + '" style="font-size:7px;fill:#8a6b9e;font-family:Montserrat,sans-serif;font-weight:700;">' + max.toFixed(1) + '</text>' +
+                '<text x="' + pad + '" y="' + (h - 5) + '" style="font-size:7px;fill:#8a6b9e;font-family:Montserrat,sans-serif;font-weight:700;">' + min.toFixed(1) + '</text>';
+        }
+
+        // List recent entries
+        if (sorted.length === 0) {
+            list.innerHTML = '';
+        } else {
+            list.innerHTML = sorted.slice().reverse().slice(0, 5).map(function(e) {
+                var parts = [];
+                if (e.height_in) parts.push(e.height_in + '"');
+                if (e.weight_lbs) parts.push(e.weight_lbs + ' lbs');
+                var canEdit = currentUser && currentUser.role !== 'coparent' && currentUser.role !== 'viewer';
+                return '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(197,138,205,0.06);font-size:0.62rem;">' +
+                    '<div style="color:var(--text-light);min-width:85px;">' + e.date + '</div>' +
+                    '<div style="flex:1;color:var(--text);font-weight:600;">' + parts.join(' · ') + (e.note ? ' <span style="color:var(--text-light);font-weight:400;">— ' + e.note + '</span>' : '') + '</div>' +
+                    (canEdit ? '<button data-id="' + e.id + '" class="growth-del-btn" style="border:none;background:none;color:var(--text-light);cursor:pointer;padding:4px;"><i class="fa-solid fa-trash"></i></button>' : '') +
+                    '</div>';
+            }).join('');
+            list.querySelectorAll('.growth-del-btn').forEach(function(b) {
+                b.addEventListener('click', async function() {
+                    if (!confirm('Delete this measurement?')) return;
+                    growthData = growthData.filter(function(e) { return e.id !== b.dataset.id; });
+                    await saveGrowth();
+                    await logAudit('Deleted growth measurement');
+                    renderGrowthChart();
+                });
+            });
+        }
+    }
+
+    async function addGrowthEntry() {
+        var date = prompt('Date (YYYY-MM-DD):', new Date().toISOString().slice(0, 10));
+        if (!date) return;
+        var heightStr = prompt('Height (inches, leave blank to skip):', '');
+        var weightStr = prompt('Weight (lbs, leave blank to skip):', '');
+        var note = prompt('Note (optional):', '') || '';
+        var height = heightStr ? parseFloat(heightStr) : null;
+        var weight = weightStr ? parseFloat(weightStr) : null;
+        if (!height && !weight) { showToast('Enter at least one measurement'); return; }
+        growthData.push({
+            id: 'g-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+            date: date,
+            height_in: height,
+            weight_lbs: weight,
+            note: note
+        });
+        await saveGrowth();
+        await logAudit('Added growth measurement', date);
+        renderGrowthChart();
+        showToast('Growth entry added');
+    }
+
+    // ═══════════════════════════════════════
+    //  ACTIVITY TEMPLATES (one-tap multi-log)
+    // ═══════════════════════════════════════
+    var activityTemplates = [
+        { name: 'Morning routine', emoji: '🌅', items: [
+            { cat: 'diaper', text: 'Wet', detail: '' },
+            { cat: 'feed', text: 'Breakfast', detail: '' },
+            { cat: 'hygiene', text: 'Teeth brushed', detail: '' }
+        ]},
+        { name: 'Nap start', emoji: '😴', items: [
+            { cat: 'diaper', text: 'Wet', detail: '' },
+            { cat: 'sleep', text: 'Nap start', detail: '' }
+        ]},
+        { name: 'Bedtime', emoji: '🌙', items: [
+            { cat: 'hygiene', text: 'Bath', detail: '' },
+            { cat: 'hygiene', text: 'Teeth brushed', detail: '' },
+            { cat: 'sleep', text: 'Asleep', detail: '' }
+        ]}
+    ];
+
+    async function runTemplate(tpl) {
+        var now = getCSTTimeStr();
+        var date = viewingDate || getCSTDate();
+        tpl.items.forEach(function(it) {
+            actions.push({
+                id: 'act-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+                cat: it.cat,
+                time: now,
+                text: it.text,
+                detail: it.detail,
+                timestamp: new Date().toISOString()
+            });
+            logEntries.push({
+                id: 'log-' + Date.now() + '-' + Math.random().toString(36).slice(2,6),
+                cat: it.cat,
+                date: date,
+                time: now,
+                text: it.text,
+                detail: it.detail,
+                timestamp: new Date().toISOString()
+            });
+        });
+        await saveActions();
+        await saveLog();
+        await logAudit('Ran template', tpl.name);
+        if (typeof renderTimeline === 'function') renderTimeline();
+        showToast(tpl.emoji + ' ' + tpl.name + ' logged (' + tpl.items.length + ' entries)');
+    }
+
+    function injectTemplateBar() {
+        var actionsTab = document.getElementById('tab-actions');
+        if (!actionsTab || document.getElementById('templateBar')) return;
+        // Don't show for read-only roles
+        if (currentUser && (currentUser.role === 'coparent' || currentUser.role === 'viewer')) return;
+        var bar = document.createElement('div');
+        bar.id = 'templateBar';
+        bar.className = 'card';
+        bar.style.cssText = 'padding:10px 12px;margin-bottom:8px;';
+        bar.innerHTML = '<div class="card-label" style="margin-bottom:8px;"><i class="fa-solid fa-wand-magic-sparkles"></i> Quick Routines</div>' +
+            '<div style="display:flex;gap:6px;flex-wrap:wrap;">' +
+            activityTemplates.map(function(t, i) {
+                return '<button data-tpl="' + i + '" style="flex:1;min-width:100px;padding:10px 8px;border:1.5px solid var(--border);background:white;border-radius:12px;font-family:Montserrat,sans-serif;font-size:0.62rem;font-weight:700;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:4px;transition:all var(--dur-base);"><span style="font-size:1.1rem;">' + t.emoji + '</span><span>' + t.name + '</span></button>';
+            }).join('') + '</div>';
+        // Insert at top of actions tab, after the sync badge if present
+        var firstCard = actionsTab.querySelector('.card');
+        if (firstCard) actionsTab.insertBefore(bar, firstCard);
+        else actionsTab.appendChild(bar);
+        bar.querySelectorAll('[data-tpl]').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var tpl = activityTemplates[parseInt(this.dataset.tpl)];
+                if (confirm('Log "' + tpl.name + '" — ' + tpl.items.length + ' entries at current time?')) runTemplate(tpl);
+            });
+        });
+    }
+
+    // ═══════════════════════════════════════
     //  INIT (waits for auth)
     // ═══════════════════════════════════════
     async function appInit() {
@@ -4908,11 +5801,69 @@
         await loadActions();
         await loadLog();
         await loadInfoBank();
+        await loadAudit();
+        await loadAppointments();
+        await loadGrowth();
         renderSafeHarbor();
         initLogFilters();
         renderNotifBanner();
         startRealtime();
         initServiceWorker();
+
+        // Version badge
+        var vb = document.getElementById('versionBadge');
+        if (vb) vb.textContent = 'v2026.04.16';
+
+        // Setup dashboard
+        setupGlobalSearch();
+        renderDashboard();
+        renderAppointments();
+        renderGrowthChart();
+        injectTemplateBar();
+
+        // Growth chart toggle + add
+        document.querySelectorAll('.growth-toggle-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                document.querySelectorAll('.growth-toggle-btn').forEach(function(b) { b.classList.remove('active'); b.style.background = 'white'; b.style.color = ''; });
+                this.classList.add('active');
+                this.style.background = 'var(--purple-mid)';
+                this.style.color = 'white';
+                growthMetric = this.dataset.metric;
+                renderGrowthChart();
+            });
+        });
+        // Initialize toggle state
+        var firstGt = document.querySelector('.growth-toggle-btn.active');
+        if (firstGt) { firstGt.style.background = 'var(--purple-mid)'; firstGt.style.color = 'white'; }
+        var addGrowth = document.getElementById('addGrowthBtn');
+        if (addGrowth) addGrowth.addEventListener('click', addGrowthEntry);
+
+        // Wire up appointment form
+        var addBtn = document.getElementById('addApptBtn');
+        if (addBtn) addBtn.addEventListener('click', function() { openApptForm(null); });
+        var cancelBtn = document.getElementById('apptCancel');
+        if (cancelBtn) cancelBtn.addEventListener('click', function() { document.getElementById('apptFormCard').style.display = 'none'; editingApptId = null; });
+        var saveBtn = document.getElementById('apptSave');
+        if (saveBtn) saveBtn.addEventListener('click', saveApptForm);
+
+        // Schedule reminders
+        checkApptReminders();
+
+        // Voice input on textareas/inputs
+        ['apptNotes', 'formDetail'].forEach(function(id) {
+            var el = document.getElementById(id);
+            if (el) attachVoiceInput(el);
+        });
+
+        // Global report button in dashboard
+        var dashCard = document.querySelector('#tab-dashboard .card:first-of-type + .card');
+        // Add PDF export button to dashboard header
+        var pdfBtn = document.createElement('button');
+        pdfBtn.innerHTML = '<i class="fa-solid fa-file-pdf"></i> EXPORT PDF REPORT';
+        pdfBtn.style.cssText = 'width:100%;padding:12px;border:none;background:linear-gradient(135deg,var(--teal),#6bbfaa);color:white;border-radius:12px;font-family:Montserrat,sans-serif;font-size:0.7rem;font-weight:700;cursor:pointer;letter-spacing:1px;margin-top:6px;';
+        pdfBtn.addEventListener('click', generatePDFReport);
+        var dashTab = document.getElementById('tab-dashboard');
+        if (dashTab) dashTab.appendChild(pdfBtn);
 
         // Apply read-only after data loads for restricted roles
         if (currentUser && (currentUser.role === 'coparent' || currentUser.role === 'viewer')) {
@@ -4923,6 +5874,20 @@
             // Hide the Procare import card
             var importCard = document.querySelector('.import-card');
             if (importCard) importCard.style.display = 'none';
+            // Hide appointment add button
+            var addApptBtn = document.getElementById('addApptBtn');
+            if (addApptBtn) addApptBtn.style.display = 'none';
+            // Hide growth add button
+            var addGrowthBtn = document.getElementById('addGrowthBtn');
+            if (addGrowthBtn) addGrowthBtn.style.display = 'none';
+        }
+
+        // Co-parent: hide Dashboard and Appointments too
+        if (currentUser && currentUser.role === 'coparent') {
+            var nd = document.getElementById('navDashboard');
+            var na = document.getElementById('navAppts');
+            if (nd) nd.style.display = 'none';
+            if (na) na.style.display = 'none';
         }
     }
 
