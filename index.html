@@ -2910,6 +2910,9 @@
 
         document.getElementById('qfSubmit').addEventListener('click', submitQuickForm);
 
+        // Attach voice input to the details field
+        if (typeof attachVoiceInput === 'function') attachVoiceInput(document.getElementById('qfText'));
+
         // Focus the text input
         setTimeout(function() { document.getElementById('qfText').focus(); }, 100);
     }
@@ -5849,8 +5852,8 @@
         // Schedule reminders
         checkApptReminders();
 
-        // Voice input on textareas/inputs
-        ['apptNotes', 'formDetail'].forEach(function(id) {
+        // Voice input on persistent textareas (qfText is dynamic — attached in openQuickForm)
+        ['apptNotes'].forEach(function(id) {
             var el = document.getElementById(id);
             if (el) attachVoiceInput(el);
         });
