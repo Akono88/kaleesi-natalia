@@ -1563,6 +1563,74 @@
         .au-role.parent { background: #e4edfa; color: #7BA3D9; }
         .au-role.coparent { background: #e6f7f2; color: #2a7a5f; }
         .au-role.viewer { background: #fdf5eb; color: #c67d1a; }
+        .au-role.watcher { background: #eef5eb; color: #5a8a3a; }
+
+        /* Permissions modal */
+        .perms-modal-overlay {
+            position: fixed; inset: 0; background: rgba(60,30,80,0.45); z-index: 10000;
+            display: none; align-items: flex-start; justify-content: center; padding: 20px;
+            overflow-y: auto; backdrop-filter: blur(4px);
+        }
+        .perms-modal-overlay.active { display: flex; }
+        .perms-modal {
+            background: white; border-radius: 18px; padding: 20px; width: 100%; max-width: 420px;
+            box-shadow: var(--elev-3); margin: auto;
+        }
+        .perms-modal h3 {
+            font-size: 0.85rem; font-weight: 800; color: var(--text); margin-bottom: 4px;
+            display: flex; align-items: center; gap: 8px;
+        }
+        .perms-modal .perms-user {
+            font-size: 0.6rem; color: var(--text-mid); margin-bottom: 14px;
+        }
+        .perms-section-label {
+            font-size: 0.5rem; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase;
+            color: var(--text-light); margin: 12px 0 6px;
+        }
+        .perm-row {
+            display: flex; align-items: center; justify-content: space-between; gap: 10px;
+            padding: 8px 10px; border-radius: 10px; background: var(--purple-glow);
+            margin-bottom: 4px; font-size: 0.68rem;
+        }
+        .perm-row-label { flex: 1; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 8px; }
+        .perm-select {
+            padding: 4px 10px; border-radius: 8px; border: 1.5px solid var(--border);
+            font-family: 'Montserrat', sans-serif; font-size: 0.6rem; font-weight: 700;
+            cursor: pointer; background: white; color: var(--text);
+        }
+        .perm-select[data-val="edit"] { background: #e4edfa; color: #5a7ab8; border-color: #c3d2ee; }
+        .perm-select[data-val="read"] { background: #fdf5eb; color: #c67d1a; border-color: #f0d8b0; }
+        .perm-select[data-val="none"] { background: #fff0f3; color: #c0314a; border-color: #f0c0ca; }
+        .perm-checkbox-row {
+            display: flex; align-items: center; gap: 8px; padding: 6px 10px; font-size: 0.62rem;
+            font-weight: 600; color: var(--text);
+        }
+        .perm-checkbox-row input[type="checkbox"] {
+            width: 16px; height: 16px; cursor: pointer; accent-color: var(--purple-mid);
+        }
+        .perms-preset-bar {
+            display: flex; gap: 6px; margin-bottom: 14px; flex-wrap: wrap;
+        }
+        .perms-preset-btn {
+            flex: 1; padding: 8px 10px; border: 1.5px solid var(--border); background: white;
+            border-radius: 10px; font-family: 'Montserrat', sans-serif; font-size: 0.58rem;
+            font-weight: 700; color: var(--text-mid); cursor: pointer; letter-spacing: 0.5px;
+            text-transform: uppercase; min-width: 72px;
+        }
+        .perms-preset-btn:hover { border-color: var(--purple-deep); color: var(--purple-mid); }
+        .perms-footer {
+            display: flex; gap: 8px; margin-top: 16px; padding-top: 14px;
+            border-top: 1px solid var(--border);
+        }
+        .perms-footer button {
+            flex: 1; padding: 10px; border-radius: 10px; font-family: 'Montserrat', sans-serif;
+            font-size: 0.68rem; font-weight: 700; cursor: pointer; letter-spacing: 1px;
+        }
+        .perms-cancel { border: 1.5px solid var(--border); background: white; color: var(--text-mid); }
+        .perms-save {
+            border: none; background: linear-gradient(135deg, var(--purple-deep), var(--purple-mid));
+            color: white;
+        }
         .admin-user-row .au-actions { display: flex; gap: 6px; }
         .admin-user-row .au-btn {
             border: none; background: none; cursor: pointer; font-size: 0.75rem;
@@ -2152,6 +2220,7 @@
                         <option value="parent">Parent</option>
                         <option value="coparent">Co-Parent</option>
                         <option value="viewer">Viewer</option>
+                        <option value="watcher">Watcher</option>
                         <option value="admin">Admin</option>
                     </select>
                     <button class="admin-add-btn" id="adminAddBtn"><i class="fa-solid fa-user-plus"></i> ADD USER</button>
@@ -2386,7 +2455,66 @@
     //  AUTH SYSTEM
     // ═══════════════════════════════════════
     var USERS_ID = 'kaleesi-users';
-    var currentUser = null; // { username, display, role }
+    var currentUser = null; // { username, display, role, permissions }
+
+    // Permission schema:
+    //   tabs: { actions, dashboard, calendar, appointments, info, care, log } → 'edit' | 'read' | 'none'
+    //   info: { medical, education, activities, childcare, religion, coparent } → boolean
+    var TAB_PERMS = [
+        { key: 'actions',      label: 'Actions',      icon: 'fa-bolt' },
+        { key: 'dashboard',    label: 'Home (Dashboard)', icon: 'fa-chart-line' },
+        { key: 'calendar',     label: 'Calendar',     icon: 'fa-calendar-days' },
+        { key: 'appointments', label: 'Appointments', icon: 'fa-calendar-check' },
+        { key: 'info',         label: 'Info Bank',    icon: 'fa-folder-open' },
+        { key: 'care',         label: 'Care Guide',   icon: 'fa-heart-pulse' },
+        { key: 'log',          label: 'Log History',  icon: 'fa-clock-rotate-left' }
+    ];
+    var INFO_SUBS = [
+        { key: 'medical',    label: 'Medical' },
+        { key: 'education',  label: 'Education' },
+        { key: 'activities', label: 'Activities' },
+        { key: 'childcare',  label: 'Child Care' },
+        { key: 'religion',   label: 'Religion' },
+        { key: 'coparent',   label: 'Co-Parent' }
+    ];
+
+    function defaultPermissionsFor(role) {
+        // Admin always gets implicit full access — permissions object ignored
+        if (role === 'admin') return null;
+        var all = function(v) {
+            var p = {};
+            TAB_PERMS.forEach(function(t) { p[t.key] = v; });
+            INFO_SUBS.forEach(function(s) { p['info_' + s.key] = true; });
+            return p;
+        };
+        if (role === 'parent') return all('edit');
+        if (role === 'viewer') return all('read');
+        if (role === 'watcher') {
+            // Watcher starts with nothing — admin configures each permission
+            var p = {};
+            TAB_PERMS.forEach(function(t) { p[t.key] = 'none'; });
+            INFO_SUBS.forEach(function(s) { p['info_' + s.key] = false; });
+            return p;
+        }
+        if (role === 'coparent') {
+            return {
+                actions: 'read', dashboard: 'none', calendar: 'none', appointments: 'none',
+                info: 'read', care: 'none', log: 'read',
+                info_medical: false, info_education: false, info_activities: false,
+                info_childcare: false, info_religion: false, info_coparent: true
+            };
+        }
+        return all('read');
+    }
+
+    // Ensure every non-admin user has a permissions object (migrate on load)
+    function ensurePermissions(user) {
+        if (user.role === 'admin') return user;
+        if (!user.permissions || typeof user.permissions !== 'object') {
+            user.permissions = defaultPermissionsFor(user.role);
+        }
+        return user;
+    }
 
     async function hashPassword(password, salt) {
         var data = new TextEncoder().encode(salt + ':' + password);
@@ -2428,11 +2556,12 @@
         if (!user) return { ok: false, error: 'User not found' };
         var hash = await hashPassword(password, user.salt);
         if (hash !== user.hash) return { ok: false, error: 'Incorrect password' };
-        return { ok: true, user: { username: user.username, display: user.display, role: user.role } };
+        ensurePermissions(user);
+        return { ok: true, user: { username: user.username, display: user.display, role: user.role, permissions: user.permissions } };
     }
 
     function saveSession(user) {
-        localStorage.setItem('kn_session', JSON.stringify({ username: user.username, display: user.display, role: user.role, ts: Date.now() }));
+        localStorage.setItem('kn_session', JSON.stringify({ username: user.username, display: user.display, role: user.role, permissions: user.permissions || null, ts: Date.now() }));
     }
 
     function loadSession() {
@@ -2453,63 +2582,103 @@
         location.reload();
     }
 
-    function applyRoleVisibility(role) {
-        var navCalendar = document.getElementById('navCalendar');
-        var navCare = document.getElementById('navCare');
+    // Can current user perform action on this tab? returns 'edit'|'read'|'none'
+    function permFor(tabKey) {
+        if (!currentUser) return 'none';
+        if (currentUser.role === 'admin') return 'edit';
+        if (!currentUser.permissions) return 'none';
+        return currentUser.permissions[tabKey] || 'none';
+    }
+    function canEdit(tabKey) { return permFor(tabKey) === 'edit'; }
+    function canRead(tabKey) { var p = permFor(tabKey); return p === 'edit' || p === 'read'; }
+    function canSeeInfoSub(sub) {
+        if (!currentUser) return false;
+        if (currentUser.role === 'admin') return true;
+        if (!currentUser.permissions) return false;
+        return !!currentUser.permissions['info_' + sub];
+    }
+
+    function applyPermissions() {
+        var role = currentUser ? currentUser.role : null;
         var navAdmin = document.getElementById('navAdmin');
+        if (navAdmin) navAdmin.style.display = (role === 'admin') ? '' : 'none';
+
+        // Admins see everything
+        if (role === 'admin') {
+            ['navDashboard','navCalendar','navAppts','navCare'].forEach(function(id) {
+                var el = document.getElementById(id); if (el) el.style.display = '';
+            });
+            document.querySelectorAll('.nav-btn').forEach(function(b) { if (b.dataset.tab !== 'tab-admin') b.style.display = ''; });
+            var ibSubtabs = document.getElementById('ibSubtabs');
+            if (ibSubtabs) ibSubtabs.querySelectorAll('.ib-subtab').forEach(function(b) { b.style.display = ''; });
+            return;
+        }
+
+        // Map tab keys → nav button ids and tab-view ids
+        var tabNavIds = {
+            actions: null, // ACTIONS nav button has no id; treat as always visible
+            dashboard: 'navDashboard', calendar: 'navCalendar', appointments: 'navAppts',
+            care: 'navCare'
+            // info & log nav buttons have no ids in markup; match by data-tab
+        };
+
+        TAB_PERMS.forEach(function(t) {
+            var perm = permFor(t.key);
+            var navEl = null;
+            if (tabNavIds[t.key]) navEl = document.getElementById(tabNavIds[t.key]);
+            else navEl = document.querySelector('[data-tab="tab-' + (t.key === 'actions' ? 'actions' : t.key === 'info' ? 'info' : t.key === 'log' ? 'log' : t.key) + '"]');
+            if (navEl) navEl.style.display = (perm === 'none') ? 'none' : '';
+        });
+
+        // Info subtabs
         var ibSubtabs = document.getElementById('ibSubtabs');
+        if (ibSubtabs) {
+            var first = null;
+            ibSubtabs.querySelectorAll('.ib-subtab').forEach(function(btn) {
+                var allowed = canSeeInfoSub(btn.dataset.ibtab);
+                btn.style.display = allowed ? '' : 'none';
+                if (allowed && !first) first = btn;
+            });
+            // If the currently-active info subtab is hidden, switch to first allowed
+            var active = ibSubtabs.querySelector('.ib-subtab.active');
+            if (active && active.style.display === 'none' && first) first.click();
+        }
 
-        // Show admin nav only for admins
-        navAdmin.style.display = (role === 'admin') ? '' : 'none';
-
-        if (role === 'coparent') {
-            // Hide Calendar and Care tabs
-            navCalendar.style.display = 'none';
-            navCare.style.display = 'none';
-
-            // In Info tab, only show Co-Parent subtab
-            if (ibSubtabs) {
-                ibSubtabs.querySelectorAll('.ib-subtab').forEach(function(btn) {
-                    if (btn.dataset.ibtab === 'coparent') {
-                        btn.style.display = '';
-                        btn.click(); // auto-select co-parent subtab
-                    } else {
-                        btn.style.display = 'none';
-                    }
-                });
-            }
-
-            // Disable quick-add buttons (read-only actions)
+        // Read-only treatment for whole app
+        // If Actions is read or none, disable quick-add + hide procare import
+        if (!canEdit('actions')) {
             document.querySelectorAll('.cat-btn').forEach(function(btn) { btn.disabled = true; btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; });
-
-            // Hide procare import if exists
             var importBtn = document.querySelector('[onclick*="openImportDaycare"]');
             if (importBtn) importBtn.style.display = 'none';
-        } else if (role === 'viewer') {
-            // Viewer: can see all tabs but everything is read-only
-            navCalendar.style.display = '';
-            navCare.style.display = '';
-            if (ibSubtabs) {
-                ibSubtabs.querySelectorAll('.ib-subtab').forEach(function(btn) { btn.style.display = ''; });
-            }
-
-            // Disable quick-add buttons
-            document.querySelectorAll('.cat-btn').forEach(function(btn) { btn.disabled = true; btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; });
-
-            // Hide procare import
-            var importBtn = document.querySelector('[onclick*="openImportDaycare"]');
-            if (importBtn) importBtn.style.display = 'none';
-
-            // Disable calendar paint mode buttons
+            var importCard = document.querySelector('.import-card');
+            if (importCard) importCard.style.display = 'none';
+            var templateBar = document.getElementById('templateBar');
+            if (templateBar) templateBar.style.display = 'none';
+        }
+        // If Calendar is read or none, disable paint/pattern/export buttons
+        if (!canEdit('calendar')) {
             document.querySelectorAll('.cal-paint-btn, .cal-pattern-btn, .cal-export-btn').forEach(function(btn) { btn.disabled = true; btn.style.opacity = '0.4'; btn.style.pointerEvents = 'none'; });
-        } else {
-            navCalendar.style.display = '';
-            navCare.style.display = '';
-            if (ibSubtabs) {
-                ibSubtabs.querySelectorAll('.ib-subtab').forEach(function(btn) { btn.style.display = ''; });
-            }
+        }
+        // If Appointments is read or none, hide add button
+        if (!canEdit('appointments')) {
+            var addApptBtn = document.getElementById('addApptBtn');
+            if (addApptBtn) addApptBtn.style.display = 'none';
+        }
+        // If Dashboard is read or none, hide growth add button
+        if (!canEdit('dashboard')) {
+            var addGrowthBtn = document.getElementById('addGrowthBtn');
+            if (addGrowthBtn) addGrowthBtn.style.display = 'none';
+        }
+        // If Info is read or none, hide info-bank edit/add/delete buttons
+        if (!canEdit('info')) {
+            document.querySelectorAll('.ib-add-btn, .ib-edit-btn, .ib-del-btn').forEach(function(btn) {
+                btn.style.display = 'none';
+            });
         }
     }
+
+    // Backward-compat alias (used by legacy code paths)
+    function applyRoleVisibility() { applyPermissions(); }
 
     // ─── Admin Panel Functions ───
     async function renderAdminUsers() {
@@ -2530,6 +2699,7 @@
                     '<option value="viewer"' + (u.role === 'viewer' ? ' selected' : '') + '>Viewer</option>' +
                 '</select>' +
                 '<div class="au-actions">' +
+                (u.role !== 'admin' ? '<button class="au-btn" title="Edit permissions" data-user="' + u.username + '" data-action="perms"><i class="fa-solid fa-sliders"></i></button>' : '') +
                 '<button class="au-btn" title="Reset password" data-user="' + u.username + '" data-action="reset"><i class="fa-solid fa-key"></i></button>' +
                 (canDelete ? '<button class="au-btn danger" title="Delete" data-user="' + u.username + '" data-action="delete"><i class="fa-solid fa-trash"></i></button>' : '') +
                 '</div>';
@@ -2547,6 +2717,8 @@
                     await saveUsers(users);
                     await logAudit('Deleted user', uname);
                     renderAdminUsers();
+                } else if (action === 'perms') {
+                    openPermsEditor(uname);
                 } else if (action === 'reset') {
                     var newPass = prompt('New password for "' + uname + '":');
                     if (!newPass || newPass.length < 3) { alert('Password must be at least 3 characters.'); return; }
@@ -2593,6 +2765,8 @@
                 }
 
                 user.role = newRole;
+                // Reset permissions to the new role's defaults (admin gets to tweak via perms editor)
+                user.permissions = defaultPermissionsFor(newRole);
                 await saveUsers(users);
                 await logAudit('Changed role of ' + uname, originalRole + ' → ' + newRole);
                 // If changing own role, update session
@@ -2626,6 +2800,93 @@
         }
     }
 
+    // ─── Permission Editor ───
+    var editingPermsUsername = null;
+    var editingPermsDraft = null;
+
+    async function openPermsEditor(username) {
+        var users = await loadUsers();
+        var user = users.find(function(u) { return u.username === username; });
+        if (!user) return;
+        ensurePermissions(user);
+        editingPermsUsername = username;
+        // Work on a copy so Cancel discards changes
+        editingPermsDraft = JSON.parse(JSON.stringify(user.permissions || defaultPermissionsFor(user.role)));
+
+        document.getElementById('permsUserLabel').textContent = (user.display || user.username) + ' · ' + user.role.toUpperCase();
+        renderPermsEditor();
+        document.getElementById('permsModalOverlay').classList.add('active');
+    }
+
+    function renderPermsEditor() {
+        var tabsList = document.getElementById('permTabsList');
+        tabsList.innerHTML = TAB_PERMS.map(function(t) {
+            var val = editingPermsDraft[t.key] || 'none';
+            return '<div class="perm-row">' +
+                '<div class="perm-row-label"><i class="fa-solid ' + t.icon + '" style="color:var(--purple-mid);width:16px;"></i>' + t.label + '</div>' +
+                '<select class="perm-select" data-tab="' + t.key + '" data-val="' + val + '">' +
+                    '<option value="edit"' + (val === 'edit' ? ' selected' : '') + '>Edit</option>' +
+                    '<option value="read"' + (val === 'read' ? ' selected' : '') + '>Read only</option>' +
+                    '<option value="none"' + (val === 'none' ? ' selected' : '') + '>Hidden</option>' +
+                '</select>' +
+                '</div>';
+        }).join('');
+        tabsList.querySelectorAll('.perm-select').forEach(function(sel) {
+            sel.addEventListener('change', function() {
+                editingPermsDraft[this.dataset.tab] = this.value;
+                this.dataset.val = this.value;
+            });
+        });
+
+        var infoList = document.getElementById('permInfoList');
+        infoList.innerHTML = INFO_SUBS.map(function(s) {
+            var checked = !!editingPermsDraft['info_' + s.key];
+            return '<label class="perm-checkbox-row"><input type="checkbox" data-sub="' + s.key + '"' + (checked ? ' checked' : '') + '> ' + s.label + '</label>';
+        }).join('');
+        infoList.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+            cb.addEventListener('change', function() {
+                editingPermsDraft['info_' + this.dataset.sub] = this.checked;
+            });
+        });
+    }
+
+    function wirePermsModal() {
+        var overlay = document.getElementById('permsModalOverlay');
+        document.getElementById('permsCancel').addEventListener('click', function() {
+            overlay.classList.remove('active');
+            editingPermsUsername = null; editingPermsDraft = null;
+        });
+        overlay.addEventListener('click', function(e) { if (e.target === overlay) { overlay.classList.remove('active'); editingPermsUsername = null; editingPermsDraft = null; } });
+
+        document.getElementById('permsSave').addEventListener('click', async function() {
+            if (!editingPermsUsername || !editingPermsDraft) return;
+            var users = await loadUsers();
+            var user = users.find(function(u) { return u.username === editingPermsUsername; });
+            if (!user) return;
+            user.permissions = editingPermsDraft;
+            await saveUsers(users);
+            await logAudit('Updated permissions for ' + editingPermsUsername);
+            // If editing own permissions, reload session
+            if (editingPermsUsername === currentUser.username && currentUser.role !== 'admin') {
+                currentUser.permissions = editingPermsDraft;
+                saveSession(currentUser);
+            }
+            overlay.classList.remove('active');
+            editingPermsUsername = null; editingPermsDraft = null;
+            showToast('Permissions saved');
+            renderAdminUsers();
+        });
+
+        // Preset buttons
+        document.querySelectorAll('.perms-preset-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var preset = this.dataset.preset;
+                editingPermsDraft = defaultPermissionsFor(preset);
+                renderPermsEditor();
+            });
+        });
+    }
+
     async function adminAddUser() {
         var msg = document.getElementById('adminAddMsg');
         var uname = document.getElementById('adminNewUser').value.trim().toLowerCase();
@@ -2644,7 +2905,8 @@
 
         var salt = generateSalt();
         var hash = await hashPassword(pass, salt);
-        users.push({ username: uname, display: display || uname, role: role, salt: salt, hash: hash });
+        var newUser = { username: uname, display: display || uname, role: role, salt: salt, hash: hash, permissions: defaultPermissionsFor(role) };
+        users.push(newUser);
         await saveUsers(users);
         await logAudit('Created user', uname + ' (' + role + ')');
 
@@ -2661,13 +2923,14 @@
         var session = loadSession();
 
         if (session) {
-            // Verify user still exists in DB
+            // Verify user still exists in DB and refresh permissions from DB
             var users = await loadUsers();
             users = await seedDefaultAdmin(users);
             var found = users.find(function(u) { return u.username === session.username; });
             if (found) {
-                currentUser = { username: found.username, display: found.display, role: found.role };
-                // Update session in case role changed
+                ensurePermissions(found);
+                currentUser = { username: found.username, display: found.display, role: found.role, permissions: found.permissions };
+                // Update session in case role/permissions changed
                 saveSession(currentUser);
                 showApp();
                 return;
@@ -2720,11 +2983,12 @@
         if (document.getElementById('adminLogoutBtn')) {
             document.getElementById('adminLogoutBtn').addEventListener('click', clearSession);
         }
-        applyRoleVisibility(currentUser.role);
+        applyPermissions();
         // Init admin panel if admin
         if (currentUser.role === 'admin') {
             renderAdminUsers();
             document.getElementById('adminAddBtn').addEventListener('click', adminAddUser);
+            wirePermsModal();
         }
         // Fire custom event so the rest of the app knows auth is done
         window.dispatchEvent(new Event('kn-auth-ready'));
@@ -5400,7 +5664,7 @@
             var past = diff < 0;
             var timeLabel = d.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' });
             var relative = past ? 'Past' : (soon ? '⏰ Soon' : (diff < 7 * 86400000 ? 'This week' : d.toLocaleDateString('en-US', { weekday: 'short' })));
-            var coparentOnly = (currentUser && (currentUser.role === 'coparent' || currentUser.role === 'viewer'));
+            var coparentOnly = !canEdit('appointments');
             return '<div class="appt-card' + (soon ? ' appt-soon' : '') + '" style="' + (past ? 'opacity:0.55;' : '') + '">' +
                 '<div class="appt-when"><div class="appt-day">' + d.getDate() + '</div><div class="appt-month">' + MONTHS[d.getMonth()] + '</div></div>' +
                 '<div class="appt-body"><div class="appt-title">' + a.title + '</div><div class="appt-sub">' + relative + ' · ' + timeLabel + (a.location ? ' · ' + a.location : '') + '</div>' + (a.notes ? '<div style="font-size:0.55rem;color:var(--text-light);margin-top:4px;">' + a.notes + '</div>' : '') + '</div>' +
@@ -5670,11 +5934,11 @@
                 var parts = [];
                 if (e.height_in) parts.push(e.height_in + '"');
                 if (e.weight_lbs) parts.push(e.weight_lbs + ' lbs');
-                var canEdit = currentUser && currentUser.role !== 'coparent' && currentUser.role !== 'viewer';
+                var canEditGrowth = canEdit('dashboard');
                 return '<div style="display:flex;align-items:center;gap:10px;padding:6px 0;border-bottom:1px solid rgba(197,138,205,0.06);font-size:0.62rem;">' +
                     '<div style="color:var(--text-light);min-width:85px;">' + e.date + '</div>' +
                     '<div style="flex:1;color:var(--text);font-weight:600;">' + parts.join(' · ') + (e.note ? ' <span style="color:var(--text-light);font-weight:400;">— ' + e.note + '</span>' : '') + '</div>' +
-                    (canEdit ? '<button data-id="' + e.id + '" class="growth-del-btn" style="border:none;background:none;color:var(--text-light);cursor:pointer;padding:4px;"><i class="fa-solid fa-trash"></i></button>' : '') +
+                    (canEditGrowth ? '<button data-id="' + e.id + '" class="growth-del-btn" style="border:none;background:none;color:var(--text-light);cursor:pointer;padding:4px;"><i class="fa-solid fa-trash"></i></button>' : '') +
                     '</div>';
             }).join('');
             list.querySelectorAll('.growth-del-btn').forEach(function(b) {
@@ -5763,8 +6027,8 @@
     function injectTemplateBar() {
         var actionsTab = document.getElementById('tab-actions');
         if (!actionsTab || document.getElementById('templateBar')) return;
-        // Don't show for read-only roles
-        if (currentUser && (currentUser.role === 'coparent' || currentUser.role === 'viewer')) return;
+        // Only show for users who can edit actions
+        if (!canEdit('actions')) return;
         var bar = document.createElement('div');
         bar.id = 'templateBar';
         bar.className = 'card';
@@ -5868,30 +6132,9 @@
         var dashTab = document.getElementById('tab-dashboard');
         if (dashTab) dashTab.appendChild(pdfBtn);
 
-        // Apply read-only after data loads for restricted roles
-        if (currentUser && (currentUser.role === 'coparent' || currentUser.role === 'viewer')) {
-            // Hide add/edit/delete buttons across the app
-            document.querySelectorAll('.ib-add-btn, .ib-edit-btn, .ib-del-btn').forEach(function(btn) {
-                btn.style.display = 'none';
-            });
-            // Hide the Procare import card
-            var importCard = document.querySelector('.import-card');
-            if (importCard) importCard.style.display = 'none';
-            // Hide appointment add button
-            var addApptBtn = document.getElementById('addApptBtn');
-            if (addApptBtn) addApptBtn.style.display = 'none';
-            // Hide growth add button
-            var addGrowthBtn = document.getElementById('addGrowthBtn');
-            if (addGrowthBtn) addGrowthBtn.style.display = 'none';
-        }
-
-        // Co-parent: hide Dashboard and Appointments too
-        if (currentUser && currentUser.role === 'coparent') {
-            var nd = document.getElementById('navDashboard');
-            var na = document.getElementById('navAppts');
-            if (nd) nd.style.display = 'none';
-            if (na) na.style.display = 'none';
-        }
+        // Re-apply permissions now that all data-dependent UI is rendered
+        // (templateBar, addApptBtn, addGrowthBtn, info edit buttons weren't in DOM before this point)
+        applyPermissions();
     }
 
     // Wait for auth to complete before loading app data
@@ -5901,5 +6144,32 @@
         window.addEventListener('kn-auth-ready', function() { appInit(); });
     }
     </script>
+
+    <!-- Permission Editor Modal -->
+    <div class="perms-modal-overlay" id="permsModalOverlay">
+        <div class="perms-modal">
+            <h3><i class="fa-solid fa-shield-halved" style="color:var(--purple-mid);"></i> Edit Permissions</h3>
+            <div class="perms-user" id="permsUserLabel">—</div>
+
+            <div class="perms-section-label">Quick presets</div>
+            <div class="perms-preset-bar">
+                <button class="perms-preset-btn" data-preset="parent">Parent</button>
+                <button class="perms-preset-btn" data-preset="viewer">Viewer</button>
+                <button class="perms-preset-btn" data-preset="watcher">Watcher</button>
+                <button class="perms-preset-btn" data-preset="coparent">Co-Parent</button>
+            </div>
+
+            <div class="perms-section-label">Tabs</div>
+            <div id="permTabsList"></div>
+
+            <div class="perms-section-label">Info sub-sections</div>
+            <div id="permInfoList"></div>
+
+            <div class="perms-footer">
+                <button class="perms-cancel" id="permsCancel">Cancel</button>
+                <button class="perms-save" id="permsSave"><i class="fa-solid fa-check"></i> SAVE</button>
+            </div>
+        </div>
+    </div>
 </body>
 </html>
