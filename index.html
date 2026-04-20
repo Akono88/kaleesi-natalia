@@ -2198,7 +2198,7 @@
                 <input type="text" id="apptLocation" placeholder="Location (optional)" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;margin-bottom:8px;font-family:Montserrat,sans-serif;font-size:0.7rem;outline:none;">
                 <textarea id="apptNotes" placeholder="Notes (optional)" style="width:100%;padding:10px 14px;border:1.5px solid var(--border);border-radius:10px;margin-bottom:8px;font-family:Montserrat,sans-serif;font-size:0.7rem;outline:none;resize:vertical;min-height:60px;"></textarea>
                 <label style="font-size:0.6rem;color:var(--text-mid);font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:8px;">
-                    <input type="checkbox" id="apptRemind" checked> Send push reminder 1 hour before
+                    <input type="checkbox" id="apptRemind" checked> In-app reminder 1 hour before
                 </label>
                 <div style="display:flex;gap:8px;">
                     <button id="apptCancel" style="flex:1;padding:10px;border:1.5px solid var(--border);background:white;border-radius:10px;font-family:Montserrat,sans-serif;font-size:0.68rem;font-weight:700;cursor:pointer;">Cancel</button>
@@ -2697,6 +2697,7 @@
                     '<option value="parent"' + (u.role === 'parent' ? ' selected' : '') + '>Parent</option>' +
                     '<option value="coparent"' + (u.role === 'coparent' ? ' selected' : '') + '>Co-Parent</option>' +
                     '<option value="viewer"' + (u.role === 'viewer' ? ' selected' : '') + '>Viewer</option>' +
+                    '<option value="watcher"' + (u.role === 'watcher' ? ' selected' : '') + '>Watcher</option>' +
                 '</select>' +
                 '<div class="au-actions">' +
                 (u.role !== 'admin' ? '<button class="au-btn" title="Edit permissions" data-user="' + u.username + '" data-action="perms"><i class="fa-solid fa-sliders"></i></button>' : '') +
@@ -3218,8 +3219,7 @@
 
         var c = categories[activeFormCat];
         var notifText = c.emoji + ' ' + entry.time + ' — ' + displayText;
-        notify(c.emoji + ' ' + c.label, entry.time + ' — ' + displayText, 'action-' + entry.id);
-        sendPushToAll(c.emoji + ' ' + c.label, entry.time + ' — ' + displayText, 'action-' + entry.id);
+        // Push notifications reserved for custody calendar changes only
         addLog(activeFormCat, notifText);
 
         // Auto-archive milestones to Info Bank
@@ -3370,8 +3370,7 @@
             renderTimeline();
             saveActions();
 
-            notify('🌋 Tantrum Logged', entry.time + ' — ' + displayText, 'tantrum-' + entry.id);
-            sendPushToAll('🌋 Tantrum Logged', entry.time + ' — ' + displayText, 'tantrum-' + entry.id);
+            // Push notifications reserved for custody calendar changes only
             addLog('tantrum', '🌋 ' + entry.time + ' — ' + displayText);
 
             form.classList.remove('active');
@@ -3699,10 +3698,7 @@
                 actions = actions.filter(function(a) { return a.id !== id; });
                 renderTimeline();
                 saveActions();
-                if (removed) {
-                    var rc = categories[removed.cat] || { emoji: '🗑️', label: removed.cat };
-                    sendPushToAll('🗑️ Entry Removed', rc.emoji + ' ' + (removed.text || rc.label) + ' deleted', 'del-' + Date.now());
-                }
+                // Push notifications reserved for custody calendar changes only
                 showToast('Entry removed');
             });
         });
@@ -4451,10 +4447,21 @@
         document.getElementById('calDayModal').classList.remove('active');
         await saveCustodySchedule();
 
-        var pushMsg = calModalDayType === 'exchange'
-            ? calSelectedDate + ' exchange at ' + formatCompactTimeLong(data.exchangeTime || '18:00')
-            : calSelectedDate + ' assigned to ' + ((data.parent || '').charAt(0).toUpperCase() + (data.parent || '').slice(1));
-        sendPushToAll('📅 Custody Updated', pushMsg, 'cust-' + Date.now());
+        // Build custody push — emphasize when Adam gets Kaleesi
+        var parentName = (data.parent || '').charAt(0).toUpperCase() + (data.parent || '').slice(1);
+        var isAdam = (data.parent || '').toLowerCase() === 'adam';
+        var pushTitle, pushMsg;
+        if (calModalDayType === 'exchange') {
+            pushTitle = '📅 Custody Exchange';
+            pushMsg = calSelectedDate + ' exchange at ' + formatCompactTimeLong(data.exchangeTime || '18:00');
+        } else if (isAdam) {
+            pushTitle = '👨 Adam has Kaleesi';
+            pushMsg = calSelectedDate + ' assigned to Adam';
+        } else {
+            pushTitle = '📅 Custody Updated';
+            pushMsg = calSelectedDate + ' assigned to ' + parentName;
+        }
+        sendPushToAll(pushTitle, pushMsg, 'cust-' + Date.now());
         showToast('Saved!');
     });
 
@@ -5748,14 +5755,8 @@
             var delay = reminderTs - now;
             if (delay > 0 && delay < 24 * 60 * 60 * 1000) { // within 24h
                 apptReminderTimers[a.id] = setTimeout(function() {
+                    // In-app toast only — push notifications reserved for custody calendar changes
                     showToast('⏰ Reminder: ' + a.title + ' in 1 hour');
-                    if (swRegistration && swRegistration.showNotification) {
-                        swRegistration.showNotification('⏰ Upcoming: ' + a.title, {
-                            body: 'In 1 hour' + (a.location ? ' at ' + a.location : ''),
-                            icon: '/kaleesi-natalia/icon.png',
-                            tag: 'appt-' + a.id
-                        });
-                    }
                 }, delay);
             }
         });
