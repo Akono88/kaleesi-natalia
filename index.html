@@ -19,7 +19,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
     <style>
         :root {
-            /* ✦ Kaleesi Natalia Knopko Brand Palette ✦ */
+            /* ✦ Kaleesi Natalia Konopko Brand Palette ✦ */
             --purple-deep: #C58ACD;
             --purple-mid: #D85A9C;
             --purple-soft: #F884D5;
@@ -1491,6 +1491,49 @@
             .cal-donut-wrap { width: 100px; height: 100px; }
         }
 
+        /* ═══════════════════════════════════════════════════════
+           iPad landscape (1024-1199px) — narrow sidebar, compact padding
+           iPad portrait stays on mobile layout (768px falls through)
+           ═══════════════════════════════════════════════════════ */
+        @media (min-width: 1024px) and (max-width: 1199px) {
+            .bottom-nav { width: 180px; }
+            .bottom-nav::before {
+                font-size: 1.2rem; padding: 18px 16px 14px;
+            }
+            .app {
+                margin-left: 180px; width: calc(100% - 180px);
+                padding: 16px 20px 40px;
+            }
+            .nav-btn { padding: 12px 16px; gap: 10px; }
+            .nav-btn i { font-size: 15px; width: 18px; }
+            .nav-btn span { font-size: 0.55rem; letter-spacing: 0.8px; }
+
+            /* Header compresses */
+            header { padding: 12px 16px; gap: 12px; }
+            h1 { font-size: 1.4rem; }
+            .header-photo { width: 48px; height: 48px; }
+
+            /* Session bar fits on one line */
+            .session-bar { padding: 6px 10px; font-size: 0.55rem; }
+
+            /* Dashboard stat grid stays 2-column (not 4) */
+            #tab-dashboard .stat-grid { grid-template-columns: 1fr 1fr; }
+
+            /* Calendar master/detail fits */
+            #tab-calendar > .card:first-child {
+                grid-template-columns: 1fr 260px;
+                gap: 0 16px;
+            }
+            .cal-donut-wrap { width: 80px; height: 80px; }
+
+            /* Keep quick-cats compact */
+            .quick-cats { grid-template-columns: repeat(4, 1fr); gap: 6px; }
+            .cat-btn[data-cat="tantrum"] { grid-column: span 2; }
+
+            /* Admin panel narrows */
+            .admin-add-form { grid-template-columns: 1fr 1fr; }
+        }
+
         /* ═══ LOGIN OVERLAY ═══ */
         .login-overlay {
             position: fixed; inset: 0; z-index: 9999;
@@ -1897,7 +1940,7 @@
         </div>
         <header>
             <img src="kaleesi.png" alt="Kaleesi" class="header-photo">
-            <h1>🦋 Kaleesi Natalia Knopko ♡</h1>
+            <h1>🦋 Kaleesi Natalia Konopko ♡</h1>
             <div class="subtitle">✦ 🐾 DAILY CARE & SCHEDULE TRACKER 🐾 ✦</div>
             <div class="cst-clock" id="clockDisplay"></div>
         </header>
@@ -5318,7 +5361,7 @@
             lines.push('');
         }
 
-        lines.push('— Sent from Kaleesi Natalia Knopko App ✦');
+        lines.push('— Sent from Kaleesi Natalia Konopko App ✦');
 
         var summary = lines.join('\n');
 
@@ -5809,7 +5852,7 @@
         doc.rect(0, 0, 210, 30, 'F');
         doc.setTextColor(255, 255, 255);
         doc.setFontSize(20); doc.setFont('helvetica', 'bold');
-        doc.text('Kaleesi Natalia Knopko', 15, 18);
+        doc.text('Kaleesi Natalia Konopko', 15, 18);
         doc.setFontSize(10); doc.setFont('helvetica', 'normal');
         doc.text('Daily Care Report · Generated ' + new Date().toLocaleString(), 15, 25);
         y = 40;
@@ -6080,7 +6123,7 @@
 
         // Version badge
         var vb = document.getElementById('versionBadge');
-        if (vb) vb.textContent = 'v2026.04.16';
+        if (vb) vb.textContent = 'v2026.04.19';
 
         // Setup dashboard
         setupGlobalSearch();
