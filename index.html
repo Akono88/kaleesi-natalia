@@ -1810,21 +1810,94 @@
         #tab-dashboard .insight-text {
             font-size: 0.65rem; color: var(--text-mid); line-height: 1.5;
         }
-        #tab-dashboard .bar-chart { display: flex; align-items: flex-end; height: 80px; gap: 3px; margin: 10px 0; }
+        #tab-dashboard .bar-chart { display: flex; align-items: flex-end; height: 90px; gap: 3px; margin: 10px 0 4px; }
         #tab-dashboard .bar-chart .bar {
             flex: 1; background: linear-gradient(180deg, var(--purple-deep), var(--purple-mid));
-            border-radius: 3px 3px 0 0; min-height: 2px; transition: height var(--dur-slow) var(--ease-out);
-            position: relative;
+            border-radius: 4px 4px 0 0; min-height: 2px; transition: height var(--dur-slow) var(--ease-out);
+            position: relative; display: flex; justify-content: center; align-items: flex-start;
+        }
+        #tab-dashboard .bar-chart .bar.is-zero { background: rgba(197,138,205,0.18); min-height: 4px; }
+        #tab-dashboard .bar-chart .bar.is-today { box-shadow: 0 0 0 1.5px var(--purple-mid); }
+        #tab-dashboard .bar-count {
+            position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+            font-size: 0.5rem; font-weight: 800; color: var(--text-mid); white-space: nowrap;
         }
         #tab-dashboard .bar-label {
             font-size: 0.45rem; font-weight: 600; color: var(--text-light);
             text-align: center; margin-top: 4px;
         }
         #tab-dashboard .chart-labels {
-            display: flex; gap: 3px; font-size: 0.45rem; font-weight: 600;
-            color: var(--text-light); text-align: center;
+            display: flex; gap: 3px; font-size: 0.5rem; font-weight: 700;
+            color: var(--text-light); text-align: center; letter-spacing: 0.5px;
         }
         #tab-dashboard .chart-labels > div { flex: 1; }
+        #tab-dashboard .chart-labels > div.is-today { color: var(--purple-mid); }
+
+        /* Trend arrows on stat cards */
+        #tab-dashboard .stat-trend {
+            display: inline-block; font-size: 0.5rem; font-weight: 800;
+            padding: 1px 5px; border-radius: 6px; margin-left: 4px; letter-spacing: 0.3px;
+        }
+        #tab-dashboard .stat-trend.up   { color: var(--cat-tantrum);   background: var(--cat-tantrum-bg); }
+        #tab-dashboard .stat-trend.down { color: var(--safe-text);     background: var(--safe-bg); }
+        #tab-dashboard .stat-trend.same { color: var(--text-light);    background: rgba(197,138,205,0.08); }
+        #tab-dashboard .stat-trend.up.benign   { color: var(--info-text); background: var(--info-bg); }
+        #tab-dashboard .stat-trend.down.benign { color: var(--text-light); background: rgba(197,138,205,0.08); }
+
+        /* Tone variants for insights */
+        #tab-dashboard .insight-card.insight-good {
+            background: linear-gradient(135deg, rgba(151,215,198,0.18), rgba(151,215,198,0.06));
+            border-color: rgba(42,122,95,0.18);
+        }
+        #tab-dashboard .insight-card.insight-warn {
+            background: linear-gradient(135deg, rgba(196,77,94,0.10), rgba(216,90,156,0.05));
+            border-color: rgba(196,77,94,0.18);
+        }
+
+        /* Section subtitle inside dashboard cards */
+        #tab-dashboard .dash-sublabel {
+            font-size: 0.55rem; font-weight: 700; color: var(--text-mid);
+            margin-bottom: 6px; letter-spacing: 1px; text-transform: uppercase;
+        }
+
+        /* Hourly heatmap */
+        #tab-dashboard .heatmap {
+            display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px; margin: 6px 0 4px;
+        }
+        #tab-dashboard .heat-cell {
+            aspect-ratio: 1 / 1.6; border-radius: 3px; min-height: 18px;
+            transition: transform var(--dur-fast); position: relative;
+        }
+        #tab-dashboard .heat-cell:hover { transform: scale(1.18); z-index: 2; }
+        #tab-dashboard .heat-axis {
+            display: grid; grid-template-columns: repeat(24, 1fr); gap: 2px;
+            font-size: 0.42rem; font-weight: 700; color: var(--text-light);
+            text-align: center; letter-spacing: 0.3px;
+        }
+        #tab-dashboard .heat-axis > div { opacity: 0.7; }
+
+        /* Top activities — bar fill */
+        .pattern-bar .pb-info { flex: 1; min-width: 0; }
+        .pattern-bar .pb-info .pb-label { font-size: 0.65rem; }
+        .pattern-bar .pb-top {
+            font-size: 0.55rem; color: var(--text-light); font-weight: 500;
+            margin-left: 6px;
+        }
+        .pattern-bar .pb-fill {
+            height: 5px; background: rgba(197,138,205,0.10); border-radius: 4px;
+            margin-top: 5px; overflow: hidden;
+        }
+        .pattern-bar .pb-fill-inner {
+            height: 100%; border-radius: 4px;
+            transition: width var(--dur-slow) var(--ease-out);
+        }
+
+        /* Growth chart caption */
+        #tab-dashboard .growth-caption {
+            font-size: 0.6rem; color: var(--text-mid); margin: 4px 2px 6px;
+            display: flex; justify-content: space-between; gap: 8px; flex-wrap: wrap;
+        }
+        #tab-dashboard .growth-caption strong { color: var(--text); font-weight: 800; }
 
         /* Pattern bar */
         .pattern-bar {
@@ -2197,10 +2270,15 @@
             <div class="card">
                 <div class="card-label"><i class="fa-solid fa-chart-line"></i> This Week at a Glance</div>
                 <div class="stat-grid" id="statGrid"></div>
-                <div style="margin-top:10px;">
-                    <div style="font-size:0.6rem;font-weight:700;color:var(--text-mid);margin-bottom:6px;letter-spacing:1px;text-transform:uppercase;">Activity (last 7 days)</div>
+                <div style="margin-top:14px;">
+                    <div class="dash-sublabel">Activity (last 7 days)</div>
                     <div class="bar-chart" id="weekBarChart"></div>
                     <div class="chart-labels" id="weekBarLabels"></div>
+                </div>
+                <div style="margin-top:14px;">
+                    <div class="dash-sublabel">Hourly pattern (last 14 days)</div>
+                    <div class="heatmap" id="hourlyHeatmap"></div>
+                    <div class="heat-axis" id="hourlyHeatmapAxis"></div>
                 </div>
             </div>
             <div class="card">
@@ -2221,6 +2299,7 @@
                     <button class="growth-toggle-btn" data-metric="weight" style="flex:1;padding:6px;border:1.5px solid var(--border);background:white;border-radius:10px;font-weight:700;cursor:pointer;">Weight</button>
                 </div>
                 <svg class="growth-chart-svg" id="growthChart" viewBox="0 0 300 180" preserveAspectRatio="none"></svg>
+                <div class="growth-caption" id="growthCaption"></div>
                 <div id="growthList" style="margin-top:10px;"></div>
             </div>
         </div>
@@ -5549,97 +5628,338 @@
     //  DASHBOARD
     // ═══════════════════════════════════════
     function renderDashboard() {
-        // This week
         var now = new Date();
+        var nowCST = getCSTNow();
+        var todayCST = getCSTDate();
         var weekAgo = new Date(now.getTime() - 7 * 86400000);
+        var twoWeeksAgo = new Date(now.getTime() - 14 * 86400000);
         var monthAgo = new Date(now.getTime() - 30 * 86400000);
 
         var weekEntries = logEntries.filter(function(e) { return e.timestamp && new Date(e.timestamp) > weekAgo; });
+        var lastWeekEntries = logEntries.filter(function(e) {
+            if (!e.timestamp) return false;
+            var t = new Date(e.timestamp);
+            return t > twoWeeksAgo && t <= weekAgo;
+        });
+        var fortnightEntries = logEntries.filter(function(e) { return e.timestamp && new Date(e.timestamp) > twoWeeksAgo; });
         var monthEntries = logEntries.filter(function(e) { return e.timestamp && new Date(e.timestamp) > monthAgo; });
 
-        // Stats
-        var feedCount = weekEntries.filter(function(e) { return e.cat === 'feed'; }).length;
-        var sleepCount = weekEntries.filter(function(e) { return e.cat === 'sleep'; }).length;
-        var medCount = weekEntries.filter(function(e) { return e.cat === 'med'; }).length;
-        var tantrumCount = weekEntries.filter(function(e) { return e.cat === 'tantrum'; }).length;
+        function countCat(arr, cat) { return arr.filter(function(e) { return e.cat === cat; }).length; }
+
+        var feedCount = countCat(weekEntries, 'feed');
+        var sleepCount = countCat(weekEntries, 'sleep');
+        var medCount = countCat(weekEntries, 'med');
+        var tantrumCount = countCat(weekEntries, 'tantrum');
+        var diaperCount = countCat(weekEntries, 'diaper') + countCat(weekEntries, 'potty');
+        var totalCount = weekEntries.length;
+
+        var lastFeed = countCat(lastWeekEntries, 'feed');
+        var lastSleep = countCat(lastWeekEntries, 'sleep');
+        var lastMed = countCat(lastWeekEntries, 'med');
+        var lastTantrum = countCat(lastWeekEntries, 'tantrum');
+        var lastDiaper = countCat(lastWeekEntries, 'diaper') + countCat(lastWeekEntries, 'potty');
+        var lastTotal = lastWeekEntries.length;
+
+        // ── Trend pill: dirOnUp = direction class when curr > prev.
+        // For tantrums, "up" is bad (red). For everything else, "up" is just info (purple).
+        function trendPill(curr, prev, upIsBad) {
+            if (prev === 0 && curr === 0) return '';
+            if (prev === 0) {
+                var cls = upIsBad ? 'up' : 'up benign';
+                return '<span class="stat-trend ' + cls + '">▲ new</span>';
+            }
+            var pct = Math.round(((curr - prev) / prev) * 100);
+            if (Math.abs(pct) < 5) return '<span class="stat-trend same">— flat</span>';
+            if (pct > 0) {
+                return '<span class="stat-trend up' + (upIsBad ? '' : ' benign') + '">▲ ' + pct + '%</span>';
+            }
+            return '<span class="stat-trend down' + (upIsBad ? '' : ' benign') + '">▼ ' + Math.abs(pct) + '%</span>';
+        }
+
+        var stats = [
+            { label: 'Total entries', value: totalCount,   trend: trendPill(totalCount, lastTotal, false) },
+            { label: 'Feedings',      value: feedCount,    trend: trendPill(feedCount, lastFeed, false) },
+            { label: 'Tantrums',      value: tantrumCount, trend: trendPill(tantrumCount, lastTantrum, true) },
+            { label: 'Sleep logs',    value: sleepCount,   trend: trendPill(sleepCount, lastSleep, false) },
+            { label: 'Meds',          value: medCount,     trend: trendPill(medCount, lastMed, false) },
+            { label: 'Diapers/potty', value: diaperCount,  trend: trendPill(diaperCount, lastDiaper, false) }
+        ];
 
         var sg = document.getElementById('statGrid');
         if (sg) {
-            sg.innerHTML =
-                '<div class="stat-card"><div class="stat-label">Feedings</div><div class="stat-value">' + feedCount + '</div><div class="stat-sub">this week</div></div>' +
-                '<div class="stat-card"><div class="stat-label">Sleep logs</div><div class="stat-value">' + sleepCount + '</div><div class="stat-sub">this week</div></div>' +
-                '<div class="stat-card"><div class="stat-label">Medications</div><div class="stat-value">' + medCount + '</div><div class="stat-sub">this week</div></div>' +
-                '<div class="stat-card"><div class="stat-label">Tantrums</div><div class="stat-value">' + tantrumCount + '</div><div class="stat-sub">this week</div></div>';
+            sg.innerHTML = stats.map(function(s) {
+                return '<div class="stat-card">' +
+                    '<div class="stat-label">' + s.label + '</div>' +
+                    '<div class="stat-value">' + s.value + '</div>' +
+                    '<div class="stat-sub">vs last wk' + (s.trend ? ' ' + s.trend : '') + '</div>' +
+                '</div>';
+            }).join('');
         }
 
-        // Bar chart — entries per day for last 7 days
+        // ── Bar chart: entries per day for last 7 days, using CST date strings ──
         var dayBuckets = [];
         for (var i = 6; i >= 0; i--) {
-            var d = new Date(now.getTime() - i * 86400000);
-            var ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+            var dCST = new Date(nowCST.getTime() - i * 86400000);
+            var ds = dCST.getFullYear() + '-' + String(dCST.getMonth()+1).padStart(2,'0') + '-' + String(dCST.getDate()).padStart(2,'0');
             var count = logEntries.filter(function(e) { return e.date === ds; }).length;
-            dayBuckets.push({ date: d, count: count, label: ['Su','Mo','Tu','We','Th','Fr','Sa'][d.getDay()] });
+            dayBuckets.push({
+                date: dCST, ds: ds, count: count,
+                label: ['S','M','T','W','T','F','S'][dCST.getDay()],
+                isToday: ds === todayCST
+            });
         }
         var maxCount = Math.max.apply(null, dayBuckets.map(function(b) { return b.count; })) || 1;
         var chart = document.getElementById('weekBarChart');
         var labels = document.getElementById('weekBarLabels');
         if (chart) {
             chart.innerHTML = dayBuckets.map(function(b) {
-                var pct = (b.count / maxCount) * 100;
-                return '<div class="bar" style="height:' + pct + '%" title="' + b.count + ' entries"></div>';
+                var pct = b.count === 0 ? 0 : Math.max(8, (b.count / maxCount) * 100);
+                var cls = 'bar' + (b.count === 0 ? ' is-zero' : '') + (b.isToday ? ' is-today' : '');
+                return '<div class="' + cls + '" style="height:' + pct + '%" title="' + b.ds + ': ' + b.count + ' entries">' +
+                    (b.count > 0 ? '<div class="bar-count">' + b.count + '</div>' : '') +
+                '</div>';
             }).join('');
         }
         if (labels) {
-            labels.innerHTML = dayBuckets.map(function(b) { return '<div>' + b.label + '</div>'; }).join('');
+            labels.innerHTML = dayBuckets.map(function(b) {
+                return '<div' + (b.isToday ? ' class="is-today"' : '') + '>' + b.label + '</div>';
+            }).join('');
         }
 
-        // Insights
+        // ── Hourly heatmap (last 14 days) ──
+        var hourCounts = new Array(24).fill(0);
+        fortnightEntries.forEach(function(e) {
+            var h = new Date(e.timestamp).getHours();
+            hourCounts[h]++;
+        });
+        var maxHour = Math.max.apply(null, hourCounts) || 1;
+        var heatmapEl = document.getElementById('hourlyHeatmap');
+        var heatmapAxisEl = document.getElementById('hourlyHeatmapAxis');
+        function hLabel(h) { return h === 0 ? '12a' : h < 12 ? h + 'a' : h === 12 ? '12p' : (h - 12) + 'p'; }
+        if (heatmapEl) {
+            heatmapEl.innerHTML = hourCounts.map(function(c, h) {
+                var intensity = c / maxHour;
+                var alpha = c === 0 ? 0.05 : (0.15 + intensity * 0.80);
+                return '<div class="heat-cell" style="background:rgba(216,90,156,' + alpha.toFixed(2) + ');" title="' + hLabel(h) + ': ' + c + ' entries"></div>';
+            }).join('');
+        }
+        if (heatmapAxisEl) {
+            heatmapAxisEl.innerHTML = hourCounts.map(function(c, h) {
+                return '<div>' + (h % 3 === 0 ? hLabel(h) : '') + '</div>';
+            }).join('');
+        }
+
+        // ── Sleep duration estimate (paired Asleep/Woke up or Nap start/Nap end) ──
+        var sleepByDay = {};
+        weekEntries.filter(function(e) { return e.cat === 'sleep' && e.timestamp; }).forEach(function(e) {
+            var ds = e.date || (e.timestamp || '').slice(0,10);
+            if (!sleepByDay[ds]) sleepByDay[ds] = [];
+            sleepByDay[ds].push(e);
+        });
+        var totalSleepMs = 0;
+        var sleepEpisodes = 0;
+        Object.keys(sleepByDay).forEach(function(ds) {
+            var arr = sleepByDay[ds].slice().sort(function(a,b) { return new Date(a.timestamp) - new Date(b.timestamp); });
+            var openStart = null;
+            arr.forEach(function(e) {
+                var t = (e.text || '').toLowerCase();
+                var isStart = t.indexOf('start') >= 0 || t === 'asleep';
+                var isEnd = t.indexOf('end') >= 0 || t.indexOf('woke') >= 0;
+                if (isStart && !openStart) openStart = new Date(e.timestamp);
+                else if (isEnd && openStart) {
+                    var dur = new Date(e.timestamp) - openStart;
+                    if (dur > 5 * 60 * 1000 && dur < 14 * 3600 * 1000) {
+                        totalSleepMs += dur;
+                        sleepEpisodes++;
+                    }
+                    openStart = null;
+                }
+            });
+        });
+        var avgSleepHrs = sleepEpisodes > 0 ? (totalSleepMs / 3600000 / sleepEpisodes).toFixed(1) : null;
+
+        // ── Insights ──
         var insights = [];
-        // Tantrum by day of week
+        var dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+
+        // Daily average + WoW
+        var avgPerDay = (totalCount / 7).toFixed(1);
+        var lastAvg = (lastTotal / 7).toFixed(1);
+        insights.push({
+            emoji: '📊', tone: 'info', title: 'Daily logging average',
+            text: '<strong>' + avgPerDay + '</strong> entries/day this week (last week: ' + lastAvg + ').'
+        });
+
+        // Busiest day this week
+        var weekDayCounts = [0,0,0,0,0,0,0];
+        weekEntries.forEach(function(e) { if (e.timestamp) weekDayCounts[new Date(e.timestamp).getDay()]++; });
+        var maxWeekDay = Math.max.apply(null, weekDayCounts);
+        if (maxWeekDay > 0) {
+            var maxIdx = weekDayCounts.indexOf(maxWeekDay);
+            insights.push({
+                emoji: '🏆', tone: 'info', title: 'Busiest day',
+                text: dayNames[maxIdx] + ' had the most logging — <strong>' + maxWeekDay + '</strong> entries.'
+            });
+        }
+
+        // Logging streak (consecutive days back from today with ≥1 entry)
+        var streak = 0;
+        for (var k = 0; k < 60; k++) {
+            var dx = new Date(nowCST.getTime() - k * 86400000);
+            var dsx = dx.getFullYear() + '-' + String(dx.getMonth()+1).padStart(2,'0') + '-' + String(dx.getDate()).padStart(2,'0');
+            if (logEntries.some(function(e) { return e.date === dsx; })) streak++;
+            else break;
+        }
+        if (streak >= 3) {
+            insights.push({
+                emoji: '🔥', tone: 'good', title: 'Logging streak',
+                text: '<strong>' + streak + ' day' + (streak === 1 ? '' : 's') + '</strong> in a row with at least one entry.'
+            });
+        }
+
+        // Tantrum patterns
         if (tantrumCount > 0) {
             var tByDay = [0,0,0,0,0,0,0];
-            weekEntries.filter(function(e) { return e.cat === 'tantrum' && e.timestamp; }).forEach(function(e) {
-                tByDay[new Date(e.timestamp).getDay()]++;
+            var tByHour = new Array(24).fill(0);
+            var triggerCounts = {};
+            weekEntries.filter(function(e) { return e.cat === 'tantrum'; }).forEach(function(e) {
+                if (e.timestamp) {
+                    tByDay[new Date(e.timestamp).getDay()]++;
+                    tByHour[new Date(e.timestamp).getHours()]++;
+                }
+                var key = (e.text || '').trim();
+                if (key) triggerCounts[key] = (triggerCounts[key] || 0) + 1;
             });
             var worstDay = tByDay.indexOf(Math.max.apply(null, tByDay));
-            var dayNames = ['Sundays','Mondays','Tuesdays','Wednesdays','Thursdays','Fridays','Saturdays'];
             if (tByDay[worstDay] > 0) {
-                insights.push({ emoji: '🌋', title: 'Tantrum pattern', text: 'Most tantrums this week happened on <strong>' + dayNames[worstDay] + '</strong> (' + tByDay[worstDay] + ' total).' });
+                insights.push({
+                    emoji: '🌋', tone: 'warn', title: 'Tantrum day pattern',
+                    text: 'Most tantrums on <strong>' + dayNames[worstDay] + 's</strong> (' + tByDay[worstDay] + ' this week).'
+                });
+            }
+            var worstHour = tByHour.indexOf(Math.max.apply(null, tByHour));
+            if (tByHour[worstHour] > 0) {
+                insights.push({
+                    emoji: '⏰', tone: 'warn', title: 'Tantrum time-of-day',
+                    text: 'Tantrums cluster around <strong>' + hLabel(worstHour).replace(/a$/, ' AM').replace(/p$/, ' PM') + '</strong>. A snack or anchor before that window may help.'
+                });
+            }
+            var topTrigger = Object.keys(triggerCounts).sort(function(a,b) { return triggerCounts[b] - triggerCounts[a]; })[0];
+            if (topTrigger) {
+                insights.push({
+                    emoji: '🎯', tone: 'warn', title: 'Top tantrum trigger',
+                    text: '<strong>' + topTrigger + '</strong> was logged ' + triggerCounts[topTrigger] + ' time' + (triggerCounts[topTrigger] === 1 ? '' : 's') + ' this week.'
+                });
             }
         }
-        // Sleep coverage
-        var avgPerDay = (weekEntries.length / 7).toFixed(1);
-        insights.push({ emoji: '📊', title: 'Daily average', text: '<strong>' + avgPerDay + '</strong> entries per day this week.' });
 
-        // Missed meds check - days with 0 med entries
-        var medDays = 0;
-        for (var j = 0; j < 7; j++) {
-            var d = new Date(now.getTime() - j * 86400000);
-            var ds = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
-            if (logEntries.some(function(e) { return e.date === ds && e.cat === 'med'; })) medDays++;
+        // Tantrum WoW
+        if (lastTantrum > 0 && tantrumCount < lastTantrum) {
+            insights.push({
+                emoji: '🌟', tone: 'good', title: 'Tantrums down',
+                text: '<strong>' + (lastTantrum - tantrumCount) + ' fewer</strong> tantrum' + (lastTantrum - tantrumCount === 1 ? '' : 's') + ' than last week — keep doing what you\'re doing.'
+            });
+        } else if (lastTantrum > 0 && tantrumCount > lastTantrum) {
+            insights.push({
+                emoji: '📈', tone: 'warn', title: 'Tantrums up',
+                text: '<strong>' + (tantrumCount - lastTantrum) + ' more</strong> than last week. Worth checking sleep and transition days.'
+            });
         }
-        if (medDays < 7 && medCount > 0) {
-            insights.push({ emoji: '💊', title: 'Medication coverage', text: 'Medications logged on <strong>' + medDays + ' of 7</strong> days this week.' });
+
+        // Sleep summary
+        if (avgSleepHrs) {
+            insights.push({
+                emoji: '😴', tone: 'info', title: 'Average sleep episode',
+                text: '<strong>' + avgSleepHrs + ' hrs</strong> across ' + sleepEpisodes + ' tracked nap/night episode' + (sleepEpisodes === 1 ? '' : 's') + ' this week.'
+            });
+        }
+
+        // Med coverage (only if any med activity at all)
+        if (medCount > 0) {
+            var medDays = 0;
+            for (var j = 0; j < 7; j++) {
+                var d2 = new Date(nowCST.getTime() - j * 86400000);
+                var ds2 = d2.getFullYear() + '-' + String(d2.getMonth()+1).padStart(2,'0') + '-' + String(d2.getDate()).padStart(2,'0');
+                if (logEntries.some(function(e) { return e.date === ds2 && e.cat === 'med'; })) medDays++;
+            }
+            var medTone = medDays >= 6 ? 'good' : medDays >= 3 ? 'info' : 'warn';
+            insights.push({
+                emoji: '💊', tone: medTone, title: 'Medication coverage',
+                text: 'Meds logged on <strong>' + medDays + '/7</strong> days this week.'
+            });
+        }
+
+        // Latest milestone
+        var recentMilestones = monthEntries.filter(function(e) { return e.cat === 'milestone'; })
+            .sort(function(a,b) { return new Date(b.timestamp) - new Date(a.timestamp); });
+        if (recentMilestones.length > 0) {
+            var m = recentMilestones[0];
+            var ago = Math.floor((Date.now() - new Date(m.timestamp).getTime()) / 86400000);
+            var agoLbl = ago === 0 ? 'today' : ago === 1 ? 'yesterday' : ago + ' days ago';
+            insights.push({
+                emoji: '⭐', tone: 'good', title: 'Latest milestone',
+                text: '<strong>' + (m.text || 'Milestone') + '</strong> — ' + agoLbl + (m.detail ? ' (' + m.detail + ')' : '') + '.'
+            });
+        }
+
+        // Most active hour
+        var topHour = hourCounts.indexOf(Math.max.apply(null, hourCounts));
+        if (hourCounts[topHour] > 0) {
+            insights.push({
+                emoji: '🕐', tone: 'info', title: 'Most active hour',
+                text: 'The <strong>' + hLabel(topHour).replace(/a$/, ' AM').replace(/p$/, ' PM') + '</strong> hour has the most logged activity (last 14 days).'
+            });
         }
 
         var ins = document.getElementById('insightsList');
         if (ins) {
-            ins.innerHTML = insights.map(function(i) {
-                return '<div class="insight-card"><div class="insight-title"><span class="insight-emoji">' + i.emoji + '</span>' + i.title + '</div><div class="insight-text">' + i.text + '</div></div>';
-            }).join('') || '<div style="color:var(--text-light);font-size:0.65rem;text-align:center;padding:10px;">Not enough data yet — keep logging!</div>';
+            ins.innerHTML = insights.length === 0
+                ? '<div style="color:var(--text-light);font-size:0.65rem;text-align:center;padding:10px;">Not enough data yet — keep logging!</div>'
+                : insights.map(function(i) {
+                    return '<div class="insight-card insight-' + (i.tone || 'info') + '">' +
+                        '<div class="insight-title"><span class="insight-emoji">' + i.emoji + '</span>' + i.title + '</div>' +
+                        '<div class="insight-text">' + i.text + '</div>' +
+                    '</div>';
+                }).join('');
         }
 
-        // Top activities (30 days)
+        // ── Top activities (last 30 days) with bar fill + most-frequent text ──
         var catCounts = {};
-        monthEntries.forEach(function(e) { catCounts[e.cat] = (catCounts[e.cat] || 0) + 1; });
-        var sorted = Object.keys(catCounts).map(function(k) { return { cat: k, count: catCounts[k] }; }).sort(function(a,b) { return b.count - a.count; });
+        var catTextCounts = {};
+        monthEntries.forEach(function(e) {
+            catCounts[e.cat] = (catCounts[e.cat] || 0) + 1;
+            if (e.text) {
+                if (!catTextCounts[e.cat]) catTextCounts[e.cat] = {};
+                catTextCounts[e.cat][e.text] = (catTextCounts[e.cat][e.text] || 0) + 1;
+            }
+        });
+        var sorted = Object.keys(catCounts).map(function(k) {
+            return { cat: k, count: catCounts[k] };
+        }).sort(function(a,b) { return b.count - a.count; });
+        var maxCat = sorted.length ? sorted[0].count : 1;
 
         var top = document.getElementById('topActivities');
         if (top) {
-            top.innerHTML = sorted.map(function(s) {
-                var c = categories[s.cat] || { emoji: '📝', label: s.cat, color: 'note' };
-                return '<div class="pattern-bar"><div class="pb-icon" style="background:var(--cat-' + c.color + '-bg);color:var(--cat-' + c.color + ');">' + c.emoji + '</div><div class="pb-label">' + c.label + '</div><div class="pb-count">' + s.count + '</div></div>';
-            }).join('') || '<div style="color:var(--text-light);font-size:0.65rem;text-align:center;padding:10px;">No activity in last 30 days.</div>';
+            top.innerHTML = sorted.length === 0
+                ? '<div style="color:var(--text-light);font-size:0.65rem;text-align:center;padding:10px;">No activity in last 30 days.</div>'
+                : sorted.map(function(s) {
+                    var c = categories[s.cat] || { emoji: '📝', label: s.cat, color: 'note' };
+                    var pct = Math.round((s.count / maxCat) * 100);
+                    var topText = '';
+                    if (catTextCounts[s.cat]) {
+                        var keys = Object.keys(catTextCounts[s.cat]);
+                        keys.sort(function(a,b) { return catTextCounts[s.cat][b] - catTextCounts[s.cat][a]; });
+                        if (keys[0]) topText = keys[0];
+                    }
+                    return '<div class="pattern-bar">' +
+                        '<div class="pb-icon" style="background:var(--cat-' + c.color + '-bg);color:var(--cat-' + c.color + ');">' + c.emoji + '</div>' +
+                        '<div class="pb-info">' +
+                            '<div class="pb-label">' + c.label + (topText ? '<span class="pb-top">most often: ' + topText + '</span>' : '') + '</div>' +
+                            '<div class="pb-fill"><div class="pb-fill-inner" style="width:' + pct + '%;background:var(--cat-' + c.color + ');"></div></div>' +
+                        '</div>' +
+                        '<div class="pb-count">' + s.count + '</div>' +
+                    '</div>';
+                }).join('');
         }
     }
 
@@ -5937,11 +6257,14 @@
     function renderGrowthChart() {
         var svg = document.getElementById('growthChart');
         var list = document.getElementById('growthList');
+        var caption = document.getElementById('growthCaption');
         if (!svg || !list) return;
 
         var sorted = growthData.slice().sort(function(a,b) { return new Date(a.date) - new Date(b.date); });
         var values = sorted.map(function(e) { return growthMetric === 'height' ? e.height_in : e.weight_lbs; }).filter(function(v) { return typeof v === 'number'; });
         var dates = sorted.filter(function(e) { return typeof (growthMetric === 'height' ? e.height_in : e.weight_lbs) === 'number'; });
+
+        if (caption) caption.innerHTML = '';
 
         if (values.length === 0) {
             svg.innerHTML = '<text x="150" y="90" text-anchor="middle" style="font-size:8px;fill:#c4a6d4;font-family:Montserrat,sans-serif;">No ' + growthMetric + ' entries yet</text>';
@@ -5968,6 +6291,21 @@
             svg.innerHTML = gridLines + '<path class="data-line" d="' + pathData + '" />' + dots +
                 '<text x="' + pad + '" y="' + (pad - 5) + '" style="font-size:7px;fill:#8a6b9e;font-family:Montserrat,sans-serif;font-weight:700;">' + max.toFixed(1) + '</text>' +
                 '<text x="' + pad + '" y="' + (h - 5) + '" style="font-size:7px;fill:#8a6b9e;font-family:Montserrat,sans-serif;font-weight:700;">' + min.toFixed(1) + '</text>';
+
+            if (caption) {
+                var unit = growthMetric === 'height' ? '"' : ' lbs';
+                var first = values[0];
+                var latest = values[values.length - 1];
+                var change = latest - first;
+                var msSpan = new Date(dates[dates.length - 1].date) - new Date(dates[0].date);
+                var daysSpan = Math.max(1, Math.round(msSpan / 86400000));
+                var changeStr = (change >= 0 ? '+' : '') + change.toFixed(1) + unit;
+                var perMonth = (change / (daysSpan / 30));
+                var perMonthStr = (perMonth >= 0 ? '+' : '') + perMonth.toFixed(1) + unit + '/mo';
+                caption.innerHTML =
+                    '<div>Latest: <strong>' + latest.toFixed(1) + unit + '</strong> · ' + dates[dates.length - 1].date + '</div>' +
+                    '<div>Change: <strong>' + changeStr + '</strong> over ' + daysSpan + ' day' + (daysSpan === 1 ? '' : 's') + (values.length > 1 ? ' · ' + perMonthStr : '') + '</div>';
+            }
         }
 
         // List recent entries
@@ -6123,7 +6461,7 @@
 
         // Version badge
         var vb = document.getElementById('versionBadge');
-        if (vb) vb.textContent = 'v2026.04.19';
+        if (vb) vb.textContent = 'v2026.05.08';
 
         // Setup dashboard
         setupGlobalSearch();
