@@ -1,10 +1,10 @@
 /* ═══════════════════════════════════════
    Kaleesi Natalia — Service Worker
    Background Push + Offline Cache
-   BUILD: 2026-05-08-v5
+   BUILD: 2026-05-08-v6
    ═══════════════════════════════════════ */
 
-var SW_VERSION = '2026-05-08-v5';
+var SW_VERSION = '2026-05-08-v6';
 var CACHE_NAME = 'kaleesi-v' + SW_VERSION;
 var PRECACHE_URLS = [
     './',
