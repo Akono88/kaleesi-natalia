@@ -5627,6 +5627,34 @@
     // ═══════════════════════════════════════
     //  DASHBOARD
     // ═══════════════════════════════════════
+    // Normalize log entries: handles both new shape ({cat,text,timestamp,time:"7:30 AM"})
+    // and legacy shape from addLog ({type,msg,time:<ISO>}).
+    function normalizeLogEntry(e) {
+        var rawTs = e.timestamp;
+        if (!rawTs && e.time && (/T/.test(e.time) || /\d{4}-\d{2}-\d{2}/.test(e.time))) rawTs = e.time;
+        var ts = null;
+        if (rawTs) {
+            var d = new Date(rawTs);
+            if (!isNaN(d.getTime()) && d.getFullYear() >= 2000) ts = d;
+        }
+        var ds = e.date;
+        if (!ds && ts) {
+            var cst = new Date(ts.toLocaleString('en-US', { timeZone: 'America/Chicago' }));
+            ds = cst.getFullYear() + '-' + String(cst.getMonth()+1).padStart(2,'0') + '-' + String(cst.getDate()).padStart(2,'0');
+        }
+        var displayTime = '';
+        if (e.time && !/T/.test(e.time) && !/\d{4}-\d{2}-\d{2}/.test(e.time)) displayTime = e.time;
+        else if (ts) displayTime = ts.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', timeZone: 'America/Chicago' });
+        return {
+            cat: e.cat || e.type || 'note',
+            date: ds,
+            ts: ts,
+            time: displayTime,
+            text: (e.text || e.msg || e.chipLabel || '').toString(),
+            detail: e.detail || ''
+        };
+    }
+
     function renderDashboard() {
         var now = new Date();
         var nowCST = getCSTNow();
@@ -5635,14 +5663,12 @@
         var twoWeeksAgo = new Date(now.getTime() - 14 * 86400000);
         var monthAgo = new Date(now.getTime() - 30 * 86400000);
 
-        var weekEntries = logEntries.filter(function(e) { return e.timestamp && new Date(e.timestamp) > weekAgo; });
-        var lastWeekEntries = logEntries.filter(function(e) {
-            if (!e.timestamp) return false;
-            var t = new Date(e.timestamp);
-            return t > twoWeeksAgo && t <= weekAgo;
-        });
-        var fortnightEntries = logEntries.filter(function(e) { return e.timestamp && new Date(e.timestamp) > twoWeeksAgo; });
-        var monthEntries = logEntries.filter(function(e) { return e.timestamp && new Date(e.timestamp) > monthAgo; });
+        var allEntries = logEntries.map(normalizeLogEntry).filter(function(e) { return e.ts; });
+
+        var weekEntries = allEntries.filter(function(e) { return e.ts > weekAgo; });
+        var lastWeekEntries = allEntries.filter(function(e) { return e.ts > twoWeeksAgo && e.ts <= weekAgo; });
+        var fortnightEntries = allEntries.filter(function(e) { return e.ts > twoWeeksAgo; });
+        var monthEntries = allEntries.filter(function(e) { return e.ts > monthAgo; });
 
         function countCat(arr, cat) { return arr.filter(function(e) { return e.cat === cat; }).length; }
 
@@ -5701,7 +5727,7 @@
         for (var i = 6; i >= 0; i--) {
             var dCST = new Date(nowCST.getTime() - i * 86400000);
             var ds = dCST.getFullYear() + '-' + String(dCST.getMonth()+1).padStart(2,'0') + '-' + String(dCST.getDate()).padStart(2,'0');
-            var count = logEntries.filter(function(e) { return e.date === ds; }).length;
+            var count = allEntries.filter(function(e) { return e.date === ds; }).length;
             dayBuckets.push({
                 date: dCST, ds: ds, count: count,
                 label: ['S','M','T','W','T','F','S'][dCST.getDay()],
@@ -5729,8 +5755,7 @@
         // ── Hourly heatmap (last 14 days) ──
         var hourCounts = new Array(24).fill(0);
         fortnightEntries.forEach(function(e) {
-            var h = new Date(e.timestamp).getHours();
-            hourCounts[h]++;
+            hourCounts[e.ts.getHours()]++;
         });
         var maxHour = Math.max.apply(null, hourCounts) || 1;
         var heatmapEl = document.getElementById('hourlyHeatmap');
@@ -5751,23 +5776,23 @@
 
         // ── Sleep duration estimate (paired Asleep/Woke up or Nap start/Nap end) ──
         var sleepByDay = {};
-        weekEntries.filter(function(e) { return e.cat === 'sleep' && e.timestamp; }).forEach(function(e) {
-            var ds = e.date || (e.timestamp || '').slice(0,10);
+        weekEntries.filter(function(e) { return e.cat === 'sleep'; }).forEach(function(e) {
+            var ds = e.date || '';
             if (!sleepByDay[ds]) sleepByDay[ds] = [];
             sleepByDay[ds].push(e);
         });
         var totalSleepMs = 0;
         var sleepEpisodes = 0;
         Object.keys(sleepByDay).forEach(function(ds) {
-            var arr = sleepByDay[ds].slice().sort(function(a,b) { return new Date(a.timestamp) - new Date(b.timestamp); });
+            var arr = sleepByDay[ds].slice().sort(function(a,b) { return a.ts - b.ts; });
             var openStart = null;
             arr.forEach(function(e) {
                 var t = (e.text || '').toLowerCase();
                 var isStart = t.indexOf('start') >= 0 || t === 'asleep';
                 var isEnd = t.indexOf('end') >= 0 || t.indexOf('woke') >= 0;
-                if (isStart && !openStart) openStart = new Date(e.timestamp);
+                if (isStart && !openStart) openStart = e.ts;
                 else if (isEnd && openStart) {
-                    var dur = new Date(e.timestamp) - openStart;
+                    var dur = e.ts - openStart;
                     if (dur > 5 * 60 * 1000 && dur < 14 * 3600 * 1000) {
                         totalSleepMs += dur;
                         sleepEpisodes++;
@@ -5792,7 +5817,7 @@
 
         // Busiest day this week
         var weekDayCounts = [0,0,0,0,0,0,0];
-        weekEntries.forEach(function(e) { if (e.timestamp) weekDayCounts[new Date(e.timestamp).getDay()]++; });
+        weekEntries.forEach(function(e) { weekDayCounts[e.ts.getDay()]++; });
         var maxWeekDay = Math.max.apply(null, weekDayCounts);
         if (maxWeekDay > 0) {
             var maxIdx = weekDayCounts.indexOf(maxWeekDay);
@@ -5807,7 +5832,7 @@
         for (var k = 0; k < 60; k++) {
             var dx = new Date(nowCST.getTime() - k * 86400000);
             var dsx = dx.getFullYear() + '-' + String(dx.getMonth()+1).padStart(2,'0') + '-' + String(dx.getDate()).padStart(2,'0');
-            if (logEntries.some(function(e) { return e.date === dsx; })) streak++;
+            if (allEntries.some(function(e) { return e.date === dsx; })) streak++;
             else break;
         }
         if (streak >= 3) {
@@ -5823,10 +5848,8 @@
             var tByHour = new Array(24).fill(0);
             var triggerCounts = {};
             weekEntries.filter(function(e) { return e.cat === 'tantrum'; }).forEach(function(e) {
-                if (e.timestamp) {
-                    tByDay[new Date(e.timestamp).getDay()]++;
-                    tByHour[new Date(e.timestamp).getHours()]++;
-                }
+                tByDay[e.ts.getDay()]++;
+                tByHour[e.ts.getHours()]++;
                 var key = (e.text || '').trim();
                 if (key) triggerCounts[key] = (triggerCounts[key] || 0) + 1;
             });
@@ -5880,7 +5903,7 @@
             for (var j = 0; j < 7; j++) {
                 var d2 = new Date(nowCST.getTime() - j * 86400000);
                 var ds2 = d2.getFullYear() + '-' + String(d2.getMonth()+1).padStart(2,'0') + '-' + String(d2.getDate()).padStart(2,'0');
-                if (logEntries.some(function(e) { return e.date === ds2 && e.cat === 'med'; })) medDays++;
+                if (allEntries.some(function(e) { return e.date === ds2 && e.cat === 'med'; })) medDays++;
             }
             var medTone = medDays >= 6 ? 'good' : medDays >= 3 ? 'info' : 'warn';
             insights.push({
@@ -5891,10 +5914,10 @@
 
         // Latest milestone
         var recentMilestones = monthEntries.filter(function(e) { return e.cat === 'milestone'; })
-            .sort(function(a,b) { return new Date(b.timestamp) - new Date(a.timestamp); });
+            .sort(function(a,b) { return b.ts - a.ts; });
         if (recentMilestones.length > 0) {
             var m = recentMilestones[0];
-            var ago = Math.floor((Date.now() - new Date(m.timestamp).getTime()) / 86400000);
+            var ago = Math.floor((Date.now() - m.ts.getTime()) / 86400000);
             var agoLbl = ago === 0 ? 'today' : ago === 1 ? 'yesterday' : ago + ' days ago';
             insights.push({
                 emoji: '⭐', tone: 'good', title: 'Latest milestone',
@@ -6180,7 +6203,7 @@
         doc.setTextColor(60, 30, 80);
         var now = new Date();
         var weekAgo = new Date(now.getTime() - 14 * 86400000);
-        var recent = logEntries.filter(function(e) { return e.timestamp && new Date(e.timestamp) > weekAgo; });
+        var recent = logEntries.map(normalizeLogEntry).filter(function(e) { return e.ts && e.ts > weekAgo; });
 
         doc.setFontSize(14); doc.setFont('helvetica', 'bold');
         doc.text('Last 14 Days — Activity Summary', 15, y); y += 8;
@@ -6461,7 +6484,7 @@
 
         // Version badge
         var vb = document.getElementById('versionBadge');
-        if (vb) vb.textContent = 'v2026.05.08';
+        if (vb) vb.textContent = 'v2026.05.08b';
 
         // Setup dashboard
         setupGlobalSearch();
